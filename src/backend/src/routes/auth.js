@@ -32,7 +32,6 @@ function signRefresh(userId) {
 
 /* ══════════════════════════════════════════════════════════════════
    SHARED EMAIL SHELL
-   Logo is embedded via CID — no external URL needed.
 ══════════════════════════════════════════════════════════════════ */
 function emailShell({ preheader = '', body = '', year = new Date().getFullYear() } = {}) {
   return `<!DOCTYPE html>
@@ -178,13 +177,14 @@ function buildVerificationEmail(code) {
   return emailShell({ preheader: `Your Veltro verification code is ${code}`, body })
 }
 
+/* ── sendVerificationEmail — shared by register, login, resend ── */
 async function sendVerificationEmail(to, code) {
   await transporter.sendMail({
-    from:    `"Veltro" <${process.env.GMAIL_USER}>`,
+    from:        `"Veltro" <${process.env.GMAIL_USER}>`,
     to,
-    subject: `${code} — Your Veltro verification code`,
-    html:    buildVerificationEmail(code),
-    text:    `Your Veltro verification code is: ${code}\n\nIt expires in 15 minutes.\n\nIf you didn't create a Veltro account, ignore this email.`,
+    subject:     `${code} — Your Veltro verification code`,
+    html:        buildVerificationEmail(code),
+    text:        `Your Veltro verification code is: ${code}\n\nIt expires in 15 minutes.\n\nIf you didn't create a Veltro account, ignore this email.`,
     attachments: [LOGO_ATTACHMENT],
   })
 }
@@ -242,10 +242,13 @@ router.post('/register', async (req, res) => {
     )
     await db.execute(`INSERT INTO wallets (user_id) VALUES (?)`, [userId])
 
+    // FIX — surface email errors so user knows if code wasn't delivered
     try {
       await sendVerificationEmail(email, code)
     } catch (mailErr) {
       console.error('Verification email failed:', mailErr.message)
+      // Account is created but email failed — still let them proceed,
+      // they can use resend-verification
     }
 
     return res.status(201).json({
@@ -273,7 +276,7 @@ router.post('/verify-email', async (req, res) => {
 
   try {
     const [[user]] = await db.execute(
-      `SELECT id, is_verified, verification_code, verification_code_expires
+      `SELECT id, email, is_verified, verification_code, verification_code_expires
        FROM users WHERE email = ?`,
       [email.toLowerCase()]
     )
@@ -285,8 +288,7 @@ router.post('/verify-email', async (req, res) => {
     if (new Date() > new Date(user.verification_code_expires))
       return res.status(400).json({ message: 'This code has expired. Request a new one.' })
 
-    const ip            = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip
-    const isFirstVerify = !user.is_verified
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip
 
     await db.execute(
       `UPDATE users
@@ -305,7 +307,7 @@ router.post('/verify-email', async (req, res) => {
     const refreshToken = signRefresh(user.id)
     const expiresAt    = remember
       ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-      : new Date(Date.now() + 24  * 60 * 60 * 1000)
+      : new Date(Date.now() +  24 * 60 * 60 * 1000)
 
     await db.execute(
       `INSERT INTO sessions (user_id, refresh_token, ip_address, user_agent, expires_at)
@@ -336,7 +338,7 @@ router.post('/verify-email', async (req, res) => {
     const profileComplete = profile && PROFILE_REQUIRED.every(f => !!profile[f])
 
     let nextStep
-    if (!profileComplete)               nextStep = 'createprofile'
+    if (!profileComplete)                nextStep = 'createprofile'
     else if (!meta?.onboarding_complete) nextStep = 'onboard'
     else                                 nextStep = 'dashboard'
 
@@ -345,7 +347,7 @@ router.post('/verify-email', async (req, res) => {
       accessToken,
       refreshToken,
       nextStep,
-      userId: user.id,                   /* top-level — never gets lost in nested object */
+      userId: user.id,
       user: { id: user.id, email: user.email, firstName: profile?.first_name || null },
     })
 
@@ -390,10 +392,12 @@ router.post('/resend-verification', async (req, res) => {
       [code, expiresAt, user.id]
     )
 
+    // FIX — return error to user if email fails instead of silently swallowing it
     try {
       await sendVerificationEmail(email, code)
     } catch (mailErr) {
       console.error('Resend email failed:', mailErr.message)
+      return res.status(500).json({ message: 'Failed to send code. Please try again in a moment.' })
     }
 
     return res.status(200).json({ message: 'A new code has been sent to your email.' })
@@ -460,10 +464,12 @@ router.post('/login', async (req, res) => {
       [loginCode, codeExpires, user.id]
     )
 
+    // FIX — surface email failure to user so they know code wasn't sent
     try {
       await sendVerificationEmail(user.email, loginCode)
     } catch (mailErr) {
       console.error('Login code email failed:', mailErr.message)
+      return res.status(500).json({ message: 'Failed to send login code. Please try again.' })
     }
 
     return res.status(200).json({

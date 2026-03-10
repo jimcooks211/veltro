@@ -1,16 +1,18 @@
-import express from 'express'
-import crypto  from 'crypto'
-import cors    from 'cors'
-import dotenv  from 'dotenv'
+import dotenv          from 'dotenv'
 import { fileURLToPath } from 'url'
 import { dirname, join }  from 'path'
-
-import { db, transporter } from './config.js'
-export { db, transporter }
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname  = dirname(__filename)
 dotenv.config({ path: join(__dirname, '..', '.env') })
+
+/* ── now safe to import anything that reads process.env ── */
+import express from 'express'
+import crypto  from 'crypto'
+import cors    from 'cors'
+
+import { db, transporter } from './config.js'
+export { db, transporter }
 
 const app  = express()
 const PORT = process.env.PORT || 4000
@@ -34,20 +36,13 @@ const testConnection = async () => {
 ══════════════════════════════════════════════════════════════════ */
 app.set('trust proxy', 1)
 
-/*  credentials:true + wildcard '*' is rejected by every browser.
-    Use a function that echoes back the request origin — this allows
-    any origin while still satisfying the CORS spec with credentials.
-    In production you can tighten this to an allowlist.              */
 app.use(cors({
   origin: (origin, cb) => cb(null, origin || '*'),
-  credentials: true,
-  methods:     ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  credentials:    true,
+  methods:        ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }))
 
-/*  ⚠️  5 mb — avatarUrl can be a base64 data URI (~150 kb after resize).
-    The old 10 kb limit silently rejected the request, which the frontend
-    catch block reported as "Network error. Please check your connection." */
 app.use(express.json({ limit: '5mb' }))
 app.use(express.static(__dirname))
 
@@ -76,7 +71,7 @@ function buildResetEmail(resetUrl) {
 <body style="margin:0;padding:0;background:#060A18;font-family:'Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
 
   <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
-    Reset your Veltro password — link expires in 15 minutes.&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌
+    Reset your Veltro password — link expires in 15 minutes.
   </div>
 
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
@@ -127,14 +122,14 @@ function buildResetEmail(resetUrl) {
                     style="display:inline-block;padding:16px 48px;font-size:15px;font-weight:700;
                            color:#ffffff;text-decoration:none;border-radius:14px;letter-spacing:0.2px;
                            font-family:'Segoe UI',Arial,sans-serif;">
-                    Reset password →
+                    Reset password &rarr;
                   </a>
                 </td>
               </tr>
             </table>
             <p style="margin:0 0 8px;font-size:13px;color:rgba(138,150,180,0.6);
                       font-family:'Segoe UI',Arial,sans-serif;">
-              If the button doesn't work, copy and paste this link:
+              If the button does not work, copy and paste this link:
             </p>
             <p style="margin:0;font-size:12px;color:#1A56FF;word-break:break-all;
                       font-family:'Segoe UI',Arial,sans-serif;">${resetUrl}</p>
@@ -149,7 +144,7 @@ function buildResetEmail(resetUrl) {
                            border-radius:12px;padding:16px 20px;">
                   <p style="margin:0;font-size:13px;color:rgba(201,168,76,0.75);
                             font-family:'Segoe UI',Arial,sans-serif;line-height:1.6;">
-                    🔒 &nbsp;If you didn't request this, you can safely ignore this email.
+                    If you did not request this, you can safely ignore this email.
                     Your password will not change until you click the link above.
                   </p>
                 </td>
@@ -168,11 +163,11 @@ function buildResetEmail(resetUrl) {
           <td align="center" style="padding:28px 48px 36px;">
             <p style="margin:0 0 8px;font-size:12px;color:rgba(138,150,180,0.5);
                       font-family:'Segoe UI',Arial,sans-serif;letter-spacing:0.3px;">
-              © ${year} Veltro Technologies Inc. All rights reserved.
+              &copy; ${year} Veltro Technologies Inc. All rights reserved.
             </p>
             <p style="margin:0;font-size:11px;color:rgba(138,150,180,0.35);
                       font-family:'Segoe UI',Arial,sans-serif;">
-              You're receiving this because you have a Veltro account.
+              You are receiving this because you have a Veltro account.
             </p>
           </td>
         </tr>
@@ -186,7 +181,7 @@ function buildResetEmail(resetUrl) {
   return {
     subject: 'Reset your Veltro password',
     html,
-    text: `Reset your Veltro password\n\nClick the link below:\n\n${resetUrl}\n\nExpires in 15 minutes.\nIf you didn't request this, ignore this email.`,
+    text: `Reset your Veltro password\n\nClick the link below:\n\n${resetUrl}\n\nExpires in 15 minutes.\nIf you did not request this, ignore this email.`,
   }
 }
 
@@ -210,8 +205,8 @@ app.post('/api/forgot-password', async (req, res) => {
 
   try {
     await transporter.sendMail({
-      from:    `"Veltro" <${process.env.GMAIL_USER}>`,
-      to:      email,
+      from:        `"Veltro" <${process.env.GMAIL_USER}>`,
+      to:          email,
       subject,
       html,
       text,

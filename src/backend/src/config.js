@@ -26,11 +26,11 @@ export const db = mysql.createPool({
     : false,
 })
 
-/* ── Gmail transporter ── */
 export const transporter = nodemailer.createTransport({
   host:   'smtp.gmail.com',
-  port:   process.env.GMAIL_PORT,
-  secure: false,
+  port:   465,
+  secure: true,
+  pool:   false,   // ← this is the only change needed
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_PASS,
