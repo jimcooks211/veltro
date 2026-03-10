@@ -1,0 +1,70 @@
+      <VeltroLogoDark />
+<VeltroLogoDark width={180} tagline="Pro Trader" />
+<VeltroLogoLight />
+<VeltroLogoLight tagline="Investment Platform" />
+<VeltroIcon />                   {/* dark - default */}
+<VeltroIcon variant="blue" />    {/* navbar button, app icon */}
+<VeltroIcon variant="light" />   {/* light cards */}
+<VeltroIcon variant="gold" />    {/* pro/premium badge */}
+<VeltroIcon variant="blue" size={40} rounded={12} />
+
+
+
+routes/ 
+/ — Landing page
+/about — About Veltro
+/pricing — Plans & pricing
+/features — Platform features
+/blog — Blog/insights
+/blog/:slug — Individual blog post
+/contact — Contact us
+/legal/terms — Terms of service
+/legal/privacy — Privacy policy
+/legal/risk-disclosure — Risk disclosure
+
+Auth/
+/login — Sign in
+/register — Create account
+/register/verify — Email verification
+/forgot-password — Password reset request
+/reset-password — New password form
+/onboarding — KYC / account setup flow
+
+App(require auth)
+/dashboard — Overview, portfolio summary
+/markets — Live market prices
+/markets/:symbol — Individual asset detail
+/trade — Buy/sell interface
+/portfolio — Holdings & performance
+/watchlist — Saved assets
+/orders — Order history
+/transactions — Deposit/withdrawal history
+/wallet — Funds management
+/wallet/deposit — Add funds
+/wallet/withdraw — Withdraw funds
+/news — Financial news feed
+/settings — Account settings
+/settings/security — Password, 2FA
+/settings/kyc — Identity verification
+/settings/notifications — Notification preferences
+/support — Help center
+
+Safe for landing page:
+/ — Home
+/features — Features
+/pricing — Pricing
+/markets — Markets (can show read-only preview)
+/blog — Blog
+/about — About
+/contact — Contact
+/login — Log in (CTA)
+/register — Get Started (primary CTA button)
+
+
+src/pages/
+  public/     Landing, About, Pricing, Features, Blog, BlogPost, Contact + public.css
+  legal/      Terms, Privacy, RiskDisclosure + legal.css
+  auth/       Login, Register, VerifyEmail, ForgotPassword, ResetPassword, Onboarding + auth.css
+  app/        Dashboard, Markets, MarketDetail, Trade, Portfolio, Watchlist, Orders, Transactions, News, Support + app.css
+  wallet/     Wallet, Deposit, Withdraw + wallet.css
+  settings/   Settings, Security, KYC, Notifications + settings.css

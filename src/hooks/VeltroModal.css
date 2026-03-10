@@ -1,0 +1,326 @@
+/* ════════════════════════════════════════════════════════════════════
+   VELTRO MODAL  —  append to the bottom of auth.css
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Overlay ─────────────────────────────────────────────────────── */
+.vm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  /* blur backdrop */
+  background: rgba(8, 12, 26, 0.55);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+
+  opacity: 0;
+  transition: opacity 280ms ease;
+  pointer-events: none;
+}
+
+/* light mode overlay tint */
+@media (prefers-color-scheme: light) {
+  .vm-overlay {
+    background: rgba(230, 234, 248, 0.6);
+  }
+}
+.light .vm-overlay {
+  background: rgba(230, 234, 248, 0.6);
+}
+
+.vm-overlay.vm-visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Sheet ───────────────────────────────────────────────────────── */
+.vm-sheet {
+  position: fixed;
+  bottom: 0;
+  /* Center with margin — NOT left:50%+translateX(-50%).
+     This ensures transform ONLY ever has a Y component.
+     Fullscreen never touches the X axis, so zero horizontal shake. */
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+
+  width: min(640px, 100vw);
+  height: 70vh;
+  max-height: 70vh;
+
+  background: var(--auth-bg-secondary, #0D1226);
+  border-radius: 24px 24px 0 0;
+  box-shadow:
+    0 -1px 0 rgba(255,255,255,0.07),
+    0 -24px 80px rgba(0,0,0,0.5);
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  will-change: transform;
+  transition:
+    transform     340ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity       280ms ease,
+    height        360ms cubic-bezier(0.32, 0.72, 0, 1),
+    max-height    360ms cubic-bezier(0.32, 0.72, 0, 1),
+    border-radius 340ms ease;
+}
+
+/* light mode sheet */
+@media (prefers-color-scheme: light) {
+  .vm-sheet {
+    background: var(--auth-bg-secondary, #ffffff);
+    box-shadow:
+      0 -1px 0 rgba(0,0,0,0.06),
+      0 -24px 80px rgba(0,0,0,0.12);
+  }
+}
+.light .vm-sheet {
+  background: var(--auth-bg-secondary, #ffffff);
+  box-shadow:
+    0 -1px 0 rgba(0,0,0,0.06),
+    0 -24px 80px rgba(0,0,0,0.12);
+}
+
+/* ── Slide-in / slide-out ────────────────────────────────────────── */
+.vm-sheet-out {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.vm-sheet-in {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ── Fullscreen mode ─────────────────────────────────────────────── */
+.vm-sheet.vm-fullscreen {
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+  border-radius: 0;
+}
+
+/* ── Unified drag zone (handle + header + rule) ──────────────────── */
+.vm-drag-zone {
+  flex-shrink: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+
+.vm-drag-zone:active       { cursor: grabbing; }
+.vm-drag-zone.vm-drag-zone-fs { cursor: default; touch-action: auto; }
+
+/* ── Drag handle pill ────────────────────────────────────────────── */
+.vm-handle-zone {
+  padding: 12px 0 4px;
+  display: flex;
+  justify-content: center;
+}
+
+.vm-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.15);
+  transition: background 150ms ease, width 150ms ease;
+}
+
+.vm-handle-zone:hover .vm-handle {
+  background: rgba(255,255,255,0.28);
+  width: 52px;
+}
+
+@media (prefers-color-scheme: light) {
+  .vm-handle             { background: rgba(0,0,0,0.12); }
+  .vm-handle-zone:hover .vm-handle { background: rgba(0,0,0,0.22); }
+}
+.light .vm-handle             { background: rgba(0,0,0,0.12); }
+.light .vm-handle-zone:hover .vm-handle { background: rgba(0,0,0,0.22); }
+
+/* ── Header ──────────────────────────────────────────────────────── */
+.vm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 20px 12px;
+  flex-shrink: 0;
+}
+
+.vm-title {
+  font-family: var(--auth-font-family, 'Inter', sans-serif);
+  font-size: var(--auth-font-size-md, 17px);
+  font-weight: var(--auth-font-weight-bold, 700);
+  letter-spacing: -0.02em;
+  color: var(--auth-white, #EEF2FF);
+  margin: 0;
+}
+
+@media (prefers-color-scheme: light) {
+  .vm-title { color: var(--auth-navy, #080C1A); }
+}
+.light .vm-title { color: var(--auth-navy, #080C1A); }
+
+.vm-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.07);
+  color: var(--auth-silver, #8A96B4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.vm-close:hover {
+  background: rgba(255,255,255,0.13);
+  color: var(--auth-white, #EEF2FF);
+  transform: rotate(90deg);
+}
+
+@media (prefers-color-scheme: light) {
+  .vm-close             { background: rgba(0,0,0,0.05); color: rgba(0,0,0,0.4); }
+  .vm-close:hover       { background: rgba(0,0,0,0.1);  color: var(--auth-navy); }
+}
+.light .vm-close             { background: rgba(0,0,0,0.05); color: rgba(0,0,0,0.4); }
+.light .vm-close:hover       { background: rgba(0,0,0,0.1);  color: var(--auth-navy); }
+
+/* ── Veltro header rule ───────────────────────────────────────────── */
+/*
+  A 1px border-bottom with a centred blue glow that fades to transparent
+  on both sides — signature Veltro accent line.
+*/
+.vm-header-rule {
+  position: relative;
+  height: 1px;
+  margin: 0 20px;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+/* base line */
+.vm-header-rule::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.07) 20%,
+    rgba(255,255,255,0.1) 50%,
+    rgba(255,255,255,0.07) 80%,
+    transparent 100%
+  );
+}
+
+@media (prefers-color-scheme: light) {
+  .vm-header-rule::before {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0,0,0,0.06) 20%,
+      rgba(0,0,0,0.09) 50%,
+      rgba(0,0,0,0.06) 80%,
+      transparent 100%
+    );
+  }
+}
+.light .vm-header-rule::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0,0,0,0.06) 20%,
+    rgba(0,0,0,0.09) 50%,
+    rgba(0,0,0,0.06) 80%,
+    transparent 100%
+  );
+}
+
+/* blue glow dot centred on the line */
+.vm-header-rule-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 6px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(37, 99, 255, 0.7) 0%,
+    rgba(0, 196, 240, 0.35) 50%,
+    transparent 100%
+  );
+  border-radius: 100px;
+  pointer-events: none;
+  filter: blur(1px);
+}
+
+/* ── Body ─────────────────────────────────────────────────────────── */
+.vm-body {
+  flex: 1;
+  overflow-y: auto;
+  /* flex column so filler pushes to the bottom */
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px 32px;
+  font-family: var(--auth-font-family, 'Inter', sans-serif);
+  color: var(--auth-white, #EEF2FF);
+  /* prevent body scroll from stealing drag gesture */
+  overscroll-behavior: contain;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+.vm-body::-webkit-scrollbar       { width: 4px; }
+.vm-body::-webkit-scrollbar-track { background: transparent; }
+.vm-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 100px; }
+
+/*
+  Filler div — always stretches to cover any empty space below content
+  when the sheet is expanded beyond its content height during a drag.
+  Uses the same bg as the sheet so there's no transparency gap.
+*/
+.vm-body-filler {
+  flex: 1;
+  min-height: 0;
+  background: var(--auth-bg-secondary, #0D1226);
+  /* extend a little past the sheet bottom just in case */
+  margin-bottom: -32px;
+  margin-left: -20px;
+  margin-right: -20px;
+}
+
+@media (prefers-color-scheme: light) {
+  .vm-body {
+    color: var(--auth-navy, #080C1A);
+    scrollbar-color: rgba(0,0,0,0.1) transparent;
+  }
+  .vm-body::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); }
+  .vm-body-filler { background: var(--auth-bg-secondary, #ffffff); }
+}
+.light .vm-body {
+  color: var(--auth-navy, #080C1A);
+  scrollbar-color: rgba(0,0,0,0.1) transparent;
+}
+.light .vm-body-filler { background: var(--auth-bg-secondary, #ffffff); }
+
+/* ── Mobile: full-width ───────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .vm-sheet {
+    width: 100vw;
+    border-radius: 20px 20px 0 0;
+  }
+}

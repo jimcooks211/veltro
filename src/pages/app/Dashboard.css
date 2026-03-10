@@ -1,0 +1,83 @@
+/* ════════════════════════════════════════════════════════════════
+   VELTRO DASHBOARD LAYOUT SHELL
+   Uses design tokens from Sidebar.css :root
+════════════════════════════════════════════════════════════════ */
+
+/* ── root wrapper ── */
+.vlt-dash-root {
+  display: flex;
+  min-height: 100vh;
+  background: var(--vlt-bg-page);
+  font-family: var(--font-body);
+  color: var(--vlt-text-primary);
+  transition: background var(--vlt-transition), color var(--vlt-transition);
+}
+
+/* ── main area (everything right of sidebar) ── */
+.vlt-dash-main {
+  flex: 1;
+  margin-left: var(--vlt-sidebar-w);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left var(--vlt-transition);
+}
+
+.vlt-dash-main.sidebar-collapsed {
+  margin-left: var(--vlt-sidebar-w-col);
+}
+
+/* ── content area ── */
+.vlt-dash-content {
+  flex: 1;
+  margin-top: var(--vlt-navbar-h);
+  padding: 28px;
+  overflow-y: auto;
+  min-height: calc(100vh - var(--vlt-navbar-h));
+  background: var(--vlt-bg-page);
+  transition: background var(--vlt-transition);
+}
+
+/* ── guard / loading screen ── */
+.vlt-dash-guard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 100vh;
+  /* dark navy fallback before tokens load */
+  background: var(--vlt-bg-page, #080d18);
+  color: var(--vlt-text-muted, rgba(107, 122, 153, 0.7));
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: var(--text-sm, 13px);
+}
+
+.vlt-dash-guard-spinner {
+  width: 28px;
+  height: 28px;
+  border: 2.5px solid var(--vlt-border-color, rgba(255,255,255,0.07));
+  border-top-color: var(--veltro-blue, #1A56FF);
+  border-radius: 50%;
+  animation: vlt-spin 0.75s linear infinite;
+}
+
+@keyframes vlt-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── mobile ── */
+@media (max-width: 768px) {
+  .vlt-dash-main {
+    margin-left: 0 !important;
+  }
+  .vlt-dash-content {
+    padding: 20px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vlt-dash-content {
+    padding: 16px 12px;
+  }
+}

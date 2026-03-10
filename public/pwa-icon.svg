@@ -1,0 +1,31 @@
+<svg width="512" height="512" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="vGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#00D4FF"/>
+      <stop offset="50%"  stop-color="#1A56FF"/>
+      <stop offset="100%" stop-color="#7B2FFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="32" height="32" rx="7" fill="#0A0F1E"/>
+
+  <!-- Outer hex ring -->
+  <path
+    d="M16 2 L29 9 L29 23 L16 30 L3 23 L3 9 Z"
+    stroke="url(#vGrad)" stroke-width="0.8" fill="none" opacity="0.3"
+  />
+
+  <!-- V shape -->
+  <path
+    d="M7 9 L16 24 L25 9"
+    stroke="url(#vGrad)" stroke-width="2.8"
+    stroke-linecap="round" stroke-linejoin="round" fill="none"
+  />
+
+  <!-- Gold slash -->
+  <line x1="11" y1="16.5" x2="21" y2="16.5" stroke="#C9A84C" stroke-width="1.4" stroke-linecap="round"/>
+
+  <!-- Center dot -->
+  <circle cx="16" cy="16.5" r="1.5" fill="#00D4FF"/>
+</svg>
