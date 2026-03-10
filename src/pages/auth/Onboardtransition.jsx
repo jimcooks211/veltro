@@ -11,7 +11,7 @@
 
 import { useEffect, useState } from 'react'
 import Veltrolog from '../../components/VeltroIcon'
-import './OnboardTransition.css'
+import './Onboardtransition.css'
 
 const MESSAGES = [
   'Setting up your profile…',
