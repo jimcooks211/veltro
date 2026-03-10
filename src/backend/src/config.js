@@ -29,7 +29,7 @@ export const db = mysql.createPool({
 /* ── Gmail transporter ── */
 export const transporter = nodemailer.createTransport({
   host:   'smtp.gmail.com',
-  port:   process.env.GMAIL.PORT,
+  port:   process.env.GMAIL_PORT,
   secure: true,
   auth: {
     user: process.env.GMAIL_USER,
