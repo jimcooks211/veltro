@@ -6,13 +6,12 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname  = dirname(__filename)
 dotenv.config({ path: join(__dirname, '..', '.env') })
 
-/* ── now safe to import anything that reads process.env ── */
 import express from 'express'
 import crypto  from 'crypto'
 import cors    from 'cors'
 
-import { db, transporter } from './config.js'
-export { db, transporter }
+import { db, sendEmail } from './config.js'
+export { db }
 
 const app  = express()
 const PORT = process.env.PORT || 4000
@@ -45,14 +44,6 @@ app.use(cors({
 
 app.use(express.json({ limit: '5mb' }))
 app.use(express.static(__dirname))
-
-/* ══════════════════════════════════════════════════════════════════
-   GMAIL — verify on boot
-══════════════════════════════════════════════════════════════════ */
-transporter.verify((err) => {
-  if (err) console.error('❌ Email connection failed:', err.message)
-  else     console.log('✅ Email transporter ready')
-})
 
 /* ══════════════════════════════════════════════════════════════════
    EMAIL TEMPLATE — PASSWORD RESET
@@ -90,8 +81,12 @@ function buildResetEmail(resetUrl) {
 
         <tr>
           <td align="center" style="padding:40px 48px 32px;">
-            <img src="cid:veltrologo" width="64" height="64" alt="Veltro"
-              style="display:block;border-radius:18px;border:0;margin:0 auto 14px;"/>
+            <div style="display:inline-flex;align-items:center;justify-content:center;
+                        width:64px;height:64px;background:linear-gradient(135deg,#1A56FF,#0A35CC);
+                        border-radius:18px;margin:0 auto 14px;">
+              <span style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-1px;
+                            font-family:'Segoe UI',Arial,sans-serif;">V</span>
+            </div>
             <span style="font-size:22px;font-weight:800;letter-spacing:-0.5px;
                           color:#EEF2FF;font-family:'Segoe UI',Arial,sans-serif;">VELTRO</span>
           </td>
@@ -189,7 +184,6 @@ function buildResetEmail(resetUrl) {
    ROUTES — PASSWORD RESET (in-memory, TODO: migrate to DB)
 ══════════════════════════════════════════════════════════════════ */
 const resetTokens = new Map()
-const LOGO_PATH   = join(__dirname, 'VeltroLogo.png')
 
 app.post('/api/forgot-password', async (req, res) => {
   const { email } = req.body
@@ -204,14 +198,7 @@ app.post('/api/forgot-password', async (req, res) => {
   const { subject, html, text } = buildResetEmail(resetUrl)
 
   try {
-    await transporter.sendMail({
-      from:       `"Veltro" <${process.env.EMAIL_USER}>`,
-      to:          email,
-      subject,
-      html,
-      text,
-      attachments: [{ filename: 'VeltroLogo.png', path: LOGO_PATH, cid: 'veltrologo' }],
-    })
+    await sendEmail({ to: email, subject, html, text })
     return res.status(200).json({ message: 'If that email is registered, a reset link is on its way.' })
   } catch (err) {
     console.error('❌  Failed to send reset email:', err.message)

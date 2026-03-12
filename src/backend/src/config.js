@@ -1,10 +1,7 @@
 // src/config.js
-// Shared db pool + email transporter
-// Import from here in route files — never from index.js
-
 import mysql      from 'mysql2/promise'
-import nodemailer from 'nodemailer'
 import dotenv     from 'dotenv'
+import { MailerSend, EmailParams, Sender, Recipient } from 'mailersend'
 import { fileURLToPath } from 'url'
 import { dirname, join }  from 'path'
 
@@ -26,13 +23,22 @@ export const db = mysql.createPool({
     : false,
 })
 
-export const transporter = nodemailer.createTransport({
-  host:   'smtp.mailersend.net',
-  port:   587,
-  secure: false,
-  pool:   false,
-  auth: {
-    user: process.env.MAILERSEND_USER,
-    pass: process.env.MAILERSEND_PASS,
-  },
+/* ── MailerSend HTTP client ── */
+export const mailer = new MailerSend({
+  apiKey: process.env.MAILERSEND_API_KEY,
 })
+
+/* ── sendEmail helper — used everywhere instead of transporter.sendMail ── */
+export async function sendEmail({ to, subject, html, text }) {
+  const sentFrom  = new Sender(process.env.EMAIL_USER, 'Veltro')
+  const recipients = [new Recipient(to)]
+  const params = new EmailParams()
+    .setFrom(sentFrom)
+    .setTo(recipients)
+    .setSubject(subject)
+    .setHtml(html)
+    .setText(text)
+  const result = await mailer.email.send(params)
+  console.log('✅ Email sent →', to)
+  return result
+}

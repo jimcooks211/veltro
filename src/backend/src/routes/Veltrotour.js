@@ -1,111 +1,14 @@
 /**
  * src/routes/Veltrotour.js
- *
- * POST /api/tour/complete   — saves riskProfile + plan, sends welcome email
- * GET  /api/tour/status     — returns onboarding state
- *
- * ─── Migration (run once) ──────────────────────────────────────────
- *   ALTER TABLE users
- *     ADD COLUMN IF NOT EXISTS risk_profile
- *       ENUM('conservative','balanced','aggressive') DEFAULT 'balanced',
- *     ADD COLUMN IF NOT EXISTS plan
- *       ENUM('starter','growth','elite') DEFAULT 'starter',
- *     ADD COLUMN IF NOT EXISTS onboarding_complete
- *       TINYINT(1) NOT NULL DEFAULT 0;
- * ──────────────────────────────────────────────────────────────────
  */
+import { Router }      from 'express'
+import { db, sendEmail } from '../config.js'
+import { requireAuth }   from '../middleware/auth.js'
 
-import { Router }        from 'express'
-import { fileURLToPath } from 'url'
-import { dirname, join } from 'path'
-import { db, transporter } from '../config.js'
-import { requireAuth }     from '../middleware/auth.js'
-
-const router    = Router()
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const LOGO_PATH = join(__dirname, '..', 'VeltroLogo.png')
+const router = Router()
 
 const VALID_RISKS = ['conservative', 'balanced', 'aggressive']
 const VALID_PLANS = ['starter', 'growth', 'elite']
-
-const LOGO_ATTACHMENT = {
-  filename: 'VeltroLogo.png',
-  path:     LOGO_PATH,
-  cid:      'veltrologo',
-}
-
-/* ══════════════════════════════════════════════════════════════════
-   SHARED EMAIL SHELL
-══════════════════════════════════════════════════════════════════ */
-function emailShell({ preheader = '', body = '', year = new Date().getFullYear() } = {}) {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <meta name="color-scheme" content="dark"/>
-  <title>Veltro</title>
-</head>
-<body style="margin:0;padding:0;background:#060A18;font-family:'Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
-
-  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${preheader}&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌</div>
-
-  <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
-    style="background:linear-gradient(180deg,#060A18 0%,#0A0F20 100%);padding:48px 16px;">
-    <tr><td align="center">
-
-      <table width="560" cellpadding="0" cellspacing="0" role="presentation"
-        style="max-width:560px;width:100%;background:#0D1226;border-radius:24px;
-               border:1px solid rgba(255,255,255,0.07);overflow:hidden;
-               box-shadow:0 32px 80px rgba(0,0,0,0.6);">
-
-        <tr>
-          <td style="height:4px;background:linear-gradient(90deg,#1A56FF 0%,#00D4FF 50%,#C9A84C 100%);
-                     border-radius:24px 24px 0 0;font-size:0;line-height:0;">&nbsp;</td>
-        </tr>
-
-        <tr>
-          <td align="center" style="padding:40px 48px 32px;">
-            <img src="cid:veltrologo" width="64" height="64" alt="Veltro"
-              style="display:block;border-radius:18px;border:0;margin:0 auto 14px;"/>
-            <span style="font-size:22px;font-weight:800;letter-spacing:-0.5px;
-                          color:#EEF2FF;font-family:'Segoe UI',Arial,sans-serif;">VELTRO</span>
-          </td>
-        </tr>
-
-        <tr>
-          <td style="padding:0 48px;">
-            <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);"></div>
-          </td>
-        </tr>
-
-        ${body}
-
-        <tr>
-          <td style="padding:0 48px;">
-            <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);"></div>
-          </td>
-        </tr>
-
-        <tr>
-          <td align="center" style="padding:28px 48px 36px;">
-            <p style="margin:0 0 8px;font-size:12px;color:rgba(138,150,180,0.5);
-                      font-family:'Segoe UI',Arial,sans-serif;letter-spacing:0.3px;">
-              © ${year} Veltro Technologies Inc. All rights reserved.
-            </p>
-            <p style="margin:0;font-size:11px;color:rgba(138,150,180,0.35);
-                      font-family:'Segoe UI',Arial,sans-serif;">
-              You're receiving this because you have a Veltro account.
-            </p>
-          </td>
-        </tr>
-
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`
-}
 
 /* ══════════════════════════════════════════════════════════════════
    PLAN / RISK METADATA
@@ -120,6 +23,57 @@ const RISK_META = {
   conservative: { label: 'Conservative', icon: '🛡️' },
   balanced:     { label: 'Balanced',     icon: '⚖️' },
   aggressive:   { label: 'Aggressive',   icon: '🚀' },
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SHARED EMAIL SHELL
+══════════════════════════════════════════════════════════════════ */
+function emailShell({ preheader = '', body = '', year = new Date().getFullYear() } = {}) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="color-scheme" content="dark"/>
+  <title>Veltro</title>
+</head>
+<body style="margin:0;padding:0;background:#060A18;font-family:'Segoe UI',Arial,sans-serif;">
+  <div style="display:none;max-height:0;overflow:hidden;">${preheader}</div>
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
+    style="background:linear-gradient(180deg,#060A18 0%,#0A0F20 100%);padding:48px 16px;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" role="presentation"
+        style="max-width:560px;width:100%;background:#0D1226;border-radius:24px;
+               border:1px solid rgba(255,255,255,0.07);overflow:hidden;
+               box-shadow:0 32px 80px rgba(0,0,0,0.6);">
+        <tr>
+          <td style="height:4px;background:linear-gradient(90deg,#1A56FF 0%,#00D4FF 50%,#C9A84C 100%);
+                     border-radius:24px 24px 0 0;font-size:0;line-height:0;">&nbsp;</td>
+        </tr>
+        <tr>
+          <td align="center" style="padding:40px 48px 32px;">
+            <div style="width:64px;height:64px;background:linear-gradient(135deg,#1A56FF,#0A35CC);
+                        border-radius:18px;margin:0 auto 14px;text-align:center;line-height:64px;">
+              <span style="font-size:26px;font-weight:900;color:#fff;">V</span>
+            </div>
+            <span style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#EEF2FF;">VELTRO</span>
+          </td>
+        </tr>
+        <tr><td style="padding:0 48px;"><div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);"></div></td></tr>
+        ${body}
+        <tr><td style="padding:0 48px;"><div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);"></div></td></tr>
+        <tr>
+          <td align="center" style="padding:28px 48px 36px;">
+            <p style="margin:0 0 8px;font-size:12px;color:rgba(138,150,180,0.5);">
+              &copy; ${year} Veltro Technologies Inc. All rights reserved.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -143,12 +97,9 @@ function buildWelcomeEmail({ firstName, plan, riskProfile }) {
         </h1>
         <p style="margin:0;font-size:16px;color:#8A96B4;line-height:1.75;font-family:'Segoe UI',Arial,sans-serif;">
           Your Veltro account is fully set up and ready to go.
-          You now have access to your personalised investment dashboard,
-          real-time market insights, and every tool you need to build wealth with confidence.
         </p>
       </td>
     </tr>
-
     <tr>
       <td style="padding:32px 48px 0;">
         <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
@@ -160,8 +111,7 @@ function buildWelcomeEmail({ firstName, plan, riskProfile }) {
                         text-transform:uppercase;color:${planInfo.color};font-family:'Segoe UI',Arial,sans-serif;">
                 Your plan
               </p>
-              <p style="margin:0;font-size:22px;font-weight:800;color:#EEF2FF;
-                        letter-spacing:-0.5px;font-family:'Segoe UI',Arial,sans-serif;">
+              <p style="margin:0;font-size:22px;font-weight:800;color:#EEF2FF;font-family:'Segoe UI',Arial,sans-serif;">
                 ${planInfo.label}
               </p>
             </td>
@@ -173,8 +123,7 @@ function buildWelcomeEmail({ firstName, plan, riskProfile }) {
                         text-transform:uppercase;color:#1A56FF;font-family:'Segoe UI',Arial,sans-serif;">
                 Risk profile
               </p>
-              <p style="margin:0;font-size:22px;font-weight:800;color:#EEF2FF;
-                        letter-spacing:-0.5px;font-family:'Segoe UI',Arial,sans-serif;">
+              <p style="margin:0;font-size:22px;font-weight:800;color:#EEF2FF;font-family:'Segoe UI',Arial,sans-serif;">
                 ${riskInfo.icon} ${riskInfo.label}
               </p>
             </td>
@@ -182,61 +131,6 @@ function buildWelcomeEmail({ firstName, plan, riskProfile }) {
         </table>
       </td>
     </tr>
-
-    <tr>
-      <td style="padding:32px 48px 0;">
-        <p style="margin:0 0 16px;font-size:13px;font-weight:700;letter-spacing:1.5px;
-                  text-transform:uppercase;color:rgba(138,150,180,0.6);font-family:'Segoe UI',Arial,sans-serif;">
-          What's next
-        </p>
-
-        <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin-bottom:12px;">
-          <tr>
-            <td width="40" valign="top">
-              <div style="width:32px;height:32px;border-radius:10px;background:rgba(26,86,255,0.15);
-                          border:1px solid rgba(26,86,255,0.25);text-align:center;line-height:32px;font-size:14px;">📊</div>
-            </td>
-            <td style="padding-left:14px;" valign="top">
-              <p style="margin:0 0 3px;font-size:14px;font-weight:700;color:#EEF2FF;font-family:'Segoe UI',Arial,sans-serif;">
-                Explore your dashboard</p>
-              <p style="margin:0;font-size:13px;color:#8A96B4;line-height:1.6;font-family:'Segoe UI',Arial,sans-serif;">
-                Get a live overview of markets, your portfolio, and curated opportunities.</p>
-            </td>
-          </tr>
-        </table>
-
-        <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin-bottom:12px;">
-          <tr>
-            <td width="40" valign="top">
-              <div style="width:32px;height:32px;border-radius:10px;background:rgba(0,212,255,0.08);
-                          border:1px solid rgba(0,212,255,0.2);text-align:center;line-height:32px;font-size:14px;">💼</div>
-            </td>
-            <td style="padding-left:14px;" valign="top">
-              <p style="margin:0 0 3px;font-size:14px;font-weight:700;color:#EEF2FF;font-family:'Segoe UI',Arial,sans-serif;">
-                Fund your wallet</p>
-              <p style="margin:0;font-size:13px;color:#8A96B4;line-height:1.6;font-family:'Segoe UI',Arial,sans-serif;">
-                Add funds to start investing. Your wallet is set up and waiting.</p>
-            </td>
-          </tr>
-        </table>
-
-        <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
-          <tr>
-            <td width="40" valign="top">
-              <div style="width:32px;height:32px;border-radius:10px;background:rgba(201,168,76,0.08);
-                          border:1px solid rgba(201,168,76,0.2);text-align:center;line-height:32px;font-size:14px;">🎯</div>
-            </td>
-            <td style="padding-left:14px;" valign="top">
-              <p style="margin:0 0 3px;font-size:14px;font-weight:700;color:#EEF2FF;font-family:'Segoe UI',Arial,sans-serif;">
-                Set your first goal</p>
-              <p style="margin:0;font-size:13px;color:#8A96B4;line-height:1.6;font-family:'Segoe UI',Arial,sans-serif;">
-                Define what you're investing towards — retirement, freedom, growth.</p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-
     <tr>
       <td align="center" style="padding:36px 48px;">
         <table cellpadding="0" cellspacing="0" role="presentation">
@@ -245,27 +139,10 @@ function buildWelcomeEmail({ firstName, plan, riskProfile }) {
                        border:1px solid rgba(255,255,255,0.15);">
               <a href="${process.env.CLIENT_URL || 'https://veltro.app'}/dashboard"
                 style="display:inline-block;padding:16px 48px;font-size:15px;font-weight:700;
-                       color:#ffffff;text-decoration:none;border-radius:14px;letter-spacing:0.2px;
+                       color:#ffffff;text-decoration:none;border-radius:14px;
                        font-family:'Segoe UI',Arial,sans-serif;">
                 Go to my dashboard →
               </a>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-
-    <tr>
-      <td style="padding:0 48px 40px;">
-        <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
-          <tr>
-            <td style="background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.12);
-                       border-radius:12px;padding:16px 20px;">
-              <p style="margin:0;font-size:13px;color:rgba(201,168,76,0.75);
-                        font-family:'Segoe UI',Arial,sans-serif;line-height:1.6;">
-                ✦ &nbsp;Need help getting started? Our support team is here 24/7.
-                Reply to this email or visit our help centre anytime.
-              </p>
             </td>
           </tr>
         </table>
@@ -280,8 +157,7 @@ function buildWelcomeEmail({ firstName, plan, riskProfile }) {
 }
 
 async function sendWelcomeEmail({ to, firstName, plan, riskProfile }) {
-  await transporter.sendMail({
-    from:    `"Veltro" <${process.env.EMAIL_USER}>`,
+  await sendEmail({
     to,
     subject: `Welcome to Veltro, ${firstName || 'Investor'} — you're all set 🎉`,
     html:    buildWelcomeEmail({ firstName, plan, riskProfile }),
@@ -296,7 +172,6 @@ async function sendWelcomeEmail({ to, firstName, plan, riskProfile }) {
       ``,
       `The Veltro Team`,
     ].join('\n'),
-    attachments: [LOGO_ATTACHMENT],
   })
 }
 
@@ -314,12 +189,7 @@ router.post('/complete', requireAuth, async (req, res) => {
 
   try {
     const [result] = await db.execute(
-      `UPDATE users
-         SET risk_profile        = ?,
-             plan                = ?,
-             onboarding_complete = 1,
-             updated_at          = NOW()
-       WHERE id = ?`,
+      `UPDATE users SET risk_profile=?, plan=?, onboarding_complete=1, updated_at=NOW() WHERE id=?`,
       [riskProfile, plan, userId]
     )
 
@@ -327,9 +197,7 @@ router.post('/complete', requireAuth, async (req, res) => {
       return res.status(404).json({ message: 'User not found.' })
 
     const [[user]] = await db.execute(
-      `SELECT u.email, p.first_name
-       FROM users u LEFT JOIN profiles p ON p.user_id = u.id
-       WHERE u.id = ?`,
+      `SELECT u.email, p.first_name FROM users u LEFT JOIN profiles p ON p.user_id = u.id WHERE u.id = ?`,
       [userId]
     )
 
@@ -348,7 +216,7 @@ router.post('/complete', requireAuth, async (req, res) => {
     console.error('❌  Tour/complete error:', err)
     return res.status(500).json({
       message: 'Something went wrong. Please try again.',
-      ...(process.env.NODE_ENV !== 'production' && { error: err.message, stack: err.stack }),
+      ...(process.env.NODE_ENV !== 'production' && { error: err.message }),
     })
   }
 })

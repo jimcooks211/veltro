@@ -3,13 +3,9 @@ import { Router }        from 'express'
 import bcrypt            from 'bcryptjs'
 import jwt               from 'jsonwebtoken'
 import crypto            from 'crypto'
-import { fileURLToPath } from 'url'
-import { dirname, join } from 'path'
-import { db, transporter } from '../config.js'
+import { db, sendEmail } from '../config.js'
 
-const router    = Router()
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const LOGO_PATH = join(__dirname, '..', 'VeltroLogo.png')
+const router = Router()
 
 /* ══════════════════════════════════════════════════════════════════
    HELPERS
@@ -17,11 +13,7 @@ const LOGO_PATH = join(__dirname, '..', 'VeltroLogo.png')
 const generateCode   = () => Math.floor(100000 + Math.random() * 900000).toString()
 const generateUserId = () => crypto.randomUUID()
 
-const LOGO_ATTACHMENT = {
-  filename: 'VeltroLogo.png',
-  path:     LOGO_PATH,
-  cid:      'veltrologo',
-}
+const FROM = 'Veltro <onboarding@resend.dev>'
 
 function signAccess(userId) {
   return jwt.sign({ sub: userId }, process.env.JWT_SECRET, { expiresIn: '1h' })
@@ -44,7 +36,7 @@ function emailShell({ preheader = '', body = '', year = new Date().getFullYear()
 </head>
 <body style="margin:0;padding:0;background:#060A18;font-family:'Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
 
-  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${preheader}&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌</div>
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${preheader}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
 
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
     style="background:linear-gradient(180deg,#060A18 0%,#0A0F20 100%);padding:48px 16px;">
@@ -62,8 +54,12 @@ function emailShell({ preheader = '', body = '', year = new Date().getFullYear()
 
         <tr>
           <td align="center" style="padding:40px 48px 32px;">
-            <img src="cid:veltrologo" width="64" height="64" alt="Veltro"
-              style="display:block;border-radius:18px;border:0;margin:0 auto 14px;"/>
+            <div style="display:inline-flex;align-items:center;justify-content:center;
+                        width:64px;height:64px;background:linear-gradient(135deg,#1A56FF,#0A35CC);
+                        border-radius:18px;margin:0 auto 14px;">
+              <span style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-1px;
+                            font-family:'Segoe UI',Arial,sans-serif;">V</span>
+            </div>
             <span style="font-size:22px;font-weight:800;letter-spacing:-0.5px;
                           color:#EEF2FF;font-family:'Segoe UI',Arial,sans-serif;">VELTRO</span>
           </td>
@@ -87,11 +83,11 @@ function emailShell({ preheader = '', body = '', year = new Date().getFullYear()
           <td align="center" style="padding:28px 48px 36px;">
             <p style="margin:0 0 8px;font-size:12px;color:rgba(138,150,180,0.5);
                       font-family:'Segoe UI',Arial,sans-serif;letter-spacing:0.3px;">
-              © ${year} Veltro Technologies Inc. All rights reserved.
+              &copy; ${year} Veltro Technologies Inc. All rights reserved.
             </p>
             <p style="margin:0;font-size:11px;color:rgba(138,150,180,0.35);
                       font-family:'Segoe UI',Arial,sans-serif;">
-              You're receiving this because you have a Veltro account.
+              You&apos;re receiving this because you have a Veltro account.
             </p>
           </td>
         </tr>
@@ -150,7 +146,7 @@ function buildVerificationEmail(code) {
           </table>
           <p style="margin:16px 0 0;font-size:12px;color:rgba(138,150,180,0.6);
                     font-family:'Segoe UI',Arial,sans-serif;text-align:center;">
-            Valid for 15 minutes · Do not share this code
+            Valid for 15 minutes &middot; Do not share this code
           </p>
         </div>
       </td>
@@ -164,7 +160,7 @@ function buildVerificationEmail(code) {
                        border-radius:12px;padding:16px 20px;">
               <p style="margin:0;font-size:13px;color:rgba(201,168,76,0.8);
                         font-family:'Segoe UI',Arial,sans-serif;line-height:1.6;">
-                🔒 &nbsp;If you didn't create a Veltro account, you can safely ignore this email.
+                If you didn&apos;t create a Veltro account, you can safely ignore this email.
                 Your account will not be activated without this code.
               </p>
             </td>
@@ -179,15 +175,12 @@ function buildVerificationEmail(code) {
 
 /* ── sendVerificationEmail — shared by register, login, resend ── */
 async function sendVerificationEmail(to, code) {
-  const info = await transporter.sendMail({
-    from:        `"Veltro" <${process.env.EMAIL_USER}>`,
+  await sendEmail({
     to,
-    subject:     `${code} — Your Veltro verification code`,
-    html:        buildVerificationEmail(code),
-    text:        `Your Veltro verification code is: ${code}\n\nIt expires in 15 minutes.\n\nIf you didn't create a Veltro account, ignore this email.`,
-    attachments: [LOGO_ATTACHMENT],
+    subject: `${code} — Your Veltro verification code`,
+    html:    buildVerificationEmail(code),
+    text:    `Your Veltro verification code is: ${code}\n\nIt expires in 15 minutes.\n\nIf you didn't create a Veltro account, ignore this email.`,
   })
-  console.log('✅ Email sent:', info.messageId, '→', to)
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -243,13 +236,10 @@ router.post('/register', async (req, res) => {
     )
     await db.execute(`INSERT INTO wallets (user_id) VALUES (?)`, [userId])
 
-    // FIX — surface email errors so user knows if code wasn't delivered
     try {
       await sendVerificationEmail(email, code)
     } catch (mailErr) {
       console.error('Verification email failed:', mailErr.message)
-      // Account is created but email failed — still let them proceed,
-      // they can use resend-verification
     }
 
     return res.status(201).json({
@@ -393,7 +383,6 @@ router.post('/resend-verification', async (req, res) => {
       [code, expiresAt, user.id]
     )
 
-    // FIX — return error to user if email fails instead of silently swallowing it
     try {
       await sendVerificationEmail(email, code)
     } catch (mailErr) {
@@ -465,7 +454,6 @@ router.post('/login', async (req, res) => {
       [loginCode, codeExpires, user.id]
     )
 
-    // FIX — surface email failure to user so they know code wasn't sent
     try {
       await sendVerificationEmail(user.email, loginCode)
     } catch (mailErr) {
