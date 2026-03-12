@@ -134,8 +134,9 @@ function buildVerificationEmail(code) {
                     <td style="padding:0 4px;">
                       <table cellpadding="0" cellspacing="0" role="presentation">
                         <tr>
-                          <td width="44" height="56" align="center" valign="middle"
-                            style="width:44px;height:56px;background:rgba(255,255,255,0.05);
+                          <td width="44" height="72" align="center" valign="middle"
+                            style="width:56px;height:72px;padding:0 12px;
+                                   background:rgba(255,255,255,0.05);
                                    border:1px solid rgba(255,255,255,0.1);border-radius:12px;
                                    font-size:28px;font-weight:900;color:#EEF2FF;
                                    font-family:'Segoe UI',Arial,sans-serif;text-align:center;">
