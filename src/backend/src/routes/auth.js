@@ -179,14 +179,15 @@ function buildVerificationEmail(code) {
 
 /* ── sendVerificationEmail — shared by register, login, resend ── */
 async function sendVerificationEmail(to, code) {
-  await transporter.sendMail({
-    from:        `"Veltro" <${process.env.GMAIL_USER}>`,
+  const info = await transporter.sendMail({
+    from:        `"Veltro" <${process.env.EMAIL_USER}>`,
     to,
     subject:     `${code} — Your Veltro verification code`,
     html:        buildVerificationEmail(code),
     text:        `Your Veltro verification code is: ${code}\n\nIt expires in 15 minutes.\n\nIf you didn't create a Veltro account, ignore this email.`,
     attachments: [LOGO_ATTACHMENT],
   })
+  console.log('✅ Email sent:', info.messageId, '→', to)
 }
 
 /* ══════════════════════════════════════════════════════════════════

@@ -54,7 +54,7 @@ if (!emailRegex.test(email)) return setError("That email doesn't look quite righ
   setError('')
   setLoading(true)
   try {
-    const res = await fetch('http://172.20.10.2:4000/api/forgot-password', {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/forgot-password`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ email }),

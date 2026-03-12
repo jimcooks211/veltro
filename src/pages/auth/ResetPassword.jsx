@@ -138,7 +138,7 @@ export default function ResetPassword() {
     setFormError('')
     setLoading(true)
     try {
-      const res  = await fetch('http://172.20.10.2:4000/api/reset-password', {
+      const res  = await fetch(`${import.meta.env.VITE_API_URL}/api/reset-password`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ token, email, password }),

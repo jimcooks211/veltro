@@ -23,7 +23,7 @@ const PORT = process.env.PORT || 4000
 const testConnection = async () => {
   try {
     const conn = await db.getConnection()
-    console.log('✅  MySQL connected — Railway project: fantastic-inspiration')
+    console.log('✅  MySQL connected')
     conn.release()
   } catch (err) {
     console.error('❌  MySQL connection failed:', err.message)
@@ -205,7 +205,7 @@ app.post('/api/forgot-password', async (req, res) => {
 
   try {
     await transporter.sendMail({
-      from:        `"Veltro" <${process.env.GMAIL_USER}>`,
+      from:       `"Veltro" <${process.env.EMAIL_USER}>`,
       to:          email,
       subject,
       html,
