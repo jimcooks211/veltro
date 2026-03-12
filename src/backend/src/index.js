@@ -50,8 +50,8 @@ app.use(express.static(__dirname))
    GMAIL — verify on boot
 ══════════════════════════════════════════════════════════════════ */
 transporter.verify((err) => {
-  if (err) console.error('❌ Gmail connection failed:', err.message)
-  else     console.log('✅ Gmail transporter ready')
+  if (err) console.error('❌ Email connection failed:', err.message)
+  else     console.log('✅ Email transporter ready')
 })
 
 /* ══════════════════════════════════════════════════════════════════
