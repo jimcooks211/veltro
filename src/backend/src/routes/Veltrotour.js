@@ -281,7 +281,7 @@ function buildWelcomeEmail({ firstName, plan, riskProfile }) {
 
 async function sendWelcomeEmail({ to, firstName, plan, riskProfile }) {
   await transporter.sendMail({
-    from:    `"Veltro" <${process.env.GMAIL_USER}>`,
+    from:    `"Veltro" <${process.env.EMAIL_USER}>`,
     to,
     subject: `Welcome to Veltro, ${firstName || 'Investor'} — you're all set 🎉`,
     html:    buildWelcomeEmail({ firstName, plan, riskProfile }),
