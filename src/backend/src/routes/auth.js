@@ -45,11 +45,23 @@ function emailShell({ preheader = '', body = '', year = new Date().getFullYear()
 
         <tr>
           <td align="center" style="padding:40px 48px 32px;">
-            <img src="https://raw.githubusercontent.com/jimcooks211/veltro/main/src/backend/src/VeltroLogo.png"
-                 alt="Veltro"
-                 width="160"
-                 style="display:block;border:0;outline:none;text-decoration:none;margin:0 auto;"
-            />
+            <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
+              <tr>
+                <td valign="middle" style="padding-right:10px;">
+                  <img src="https://raw.githubusercontent.com/jimcooks211/veltro/main/src/backend/src/VeltroLogo.png"
+                       alt="Veltro"
+                       width="53"
+                       style="display:block;border:0;outline:none;text-decoration:none;"
+                  />
+                </td>
+                <td valign="middle">
+                  <span style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#EEF2FF;
+                                font-family:Syne,'Segoe UI',Arial,sans-serif;white-space:nowrap;">
+                    VELTRO
+                  </span>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
 
@@ -180,9 +192,6 @@ const withEmailTimeout = (promise) => Promise.race([
   new Promise((_, reject) => setTimeout(() => reject(new Error('Email timeout')), 8000))
 ])
 
-/* ══════════════════════════════════════════════════════════════════
-   POST /api/auth/register
-══════════════════════════════════════════════════════════════════ */
 router.post('/register', async (req, res) => {
   const { fullName, email, password } = req.body
 
@@ -254,9 +263,6 @@ router.post('/register', async (req, res) => {
   }
 })
 
-/* ══════════════════════════════════════════════════════════════════
-   POST /api/auth/verify-email
-══════════════════════════════════════════════════════════════════ */
 router.post('/verify-email', async (req, res) => {
   const { email, code, remember = false } = req.body
   if (!email || !code)
@@ -345,9 +351,6 @@ router.post('/verify-email', async (req, res) => {
   }
 })
 
-/* ══════════════════════════════════════════════════════════════════
-   POST /api/auth/resend-verification
-══════════════════════════════════════════════════════════════════ */
 router.post('/resend-verification', async (req, res) => {
   const { email } = req.body
   if (!email) return res.status(400).json({ message: 'Email is required.' })
@@ -395,9 +398,6 @@ router.post('/resend-verification', async (req, res) => {
   }
 })
 
-/* ══════════════════════════════════════════════════════════════════
-   POST /api/auth/login
-══════════════════════════════════════════════════════════════════ */
 router.post('/login', async (req, res) => {
   const { email, password, remember = false } = req.body
   if (!email || !password)
@@ -471,9 +471,6 @@ router.post('/login', async (req, res) => {
   }
 })
 
-/* ══════════════════════════════════════════════════════════════════
-   POST /api/auth/logout
-══════════════════════════════════════════════════════════════════ */
 router.post('/logout', async (req, res) => {
   const { refreshToken } = req.body
   if (refreshToken) {
@@ -484,9 +481,6 @@ router.post('/logout', async (req, res) => {
   return res.status(200).json({ message: 'Logged out successfully.' })
 })
 
-/* ══════════════════════════════════════════════════════════════════
-   POST /api/auth/checkpoint
-══════════════════════════════════════════════════════════════════ */
 router.post('/checkpoint', async (req, res) => {
   res.status(200).json({ ok: true })
   try {

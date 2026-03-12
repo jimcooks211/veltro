@@ -45,11 +45,23 @@ function emailShell({ preheader = '', body = '', year = new Date().getFullYear()
         </tr>
         <tr>
           <td align="center" style="padding:40px 48px 32px;">
-            <img src="https://raw.githubusercontent.com/jimcooks211/veltro/main/src/backend/src/VeltroLogo.png"
-                 alt="Veltro"
-                 width="160"
-                 style="display:block;border:0;outline:none;text-decoration:none;margin:0 auto;"
-            />
+            <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
+              <tr>
+                <td valign="middle" style="padding-right:10px;">
+                  <img src="https://raw.githubusercontent.com/jimcooks211/veltro/main/src/backend/src/VeltroLogo.png"
+                       alt="Veltro"
+                       width="53"
+                       style="display:block;border:0;outline:none;text-decoration:none;"
+                  />
+                </td>
+                <td valign="middle">
+                  <span style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#EEF2FF;
+                                font-family:Syne,'Segoe UI',Arial,sans-serif;white-space:nowrap;">
+                    VELTRO
+                  </span>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
         <tr><td style="padding:0 48px;"><div style="height:1px;background:rgba(255,255,255,0.06);"></div></td></tr>
@@ -164,9 +176,6 @@ async function sendWelcomeEmail({ to, firstName, plan, riskProfile }) {
   })
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   POST /api/tour/complete
-══════════════════════════════════════════════════════════════════ */
 router.post('/complete', requireAuth, async (req, res) => {
   const userId = req.userId
   const { riskProfile, plan } = req.body
@@ -210,9 +219,6 @@ router.post('/complete', requireAuth, async (req, res) => {
   }
 })
 
-/* ══════════════════════════════════════════════════════════════════
-   GET /api/tour/status
-══════════════════════════════════════════════════════════════════ */
 router.get('/status', requireAuth, async (req, res) => {
   try {
     const [[user]] = await db.execute(
