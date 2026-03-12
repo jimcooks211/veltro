@@ -1,7 +1,7 @@
 /**
  * src/routes/Veltrotour.js
  */
-import { Router }      from 'express'
+import { Router }        from 'express'
 import { db, sendEmail } from '../config.js'
 import { requireAuth }   from '../middleware/auth.js'
 
@@ -10,9 +10,6 @@ const router = Router()
 const VALID_RISKS = ['conservative', 'balanced', 'aggressive']
 const VALID_PLANS = ['starter', 'growth', 'elite']
 
-/* ══════════════════════════════════════════════════════════════════
-   PLAN / RISK METADATA
-══════════════════════════════════════════════════════════════════ */
 const PLAN_META = {
   starter: { label: 'Starter', color: '#8A96B4', badge: 'rgba(138,150,180,0.12)', border: 'rgba(138,150,180,0.2)'  },
   growth:  { label: 'Growth',  color: '#00D4FF', badge: 'rgba(0,212,255,0.1)',    border: 'rgba(0,212,255,0.25)'   },
@@ -25,9 +22,6 @@ const RISK_META = {
   aggressive:   { label: 'Aggressive',   icon: '🚀' },
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   SHARED EMAIL SHELL
-══════════════════════════════════════════════════════════════════ */
 function emailShell({ preheader = '', body = '', year = new Date().getFullYear() } = {}) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -40,31 +34,30 @@ function emailShell({ preheader = '', body = '', year = new Date().getFullYear()
 <body style="margin:0;padding:0;background:#060A18;font-family:'Segoe UI',Arial,sans-serif;">
   <div style="display:none;max-height:0;overflow:hidden;">${preheader}</div>
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
-    style="background:linear-gradient(180deg,#060A18 0%,#0A0F20 100%);padding:48px 16px;">
+    style="background:#060A18;padding:48px 16px;">
     <tr><td align="center">
       <table width="560" cellpadding="0" cellspacing="0" role="presentation"
         style="max-width:560px;width:100%;background:#0D1226;border-radius:24px;
-               border:1px solid rgba(255,255,255,0.07);overflow:hidden;
-               box-shadow:0 32px 80px rgba(0,0,0,0.6);">
+               border:1px solid rgba(255,255,255,0.07);overflow:hidden;">
         <tr>
           <td style="height:4px;background:linear-gradient(90deg,#1A56FF 0%,#00D4FF 50%,#C9A84C 100%);
-                     border-radius:24px 24px 0 0;font-size:0;line-height:0;">&nbsp;</td>
+                     font-size:0;line-height:0;">&nbsp;</td>
         </tr>
         <tr>
           <td align="center" style="padding:40px 48px 32px;">
-            <div style="width:64px;height:64px;background:linear-gradient(135deg,#1A56FF,#0A35CC);
-                        border-radius:18px;margin:0 auto 14px;text-align:center;line-height:64px;">
-              <span style="font-size:26px;font-weight:900;color:#fff;">V</span>
-            </div>
-            <span style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#EEF2FF;">VELTRO</span>
+            <img src="https://raw.githubusercontent.com/jimcooks211/veltro/main/src/backend/src/VeltroLogo.png"
+                 alt="Veltro"
+                 width="160"
+                 style="display:block;border:0;outline:none;text-decoration:none;margin:0 auto;"
+            />
           </td>
         </tr>
-        <tr><td style="padding:0 48px;"><div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);"></div></td></tr>
+        <tr><td style="padding:0 48px;"><div style="height:1px;background:rgba(255,255,255,0.06);"></div></td></tr>
         ${body}
-        <tr><td style="padding:0 48px;"><div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);"></div></td></tr>
+        <tr><td style="padding:0 48px;"><div style="height:1px;background:rgba(255,255,255,0.06);"></div></td></tr>
         <tr>
           <td align="center" style="padding:28px 48px 36px;">
-            <p style="margin:0 0 8px;font-size:12px;color:rgba(138,150,180,0.5);">
+            <p style="margin:0 0 8px;font-size:12px;color:rgba(138,150,180,0.5);font-family:'Segoe UI',Arial,sans-serif;">
               &copy; ${year} Veltro Technologies Inc. All rights reserved.
             </p>
           </td>
@@ -76,9 +69,6 @@ function emailShell({ preheader = '', body = '', year = new Date().getFullYear()
 </html>`
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   BUILD WELCOME EMAIL
-══════════════════════════════════════════════════════════════════ */
 function buildWelcomeEmail({ firstName, plan, riskProfile }) {
   const planInfo    = PLAN_META[plan]        || PLAN_META.starter
   const riskInfo    = RISK_META[riskProfile] || RISK_META.balanced
@@ -135,13 +125,12 @@ function buildWelcomeEmail({ firstName, plan, riskProfile }) {
       <td align="center" style="padding:36px 48px;">
         <table cellpadding="0" cellspacing="0" role="presentation">
           <tr>
-            <td style="border-radius:14px;background:linear-gradient(135deg,#1A56FF,#0A35CC);
-                       border:1px solid rgba(255,255,255,0.15);">
+            <td style="border-radius:14px;background:#1A56FF;">
               <a href="${process.env.CLIENT_URL || 'https://veltro.app'}/dashboard"
                 style="display:inline-block;padding:16px 48px;font-size:15px;font-weight:700;
                        color:#ffffff;text-decoration:none;border-radius:14px;
                        font-family:'Segoe UI',Arial,sans-serif;">
-                Go to my dashboard →
+                Go to my dashboard &#8594;
               </a>
             </td>
           </tr>

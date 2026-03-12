@@ -7,13 +7,8 @@ import { db, sendEmail } from '../config.js'
 
 const router = Router()
 
-/* ══════════════════════════════════════════════════════════════════
-   HELPERS
-══════════════════════════════════════════════════════════════════ */
 const generateCode   = () => Math.floor(100000 + Math.random() * 900000).toString()
 const generateUserId = () => crypto.randomUUID()
-
-const FROM = 'Veltro <onboarding@resend.dev>'
 
 function signAccess(userId) {
   return jwt.sign({ sub: userId }, process.env.JWT_SECRET, { expiresIn: '1h' })
@@ -22,9 +17,6 @@ function signRefresh(userId) {
   return jwt.sign({ sub: userId }, process.env.JWT_SECRET, { expiresIn: '7d' })
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   SHARED EMAIL SHELL
-══════════════════════════════════════════════════════════════════ */
 function emailShell({ preheader = '', body = '', year = new Date().getFullYear() } = {}) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -39,35 +31,31 @@ function emailShell({ preheader = '', body = '', year = new Date().getFullYear()
   <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${preheader}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
 
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
-    style="background:linear-gradient(180deg,#060A18 0%,#0A0F20 100%);padding:48px 16px;">
+    style="background:#060A18;padding:48px 16px;">
     <tr><td align="center">
 
       <table width="560" cellpadding="0" cellspacing="0" role="presentation"
         style="max-width:560px;width:100%;background:#0D1226;border-radius:24px;
-               border:1px solid rgba(255,255,255,0.07);overflow:hidden;
-               box-shadow:0 32px 80px rgba(0,0,0,0.6);">
+               border:1px solid rgba(255,255,255,0.07);overflow:hidden;">
 
         <tr>
           <td style="height:4px;background:linear-gradient(90deg,#1A56FF 0%,#00D4FF 50%,#C9A84C 100%);
-                     border-radius:24px 24px 0 0;font-size:0;line-height:0;">&nbsp;</td>
+                     font-size:0;line-height:0;">&nbsp;</td>
         </tr>
 
         <tr>
           <td align="center" style="padding:40px 48px 32px;">
-            <div style="display:inline-flex;align-items:center;justify-content:center;
-                        width:64px;height:64px;background:linear-gradient(135deg,#1A56FF,#0A35CC);
-                        border-radius:18px;margin:0 auto 14px;">
-              <span style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-1px;
-                            font-family:'Segoe UI',Arial,sans-serif;">V</span>
-            </div>
-            <span style="font-size:22px;font-weight:800;letter-spacing:-0.5px;
-                          color:#EEF2FF;font-family:'Segoe UI',Arial,sans-serif;">VELTRO</span>
+            <img src="https://raw.githubusercontent.com/jimcooks211/veltro/main/src/backend/src/VeltroLogo.png"
+                 alt="Veltro"
+                 width="160"
+                 style="display:block;border:0;outline:none;text-decoration:none;margin:0 auto;"
+            />
           </td>
         </tr>
 
         <tr>
           <td style="padding:0 48px;">
-            <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);"></div>
+            <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
           </td>
         </tr>
 
@@ -75,7 +63,7 @@ function emailShell({ preheader = '', body = '', year = new Date().getFullYear()
 
         <tr>
           <td style="padding:0 48px;">
-            <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);"></div>
+            <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
           </td>
         </tr>
 
@@ -99,9 +87,6 @@ function emailShell({ preheader = '', body = '', year = new Date().getFullYear()
 </html>`
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   VERIFICATION EMAIL
-══════════════════════════════════════════════════════════════════ */
 function buildVerificationEmail(code) {
   const digits = code.split('')
 
@@ -122,33 +107,41 @@ function buildVerificationEmail(code) {
 
     <tr>
       <td align="center" style="padding:36px 48px;">
-        <div style="background:linear-gradient(135deg,rgba(26,86,255,0.12),rgba(0,212,255,0.06));
-                    border:1px solid rgba(26,86,255,0.25);border-radius:20px;padding:32px 40px;
-                    display:inline-block;">
-          <p style="margin:0 0 16px;font-size:11px;font-weight:700;letter-spacing:2px;
-                    color:#1A56FF;text-transform:uppercase;font-family:'Segoe UI',Arial,sans-serif;
-                    text-align:center;">
-            Your verification code
-          </p>
-          <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
-            <tr>
-              ${digits.map(d => `
-                <td style="padding:0 4px;">
-                  <div style="width:44px;height:56px;line-height:56px;text-align:center;
-                               font-size:28px;font-weight:900;color:#EEF2FF;
-                               background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
-                               border-radius:12px;font-family:'Segoe UI',Arial,sans-serif;">
-                    ${d}
-                  </div>
-                </td>
-              `).join('')}
-            </tr>
-          </table>
-          <p style="margin:16px 0 0;font-size:12px;color:rgba(138,150,180,0.6);
-                    font-family:'Segoe UI',Arial,sans-serif;text-align:center;">
-            Valid for 15 minutes &middot; Do not share this code
-          </p>
-        </div>
+        <table cellpadding="0" cellspacing="0" role="presentation"
+          style="background:#0D1635;border:1px solid rgba(26,86,255,0.25);border-radius:20px;">
+          <tr>
+            <td style="padding:32px 40px;">
+              <p style="margin:0 0 16px;font-size:11px;font-weight:700;letter-spacing:2px;
+                        color:#1A56FF;text-transform:uppercase;font-family:'Segoe UI',Arial,sans-serif;
+                        text-align:center;">
+                Your verification code
+              </p>
+              <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
+                <tr>
+                  ${digits.map(d => `
+                    <td style="padding:0 4px;">
+                      <table cellpadding="0" cellspacing="0" role="presentation">
+                        <tr>
+                          <td width="44" height="56" align="center" valign="middle"
+                            style="width:44px;height:56px;background:rgba(255,255,255,0.05);
+                                   border:1px solid rgba(255,255,255,0.1);border-radius:12px;
+                                   font-size:28px;font-weight:900;color:#EEF2FF;
+                                   font-family:'Segoe UI',Arial,sans-serif;text-align:center;">
+                            ${d}
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  `).join('')}
+                </tr>
+              </table>
+              <p style="margin:16px 0 0;font-size:12px;color:rgba(138,150,180,0.6);
+                        font-family:'Segoe UI',Arial,sans-serif;text-align:center;">
+                Valid for 15 minutes &middot; Do not share this code
+              </p>
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>
 
@@ -173,7 +166,6 @@ function buildVerificationEmail(code) {
   return emailShell({ preheader: `Your Veltro verification code is ${code}`, body })
 }
 
-/* ── sendVerificationEmail — shared by register, login, resend ── */
 async function sendVerificationEmail(to, code) {
   await sendEmail({
     to,
@@ -182,6 +174,11 @@ async function sendVerificationEmail(to, code) {
     text:    `Your Veltro verification code is: ${code}\n\nIt expires in 15 minutes.\n\nIf you didn't create a Veltro account, ignore this email.`,
   })
 }
+
+const withEmailTimeout = (promise) => Promise.race([
+  promise,
+  new Promise((_, reject) => setTimeout(() => reject(new Error('Email timeout')), 8000))
+])
 
 /* ══════════════════════════════════════════════════════════════════
    POST /api/auth/register
@@ -237,7 +234,7 @@ router.post('/register', async (req, res) => {
     await db.execute(`INSERT INTO wallets (user_id) VALUES (?)`, [userId])
 
     try {
-      await sendVerificationEmail(email, code)
+      await withEmailTimeout(sendVerificationEmail(email, code))
     } catch (mailErr) {
       console.error('Verification email failed:', mailErr.message)
     }
@@ -384,7 +381,7 @@ router.post('/resend-verification', async (req, res) => {
     )
 
     try {
-      await sendVerificationEmail(email, code)
+      await withEmailTimeout(sendVerificationEmail(email, code))
     } catch (mailErr) {
       console.error('Resend email failed:', mailErr.message)
       return res.status(500).json({ message: 'Failed to send code. Please try again in a moment.' })
@@ -455,7 +452,7 @@ router.post('/login', async (req, res) => {
     )
 
     try {
-      await sendVerificationEmail(user.email, loginCode)
+      await withEmailTimeout(sendVerificationEmail(user.email, loginCode))
     } catch (mailErr) {
       console.error('Login code email failed:', mailErr.message)
       return res.status(500).json({ message: 'Failed to send login code. Please try again.' })
