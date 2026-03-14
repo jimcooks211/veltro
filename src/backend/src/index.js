@@ -30,9 +30,9 @@ const testConnection = async () => {
 app.set('trust proxy', 1)
 
 app.use(cors({
-  origin: (origin, cb) => cb(null, origin || '*'),
-  credentials:    true,
-  methods:        ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }))
 
