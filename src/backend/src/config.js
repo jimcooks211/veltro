@@ -1,10 +1,9 @@
 // src/config.js
-import mysql               from 'mysql2/promise'
-import dotenv              from 'dotenv'
-import { google }          from 'googleapis'
-import { fileURLToPath }   from 'url'
-import { dirname, join }   from 'path'
-import nodemailer          from 'nodemailer'
+import mysql                from 'mysql2/promise'
+import dotenv               from 'dotenv'
+import { google, gmail_v1 } from 'googleapis'
+import { fileURLToPath }    from 'url'
+import { dirname, join }    from 'path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: join(__dirname, '..', '.env') })
@@ -35,7 +34,19 @@ oauth2Client.setCredentials({
   refresh_token: process.env.GMAIL_REFRESH_TOKEN
 })
 
-/* ── Startup credential check ── */
+/* ── Outbound HTTPS connectivity check ── */
+;(async () => {
+  try {
+    const res = await fetch('https://www.google.com')
+    if (res.ok) {
+      console.log('\x1b[32m[railway]\x1b[0m ✅ outbound HTTPS:443 — reachable')
+    }
+  } catch (err) {
+    console.error('\x1b[31m[railway]\x1b[0m ❌ outbound HTTPS:443 — blocked:', err.message)
+  }
+})()
+
+/* ── Startup credential + transport check ── */
 ;(async () => {
   const missing = []
   if (!process.env.GMAIL_USER)          missing.push('GMAIL_USER')
@@ -52,6 +63,7 @@ oauth2Client.setCredentials({
     const token = await oauth2Client.getAccessToken()
     if (token?.token) {
       console.log('\x1b[32m[email]\x1b[0m ✅ Gmail OAuth2 connected — credentials valid')
+      console.log('\x1b[32m[email]\x1b[0m 📡 transport: Gmail REST API (HTTPS:443)')
     } else {
       console.warn('\x1b[33m[email]\x1b[0m ⚠️  Gmail OAuth2 — no access token returned, check credentials')
     }
@@ -66,29 +78,31 @@ export async function sendEmail({ to, subject, html, text }) {
   console.log(`\x1b[36m[email]\x1b[0m subject  → ${subject}`)
 
   try {
-    const accessToken = await oauth2Client.getAccessToken()
+    const gmail = new gmail_v1.Gmail({ auth: oauth2Client })
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        type:         'OAuth2',
-        user:         process.env.GMAIL_USER,
-        clientId:     process.env.GMAIL_CLIENT_ID,
-        clientSecret: process.env.GMAIL_CLIENT_SECRET,
-        refreshToken: process.env.GMAIL_REFRESH_TOKEN,
-        accessToken:  accessToken.token,
-      }
-    })
-
-    await transporter.sendMail({
-      from:    `"Veltro" <${process.env.GMAIL_USER}>`,
-      to,
-      subject,
+    const message = [
+      `From: "Veltro" <${process.env.GMAIL_USER}>`,
+      `To: ${to}`,
+      `Subject: ${subject}`,
+      `MIME-Version: 1.0`,
+      `Content-Type: text/html; charset=utf-8`,
+      ``,
       html,
-      text,
+    ].join('\n')
+
+    const encoded = Buffer.from(message)
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '')
+
+    await gmail.users.messages.send({
+      userId: 'me',
+      requestBody: { raw: encoded },
     })
 
     console.log(`\x1b[32m[email]\x1b[0m ✅ delivered → ${to}`)
+    console.log(`\x1b[32m[email]\x1b[0m 📡 sent via Gmail REST API (HTTPS:443)`)
   } catch (err) {
     console.error(`\x1b[31m[email]\x1b[0m ❌ failed → ${to}`)
     console.error(`\x1b[31m[email]\x1b[0m reason  → ${err.message}`)
