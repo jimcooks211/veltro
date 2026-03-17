@@ -10,7 +10,7 @@ import express from 'express'
 import crypto  from 'crypto'
 import cors    from 'cors'
 
-import { db, transporter, sendEmail } from './config.js'
+import { db, sendEmail } from './config.js'
 export { db }
 
 const app  = express()
@@ -50,14 +50,6 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '5mb' }))
 app.use(express.static(__dirname))
 
-const testEmailConnection = async () => {
-  try {
-    await transporter.verify()
-    console.log('✅  Gmail SMTP connected — ready to send emails')
-  } catch (err) {
-    console.error('❌  Gmail connection failed:', err.message)
-  }
-}
 
 
 function buildResetEmail(resetUrl) {
@@ -275,5 +267,4 @@ app.get('/api/health', (_, res) => res.json({
 app.listen(PORT, async () => {
   console.log(`🚀  Veltro API running on http://localhost:${PORT}`)
   await testConnection()
-  await testEmailConnection()   // ← add this line
 })
