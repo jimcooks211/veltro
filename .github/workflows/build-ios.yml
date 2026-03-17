@@ -28,17 +28,27 @@ jobs:
       - name: Build Vite app
         run: npm run build
 
-      # ── 4. Copy web assets to iOS (skip pod install) ──
+      # ── 4. Copy web assets to iOS ──
       - name: Copy web assets to iOS
         run: npx cap copy ios
 
-      # ── 5. Fix iOS deployment target ──
-      - name: Set iOS deployment target to 14.0
+      # ── 5. Fix iOS deployment target (Capacitor v6 requires 16.0) ──
+      - name: Set iOS deployment target to 16.0
         run: |
-          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '14.0'/" ios/App/Podfile
+          echo "── Podfile before patch ──"
+          cat ios/App/Podfile
+
+          # Patch Podfile — handle both quoted and unquoted versions
+          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '16.0'/g" ios/App/Podfile
+          sed -i '' 's/platform :ios, [0-9.]*/platform :ios, 16.0/g' ios/App/Podfile
+
+          # Patch pbxproj
           sed -i '' \
-            's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*/IPHONEOS_DEPLOYMENT_TARGET = 14.0/g' \
+            's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*/IPHONEOS_DEPLOYMENT_TARGET = 16.0/g' \
             ios/App/App.xcodeproj/project.pbxproj
+
+          echo "── Podfile after patch ──"
+          cat ios/App/Podfile
 
       # ── 6. CocoaPods ──
       - name: Install CocoaPods
