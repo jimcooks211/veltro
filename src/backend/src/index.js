@@ -38,7 +38,7 @@ app.use(cors({
 
 import webhookRouter from './routes/webhook.js'
 
-app.use('/api/webhook', webhookRouter)
+app.use('/api/webhook/mailersend', webhookRouter)
 app.use(express.json({ limit: '5mb' }))
 app.use(express.static(__dirname))
 
