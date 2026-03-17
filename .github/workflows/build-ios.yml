@@ -32,23 +32,19 @@ jobs:
       - name: Copy web assets to iOS
         run: npx cap copy ios
 
-      # ── 5. Fix iOS deployment target (Capacitor v6 requires 16.0) ──
+      # ── 5. Fix iOS deployment target ──
       - name: Set iOS deployment target to 16.0
         run: |
-          echo "── Podfile before patch ──"
-          cat ios/App/Podfile
+          # Single precise replacement — avoids double-patching
+          sed -i '' "s/platform :ios, '14.0'/platform :ios, '16.0'/" ios/App/Podfile
 
-          # Patch Podfile — handle both quoted and unquoted versions
-          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '16.0'/g" ios/App/Podfile
-          sed -i '' 's/platform :ios, [0-9.]*/platform :ios, 16.0/g' ios/App/Podfile
-
-          # Patch pbxproj
+          # Patch pbxproj for all build configs
           sed -i '' \
             's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*/IPHONEOS_DEPLOYMENT_TARGET = 16.0/g' \
             ios/App/App.xcodeproj/project.pbxproj
 
           echo "── Podfile after patch ──"
-          cat ios/App/Podfile
+          grep "platform :ios" ios/App/Podfile
 
       # ── 6. CocoaPods ──
       - name: Install CocoaPods
