@@ -28,17 +28,14 @@ jobs:
       - name: Build Vite app
         run: npm run build
 
-      # ── 4. Capacitor sync (skip pod install — we do it manually) ──
-      - name: Sync Capacitor iOS
-        run: npx cap sync ios --no-deps
+      # ── 4. Copy web assets to iOS (skip pod install) ──
+      - name: Copy web assets to iOS
+        run: npx cap copy ios
 
       # ── 5. Fix iOS deployment target ──
       - name: Set iOS deployment target to 14.0
         run: |
-          # Patch Podfile
-          sed -i '' "s/platform :ios, '[0-9.]*/platform :ios, '14.0/" ios/App/Podfile
-
-          # Patch project.pbxproj for all configs
+          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '14.0'/" ios/App/Podfile
           sed -i '' \
             's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*/IPHONEOS_DEPLOYMENT_TARGET = 14.0/g' \
             ios/App/App.xcodeproj/project.pbxproj
