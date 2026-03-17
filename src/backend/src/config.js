@@ -72,6 +72,10 @@ oauth2Client.setCredentials({
   }
 })()
 
+/* ── RFC 2047 subject encoder — fixes garbled special chars (—, é, etc.) ── */
+const encodeSubject = (str) =>
+  `=?UTF-8?B?${Buffer.from(str).toString('base64')}?=`
+
 /* ── sendEmail ── */
 export async function sendEmail({ to, subject, html, text }) {
   console.log(`\x1b[36m[email]\x1b[0m sending → ${to}`)
@@ -83,7 +87,7 @@ export async function sendEmail({ to, subject, html, text }) {
     const message = [
       `From: "Veltro" <${process.env.GMAIL_USER}>`,
       `To: ${to}`,
-      `Subject: ${subject}`,
+      `Subject: ${encodeSubject(subject)}`,
       `MIME-Version: 1.0`,
       `Content-Type: text/html; charset=utf-8`,
       ``,
