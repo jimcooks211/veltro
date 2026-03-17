@@ -4,6 +4,7 @@ import dotenv     from 'dotenv'
 import { MailerSend, EmailParams, Sender, Recipient } from 'mailersend'
 import { fileURLToPath } from 'url'
 import { dirname, join }  from 'path'
+import nodemailer from 'nodemailer'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: join(__dirname, '..', '.env') })
@@ -23,22 +24,23 @@ export const db = mysql.createPool({
     : false,
 })
 
-/* ── MailerSend HTTP client ── */
-export const mailer = new MailerSend({
-  apiKey: process.env.MAILERSEND_API_KEY,
+export const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    type: 'OAuth2',
+    user: process.env.GMAIL_USER,
+    clientId: process.env.GMAIL_CLIENT_ID,
+    clientSecret: process.env.GMAIL_CLIENT_SECRET,
+    refreshToken: process.env.GMAIL_REFRESH_TOKEN,
+  }
 })
 
-/* ── sendEmail helper — used everywhere instead of transporter.sendMail ── */
 export async function sendEmail({ to, subject, html, text }) {
-  const sentFrom  = new Sender(process.env.EMAIL_USER, 'Veltro')
-  const recipients = [new Recipient(to)]
-  const params = new EmailParams()
-    .setFrom(sentFrom)
-    .setTo(recipients)
-    .setSubject(subject)
-    .setHtml(html)
-    .setText(text)
-  const result = await mailer.email.send(params)
-  console.log('✅ Email sent →', to)
-  return result
+  await transporter.sendMail({
+    from: `"Veltro" <${process.env.GMAIL_USER}>`,
+    to,
+    subject,
+    html,
+    text,
+  })
 }
