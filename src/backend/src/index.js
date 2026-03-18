@@ -259,17 +259,32 @@ app.use('/api/auth',      authRoutes)
 app.use('/api/profile',   profileRoutes)
 app.use('/api/tour',      tourRoutes)
 
+// ── OTA distribution routes ───────────────────────────────────────────────
+// manifest.plist — iOS reads this to find the IPA URL
+app.get('/ota/manifest.plist', (req, res) => {
+  res.setHeader('Content-Type', 'application/xml')
+  res.sendFile(join(__dirname, 'ota', 'manifest.plist'))
+})
+
+// IPA download
+app.get('/ota/app.ipa', (req, res) => {
+  res.setHeader('Content-Type', 'application/octet-stream')
+  res.sendFile(join(__dirname, 'ota', 'app.ipa'))
+})
+
+// Icons
+app.get('/ota/icon57.png',  (req, res) => res.sendFile(join(__dirname, 'ota', 'icon57.png')))
+app.get('/ota/icon512.png', (req, res) => res.sendFile(join(__dirname, 'ota', 'icon512.png')))
+
+// Signed mobileconfig (kept for reference)
 app.get('/install', (req, res) => {
   try {
-    const filePath = join(__dirname, 'veltro_signed.mobileconfig')
-    const buf = readFileSync(filePath)
+    const buf = readFileSync(join(__dirname, 'veltro_signed.mobileconfig'))
     res.setHeader('Content-Type', 'application/x-apple-aspen-config')
     res.setHeader('Content-Disposition', 'attachment; filename="veltro_signed.mobileconfig"')
     res.setHeader('Cache-Control', 'no-store')
-    res.setHeader('Content-Length', buf.length)
     res.status(200).send(buf)
   } catch (err) {
-    console.error('Install route error:', err.message)
     res.status(500).json({ error: 'Config not found' })
   }
 })

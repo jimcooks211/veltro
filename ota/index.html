@@ -8,10 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Veltro"/>
 <link rel="apple-touch-icon" href="https://jimcooks211.github.io/veltro/apple-touch-icon-180x180.png"/>
-<link rel="manifest" href="https://jimcooks211.github.io/veltro/manifest.json"/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#080d18;--card:#111827;--bdr:rgba(255,255,255,0.07);--blue:#1A56FF;--cyan:#00D4FF;--gold:#C9A84C;--green:#00E676;--tx1:#e8edf8;--tx2:#a8b2cc;--txm:#5a6480}
+  :root{--bg:#080d18;--bdr:rgba(255,255,255,0.07);--blue:#1A56FF;--cyan:#00D4FF;--gold:#C9A84C;--green:#00E676;--tx1:#e8edf8;--tx2:#a8b2cc;--txm:#5a6480}
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%;background:var(--bg);color:var(--tx1);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
   .glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 80% 10%,rgba(26,86,255,.09) 0%,transparent 60%),radial-gradient(ellipse 40% 30% at 10% 90%,rgba(0,212,255,.05) 0%,transparent 60%)}
@@ -30,26 +29,26 @@
   .ring-1{inset:-20px;border-color:rgba(26,86,255,.06)}
   .ring-2{inset:-10px;border-color:rgba(0,212,255,.08);animation-delay:.8s}
   @keyframes rp{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.04)}}
-  .icon-box{width:86px;height:86px;background:#0d1428;border:1px solid rgba(26,86,255,.25);border-radius:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(26,86,255,.12),0 0 80px rgba(0,212,255,.06),inset 0 1px 0 rgba(255,255,255,.05)}
+  .icon-box{width:86px;height:86px;background:#0d1428;border:1px solid rgba(26,86,255,.25);border-radius:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(26,86,255,.12),inset 0 1px 0 rgba(255,255,255,.05)}
   .hero-title{font-family:'Syne',sans-serif;font-size:clamp(28px,8vw,38px);font-weight:800;letter-spacing:-.03em;line-height:1.05;text-align:center;margin:18px 0 10px}
   .accent{background:linear-gradient(90deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-  .hero-sub{font-size:13px;color:var(--txm);text-align:center;line-height:1.65;max-width:260px;margin-bottom:26px}
-  .steps-row{display:flex;gap:8px;margin-bottom:24px;width:100%;max-width:320px}
-  .step{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
-  .step-dot{width:28px;height:28px;border-radius:50%;background:rgba(26,86,255,.12);border:1px solid rgba(26,86,255,.25);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--blue)}
-  .step-line{height:1px;background:rgba(26,86,255,.15);flex:1;align-self:center;margin-top:-14px}
-  .step-label{font-size:9px;color:var(--txm);text-align:center;letter-spacing:.04em;line-height:1.4}
+  .hero-sub{font-size:13px;color:var(--txm);text-align:center;line-height:1.65;max-width:280px;margin-bottom:26px}
+  .steps-row{display:flex;align-items:flex-start;gap:0;margin-bottom:24px;width:100%;max-width:340px}
+  .step{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .step-dot{width:30px;height:30px;border-radius:50%;background:rgba(26,86,255,.12);border:1px solid rgba(26,86,255,.25);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--blue);flex-shrink:0}
+  .step-line{flex:1;height:1px;background:rgba(26,86,255,.2);margin-top:15px}
+  .step-label{font-size:10px;color:var(--txm);text-align:center;line-height:1.5;padding:0 4px}
   .installed-state{display:none;flex-direction:column;align-items:center;gap:14px;text-align:center}
   .check-circle{width:64px;height:64px;border-radius:50%;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.25);display:flex;align-items:center;justify-content:center}
   .bottom{flex-shrink:0;padding:16px 24px max(28px,env(safe-area-inset-bottom));border-top:1px solid var(--bdr);display:flex;flex-direction:column;gap:8px}
-  .btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:15px 20px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;border:none;border-radius:9px;cursor:pointer;text-decoration:none;transition:all .2s ease}
+  .btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:15px 20px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;border:none;border-radius:9px;cursor:pointer;text-decoration:none;transition:all .18s ease}
   .btn-primary{background:var(--blue);color:#fff;box-shadow:0 4px 24px rgba(26,86,255,.35),inset 0 1px 0 rgba(255,255,255,.12)}
   .btn-primary:active{transform:scale(.98)}
   .btn-ghost{background:rgba(255,255,255,.04);color:var(--tx2);border:1px solid var(--bdr)}
   .legal{font-size:10px;color:var(--txm);text-align:center;line-height:1.5}
   .warn-box{font-size:12px;color:#FF3D57;text-align:center;padding:10px 14px;background:rgba(255,61,87,.05);border:1px solid rgba(255,61,87,.2);border-radius:8px;line-height:1.6;display:none}
-  .hint-box{font-size:11px;color:var(--txm);text-align:center;padding:8px 14px;background:rgba(255,255,255,.02);border:1px solid var(--bdr);border-radius:8px;line-height:1.6;display:none}
-  @keyframes pulse{0%,100%{box-shadow:0 4px 24px rgba(26,86,255,.35),inset 0 1px 0 rgba(255,255,255,.12)}50%{box-shadow:0 4px 36px rgba(26,86,255,.6),inset 0 1px 0 rgba(255,255,255,.12)}}
+  .hint-box{font-size:12px;color:var(--cyan);text-align:center;padding:10px 14px;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.15);border-radius:8px;line-height:1.7;display:none}
+  @keyframes pulse{0%,100%{box-shadow:0 4px 24px rgba(26,86,255,.35),inset 0 1px 0 rgba(255,255,255,.12)}50%{box-shadow:0 4px 40px rgba(26,86,255,.65),inset 0 1px 0 rgba(255,255,255,.12)}}
   .btn-pulse{animation:pulse 2s ease-in-out infinite}
 </style>
 </head>
@@ -59,7 +58,7 @@
 <div class="page">
   <div class="topbar">
     <div class="logo">
-      <svg width="32" height="32" viewBox="0 0 56 56" fill="none" style="filter:drop-shadow(0 0 8px rgba(0,212,255,.3))">
+      <svg width="32" height="32" viewBox="0 0 56 56" fill="none">
         <defs><linearGradient id="lg1" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00D4FF"/><stop offset="50%" stop-color="#1A56FF"/><stop offset="100%" stop-color="#7B2FFF"/></linearGradient></defs>
         <path d="M28 3L51 16L51 40L28 53L5 40L5 16Z" stroke="url(#lg1)" stroke-width="1.2" fill="none" opacity=".3"/>
         <path d="M12 14L28 42L44 14" stroke="url(#lg1)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -90,27 +89,25 @@
     </div>
 
     <h1 class="hero-title">Install <span class="accent">Veltro</span></h1>
-    <p class="hero-sub" id="hero-sub">Tap install, then tap Install once in Settings — Veltro is on your home screen.</p>
+    <p class="hero-sub" id="hero-sub">Tap Install — the app goes directly to your home screen.</p>
 
-    <!-- step indicators -->
     <div class="steps-row" id="steps-row">
       <div class="step">
-        <div class="step-dot" id="dot-1">1</div>
-        <span class="step-label">Tap Install<br>below</span>
+        <div class="step-dot">1</div>
+        <span class="step-label">Tap<br>Install</span>
       </div>
-      <div style="flex:1;height:1px;background:rgba(26,86,255,.15);align-self:flex-start;margin-top:14px"></div>
+      <div class="step-line"></div>
       <div class="step">
-        <div class="step-dot" id="dot-2">2</div>
-        <span class="step-label">Tap Install<br>in Settings</span>
+        <div class="step-dot">2</div>
+        <span class="step-label">Tap Install<br>to confirm</span>
       </div>
-      <div style="flex:1;height:1px;background:rgba(26,86,255,.15);align-self:flex-start;margin-top:14px"></div>
+      <div class="step-line"></div>
       <div class="step">
-        <div class="step-dot" id="dot-3" style="background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.2);color:var(--green)">✓</div>
+        <div class="step-dot" style="background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.25);color:var(--green)">✓</div>
         <span class="step-label">Icon on<br>home screen</span>
       </div>
     </div>
 
-    <!-- installed state (shown after install) -->
     <div class="installed-state" id="installed-state">
       <div class="check-circle">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#00E676" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -126,27 +123,27 @@
     <div class="warn-box" id="warn-box"></div>
     <div class="hint-box" id="hint-box"></div>
 
-    <!-- iOS: direct link to signed mobileconfig — iOS intercepts automatically -->
+    <!--
+      itms-services:// is the Apple OTA protocol.
+      iOS intercepts this URL, downloads the manifest, and shows
+      a native "Install Veltro?" dialog. Tapping Install puts the
+      app icon on the home screen immediately. No Settings required
+      during install — Trust only appears the FIRST time you open it.
+    -->
     <a class="btn btn-primary btn-pulse"
        id="install-btn"
-       href="https://veltroinvestment.up.railway.app/install"
-       type="application/x-apple-aspen-config"
-       onclick="onInstallTap()">
+       href="itms-services://?action=download-manifest&url=https%3A%2F%2Fveltroinvestment.up.railway.app%2Fota%2Fmanifest.plist">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4.5 6.5L8 10l3.5-3.5M2 13h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Install Veltro
     </a>
 
-    <!-- Android PWA install (one-click via beforeinstallprompt) -->
-    <button class="btn btn-primary btn-pulse"
-            id="android-btn"
-            style="display:none"
-            onclick="androidInstall()">
+    <button class="btn btn-primary btn-pulse" id="android-btn" style="display:none" onclick="androidInstall()">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4.5 6.5L8 10l3.5-3.5M2 13h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Install Veltro
     </button>
 
     <a class="btn btn-ghost" id="open-btn" href="https://veltro.vercel.app" style="display:none">Open Veltro →</a>
-    <p class="legal" id="legal-txt">Free · Tap once · On your home screen instantly</p>
+    <p class="legal" id="legal-txt">Native app · No App Store needed · Free</p>
   </div>
 </div>
 
@@ -160,77 +157,39 @@ var deferredPrompt = null
 
 document.getElementById('platform-badge').textContent = isIOS ? 'iOS' : isAndroid ? 'Android' : 'Web'
 
-// ── Already installed ────────────────────────────────────────────────────────
 if (isStandalone) {
-  document.getElementById('hero-sub').style.display    = 'none'
-  document.getElementById('steps-row').style.display   = 'none'
+  document.getElementById('hero-sub').style.display     = 'none'
+  document.getElementById('steps-row').style.display    = 'none'
   document.getElementById('installed-state').style.display = 'flex'
-  document.getElementById('install-btn').style.display = 'none'
-  document.getElementById('open-btn').style.display    = 'flex'
-  document.getElementById('legal-txt').textContent     = 'Veltro is installed and ready.'
+  document.getElementById('install-btn').style.display  = 'none'
+  document.getElementById('open-btn').style.display     = 'flex'
+  document.getElementById('legal-txt').textContent      = 'Veltro is installed and ready.'
 }
-
-// ── iOS Safari — signed mobileconfig path ───────────────────────────────────
-else if (isIOS && isSafari) {
-  // btn-href already set to veltro_signed.mobileconfig — iOS intercepts it natively
-  // show a small hint after tap
-}
-
-// ── iOS but NOT Safari (Chrome, Firefox, etc.) ───────────────────────────────
 else if (isIOS && !isSafari) {
   var w = document.getElementById('warn-box')
-  w.style.display   = 'block'
-  w.innerHTML       = '⚠ Open this page in <strong>Safari</strong> to install'
+  w.style.display = 'block'
+  w.innerHTML     = '⚠ Open this page in <strong>Safari</strong> to install'
   var b = document.getElementById('install-btn')
-  b.style.opacity   = '0.35'
-  b.style.pointerEvents = 'none'
+  b.style.opacity = '0.35'; b.style.pointerEvents = 'none'
   b.classList.remove('btn-pulse')
 }
-
-// ── Android — PWA beforeinstallprompt ────────────────────────────────────────
+else if (!isIOS && !isAndroid) {
+  var w2 = document.getElementById('warn-box')
+  w2.style.display  = 'block'
+  w2.textContent    = 'Open this link on your iPhone to install.'
+  var b2 = document.getElementById('install-btn')
+  b2.style.opacity  = '0.35'; b2.style.pointerEvents = 'none'
+  b2.classList.remove('btn-pulse')
+}
 else if (isAndroid) {
   document.getElementById('install-btn').style.display = 'none'
   window.addEventListener('beforeinstallprompt', function(e) {
-    e.preventDefault()
-    deferredPrompt = e
+    e.preventDefault(); deferredPrompt = e
     document.getElementById('android-btn').style.display = 'flex'
   })
-  // fallback if prompt never fires
   setTimeout(function() {
-    if (!deferredPrompt) {
-      document.getElementById('android-btn').style.display = 'flex'
-    }
+    if (!deferredPrompt) document.getElementById('android-btn').style.display = 'flex'
   }, 500)
-}
-
-// ── Desktop ──────────────────────────────────────────────────────────────────
-else {
-  var w2 = document.getElementById('warn-box')
-  w2.style.display = 'block'
-  w2.textContent   = 'Open this link on your iPhone to install.'
-  var b2 = document.getElementById('install-btn')
-  b2.style.opacity = '0.35'
-  b2.style.pointerEvents = 'none'
-  b2.classList.remove('btn-pulse')
-}
-
-// ── Tap handlers ─────────────────────────────────────────────────────────────
-function onInstallTap() {
-  if (!isIOS) return;
-  // After a short delay (profile starts downloading), deep-link straight
-  // into Settings → VPN & Device Management so user sees the profile ready
-  // to install without having to navigate manually.
-  setTimeout(function() {
-    // Open Settings directly at the profile installation screen
-    window.location.href = 'App-Prefs:root=General&path=ManagedConfigurationList';
-  }, 2200);
-
-  // Fallback: show a clear instruction if deep-link doesn't fire
-  setTimeout(function() {
-    var h = document.getElementById('hint-box');
-    h.style.display = 'block';
-    h.innerHTML = 'Profile downloaded — opening Settings now.<br><small style="opacity:.6">Go to General → VPN & Device Management → Install</small>';
-  }, 800);
 }
 
 function androidInstall() {
@@ -241,21 +200,20 @@ function androidInstall() {
       deferredPrompt = null
     })
   } else {
-    // Fallback: manual add-to-home-screen
     var h = document.getElementById('hint-box')
     h.style.display = 'block'
-    h.innerHTML = 'Tap the browser menu → "Add to Home screen"'
+    h.innerHTML = 'Tap browser menu → "Add to Home screen"'
   }
 }
 
 function showInstalled() {
-  document.getElementById('hero-sub').style.display      = 'none'
-  document.getElementById('steps-row').style.display     = 'none'
+  document.getElementById('hero-sub').style.display     = 'none'
+  document.getElementById('steps-row').style.display    = 'none'
   document.getElementById('installed-state').style.display = 'flex'
-  document.getElementById('install-btn').style.display   = 'none'
-  document.getElementById('android-btn').style.display   = 'none'
-  document.getElementById('open-btn').style.display      = 'flex'
-  document.getElementById('legal-txt').textContent       = 'Veltro is installed and ready.'
+  document.getElementById('install-btn').style.display  = 'none'
+  document.getElementById('android-btn').style.display  = 'none'
+  document.getElementById('open-btn').style.display     = 'flex'
+  document.getElementById('legal-txt').textContent      = 'Veltro is installed and ready.'
 }
 
 window.addEventListener('appinstalled', showInstalled)
