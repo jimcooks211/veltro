@@ -55,7 +55,21 @@ jobs:
           cd ios/App
           pod install --repo-update
 
-      # ── 8. Install certificates ──
+      # ── 8. Disable code signing on Pods targets ──
+      - name: Disable signing on Pods project
+        run: |
+          sed -i '' \
+            's/CODE_SIGN_IDENTITY = ".*"/CODE_SIGN_IDENTITY = ""/g' \
+            ios/App/Pods/Pods.xcodeproj/project.pbxproj
+          sed -i '' \
+            's/CODE_SIGNING_REQUIRED = YES/CODE_SIGNING_REQUIRED = NO/g' \
+            ios/App/Pods/Pods.xcodeproj/project.pbxproj
+          sed -i '' \
+            's/CODE_SIGNING_ALLOWED = YES/CODE_SIGNING_ALLOWED = NO/g' \
+            ios/App/Pods/Pods.xcodeproj/project.pbxproj
+          echo "Pods signing disabled ✓"
+
+      # ── 9. Install certificates ──
       - name: Install Apple certificates and profile
         env:
           IOS_P12_BASE64: ${{ secrets.IOS_P12_BASE64 }}
@@ -90,8 +104,7 @@ jobs:
           cp profile.mobileprovision \
             ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.mobileprovision
 
-      # ── 9. Archive ──
-      # Scope signing only to the App target — Pods use CODE_SIGNING_ALLOWED=NO
+      # ── 10. Archive ──
       - name: Archive
         run: |
           xcodebuild \
@@ -105,12 +118,9 @@ jobs:
             CODE_SIGN_IDENTITY="iPhone Distribution" \
             DEVELOPMENT_TEAM=ZDV8SQG3XZ \
             PROVISIONING_PROFILE="$PROFILE_UUID" \
-            -target App \
-            OTHER_CODE_SIGN_FLAGS="--keychain build.keychain" \
-            PODS_CODE_SIGN_STYLE=Automatic \
-            PODS_DEVELOPMENT_TEAM=ZDV8SQG3XZ
+            OTHER_CODE_SIGN_FLAGS="--keychain build.keychain"
 
-      # ── 10. Export IPA ──
+      # ── 11. Export IPA ──
       - name: Export IPA
         run: |
           xcodebuild \
@@ -119,7 +129,7 @@ jobs:
             -exportOptionsPlist ios/ExportOptions.plist \
             -exportPath $RUNNER_TEMP/ipa
 
-      # ── 11. Upload artifact ──
+      # ── 12. Upload artifact ──
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
