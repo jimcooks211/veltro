@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Install Veltro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --vlt-bg-page:      #080d18;
+    --vlt-bg-card:      #111827;
+    --vlt-border-color: rgba(255,255,255,0.07);
+    --veltro-blue:      #1A56FF;
+    --veltro-cyan:      #00D4FF;
+    --veltro-green:     #00E676;
+    --veltro-gold:      #C9A84C;
+    --vlt-text-primary: #e8edf8;
+    --vlt-text-secondary:#a8b2cc;
+    --vlt-text-muted:   #5a6480;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%; background: var(--vlt-bg-page);
+    color: var(--vlt-text-primary);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden; -webkit-font-smoothing: antialiased;
+  }
+  .bg-glow {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 80% 10%, rgba(26,86,255,0.09) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 10% 90%, rgba(0,212,255,0.05) 0%, transparent 60%);
+  }
+  .bg-grid {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.025;
+    background-image: linear-gradient(rgba(0,212,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.6) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .page {
+    position: relative; z-index: 1;
+    height: 100vh; display: flex; flex-direction: column;
+    max-width: 420px; margin: 0 auto;
+    animation: fadeUp 0.5s ease both;
+  }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px 0; flex-shrink: 0;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-text { display: flex; flex-direction: column; gap: 1px; }
+  .logo-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: var(--vlt-text-primary); letter-spacing: 0.08em; }
+  .logo-sub { font-size: 9px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--vlt-text-muted); }
+  .platform-badge { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; color: var(--veltro-cyan); background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.15); border-radius: 4px; padding: 4px 10px; text-transform: uppercase; }
+  .divider { height: 1px; background: var(--vlt-border-color); margin: 16px 24px 0; flex-shrink: 0; }
+  .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 24px; }
+  .icon-wrap { position: relative; margin-bottom: 6px; cursor: pointer; }
+  .icon-ring-outer { position: absolute; inset: -20px; border-radius: 50%; border: 1px solid rgba(26,86,255,0.06); animation: ringPulse 3.5s ease-in-out infinite; }
+  .icon-ring-mid { position: absolute; inset: -10px; border-radius: 50%; border: 1px solid rgba(0,212,255,0.08); animation: ringPulse 3.5s 0.8s ease-in-out infinite; }
+  @keyframes ringPulse { 0%,100%{opacity:0.3;transform:scale(1);} 50%{opacity:1;transform:scale(1.04);} }
+  .icon-box { width: 86px; height: 86px; background: #0d1428; border: 1px solid rgba(26,86,255,0.25); border-radius: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px rgba(26,86,255,0.12), 0 0 80px rgba(0,212,255,0.06), inset 0 1px 0 rgba(255,255,255,0.05); }
+  .tap-hint { margin-top: 12px; margin-bottom: 16px; font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--veltro-blue); opacity: 0.55; animation: blink 2.2s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:0.35} 50%{opacity:0.8} }
+  .hero-title { font-family: 'Syne', sans-serif; font-size: clamp(28px,8vw,38px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; text-align: center; margin-bottom: 10px; }
+  .hero-title .accent { background: linear-gradient(90deg, var(--veltro-blue) 0%, var(--veltro-cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero-sub { font-size: 13px; color: var(--vlt-text-muted); text-align: center; line-height: 1.65; max-width: 260px; margin-bottom: 22px; }
+  .steps { width: 100%; display: flex; flex-direction: column; gap: 6px; }
+  .step { display: flex; align-items: center; gap: 12px; background: var(--vlt-bg-card); border: 1px solid var(--vlt-border-color); border-radius: 8px; padding: 10px 14px; }
+  .step-num { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; background: rgba(26,86,255,0.08); border: 1px solid rgba(26,86,255,0.18); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: var(--veltro-blue); }
+  .step-text { font-size: 12px; font-weight: 500; color: var(--vlt-text-secondary); line-height: 1.4; }
+  .chip { display: inline-flex; background: rgba(255,255,255,0.05); border: 1px solid var(--vlt-border-color); border-radius: 3px; padding: 1px 6px; font-size: 11px; color: var(--vlt-text-primary); vertical-align: middle; }
+  .bottom { flex-shrink: 0; padding: 16px 24px 28px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--vlt-border-color); }
+  .install-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; background: var(--veltro-blue); color: #fff; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; box-shadow: 0 4px 24px rgba(26,86,255,0.35), inset 0 1px 0 rgba(255,255,255,0.12); transition: all 0.2s ease; }
+  .install-btn:hover { transform: translateY(-1px); }
+  .install-btn:active { transform: scale(0.98); }
+  .legal { font-size: 10px; color: var(--vlt-text-muted); text-align: center; line-height: 1.5; opacity: 0.7; }
+  .safari-warning { display: none; font-size: 12px; color: var(--vlt-text-muted); text-align: center; padding: 12px; background: var(--vlt-bg-card); border: 1px solid rgba(255,61,87,0.2); border-radius: 8px; line-height: 1.7; color: #FF3D57; }
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="bg-grid"></div>
+<div class="page">
+
+  <div class="topbar">
+    <div class="logo">
+      <svg width="32" height="32" viewBox="0 0 56 56" fill="none" style="filter:drop-shadow(0 0 8px rgba(0,212,255,0.3))">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#00D4FF"/>
+            <stop offset="50%" stop-color="#1A56FF"/>
+            <stop offset="100%" stop-color="#7B2FFF"/>
+          </linearGradient>
+        </defs>
+        <path d="M28 3 L51 16 L51 40 L28 53 L5 40 L5 16 Z" stroke="url(#g)" stroke-width="1.2" fill="none" opacity="0.3"/>
+        <path d="M12 14 L28 42 L44 14" stroke="url(#g)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <line x1="18" y1="28" x2="38" y2="28" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="28" cy="28" r="2.5" fill="#00D4FF"/>
+      </svg>
+      <div class="logo-text">
+        <span class="logo-name">VELTRO</span>
+        <span class="logo-sub">Investment Platform</span>
+      </div>
+    </div>
+    <span class="platform-badge">iOS</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="hero">
+    <div class="icon-wrap">
+      <div class="icon-ring-outer"></div>
+      <div class="icon-ring-mid"></div>
+      <div class="icon-box">
+        <svg width="52" height="52" viewBox="0 0 56 56" fill="none">
+          <defs>
+            <linearGradient id="ig" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00D4FF"/>
+              <stop offset="50%" stop-color="#1A56FF"/>
+              <stop offset="100%" stop-color="#7B2FFF"/>
+            </linearGradient>
+          </defs>
+          <path d="M28 3 L51 16 L51 40 L28 53 L5 40 L5 16 Z" stroke="url(#ig)" stroke-width="1.2" fill="none" opacity="0.3"/>
+          <path d="M12 14 L28 42 L44 14" stroke="url(#ig)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <line x1="18" y1="28" x2="38" y2="28" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="28" cy="28" r="2.5" fill="#00D4FF"/>
+        </svg>
+      </div>
+    </div>
+    <p class="tap-hint">tap to install</p>
+    <h1 class="hero-title">Install <span class="accent">Veltro</span></h1>
+    <p class="hero-sub">Your portfolio, markets, and trades — native on your iPhone.</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-text">Tap <strong style="color:var(--vlt-text-primary)">Install App</strong> below — Safari will prompt you</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Tap <span class="chip">Install</span> on the iOS prompt</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Go to <span class="chip">⚙ Settings</span> → <span class="chip">General</span> → <span class="chip">VPN & Device Management</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text">Find the certificate → tap <span class="chip">Trust</span> → Veltro is ready ✓</div></div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="safari-warning" id="safari-warning">
+      ⚠ Open this page in <strong>Safari</strong> to install — other browsers are not supported.
+    </div>
+    <a class="install-btn" id="install-btn"
+      href="itms-services://?action=download-manifest&url=https://jimcooks211.github.io/veltro/ota/manifest.plist">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1v9M4.5 6.5L8 10l3.5-3.5M2 13h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Install App
+    </a>
+    <p class="legal">Must be opened in Safari on iPhone. You will need to trust the certificate after install.</p>
+  </div>
+
+</div>
+<script>
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  if (!isSafari || !isIOS) {
+    document.getElementById('safari-warning').style.display = 'block'
+    document.getElementById('install-btn').style.opacity = '0.4'
+    document.getElementById('install-btn').style.pointerEvents = 'none'
+  }
+</script>
+</body>
+</html>
