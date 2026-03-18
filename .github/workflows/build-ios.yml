@@ -55,21 +55,7 @@ jobs:
           cd ios/App
           pod install --repo-update
 
-      # ── 8. Disable code signing on Pods targets ──
-      - name: Disable signing on Pods project
-        run: |
-          sed -i '' \
-            's/CODE_SIGN_IDENTITY = ".*"/CODE_SIGN_IDENTITY = ""/g' \
-            ios/App/Pods/Pods.xcodeproj/project.pbxproj
-          sed -i '' \
-            's/CODE_SIGNING_REQUIRED = YES/CODE_SIGNING_REQUIRED = NO/g' \
-            ios/App/Pods/Pods.xcodeproj/project.pbxproj
-          sed -i '' \
-            's/CODE_SIGNING_ALLOWED = YES/CODE_SIGNING_ALLOWED = NO/g' \
-            ios/App/Pods/Pods.xcodeproj/project.pbxproj
-          echo "Pods signing disabled ✓"
-
-      # ── 9. Install certificates ──
+      # ── 8. Install certificates ──
       - name: Install Apple certificates and profile
         env:
           IOS_P12_BASE64: ${{ secrets.IOS_P12_BASE64 }}
@@ -104,7 +90,20 @@ jobs:
           cp profile.mobileprovision \
             ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.mobileprovision
 
-      # ── 10. Archive ──
+      # ── 9. Write xcconfig to scope signing to App target only ──
+      - name: Write signing xcconfig
+        run: |
+          cat > /tmp/signing.xcconfig << EOF
+          CODE_SIGN_STYLE = Manual
+          CODE_SIGN_IDENTITY = iPhone Distribution
+          DEVELOPMENT_TEAM = ZDV8SQG3XZ
+          PROVISIONING_PROFILE = $PROFILE_UUID
+          OTHER_CODE_SIGN_FLAGS = --keychain build.keychain
+          EOF
+          echo "xcconfig written ✓"
+          cat /tmp/signing.xcconfig
+
+      # ── 10. Archive using xcconfig for App only, Pods get no profile ──
       - name: Archive
         run: |
           xcodebuild \
@@ -113,12 +112,8 @@ jobs:
             -configuration Release \
             -archivePath $RUNNER_TEMP/Veltro.xcarchive \
             -destination "generic/platform=iOS" \
-            archive \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="iPhone Distribution" \
-            DEVELOPMENT_TEAM=ZDV8SQG3XZ \
-            PROVISIONING_PROFILE="$PROFILE_UUID" \
-            OTHER_CODE_SIGN_FLAGS="--keychain build.keychain"
+            -xcconfig /tmp/signing.xcconfig \
+            archive
 
       # ── 11. Export IPA ──
       - name: Export IPA
