@@ -21,33 +21,33 @@ jobs:
           node-version: '20'
           cache: npm
 
-      # ── 3. Install & build web app ──
+      # ── 3. Install & build ──
       - name: Install dependencies
         run: npm install
 
       - name: Build Vite app
         run: npm run build
 
-      # ── 4. Copy web assets to iOS ──
+      # ── 4. Copy web assets ──
       - name: Copy web assets to iOS
         run: npx cap copy ios
 
-      # ── 5. Fix iOS deployment target ──
+      # ── 5. Fix deployment target ──
       - name: Set iOS deployment target to 16.0
         run: |
           sed -i '' "s/platform :ios, '14.0'/platform :ios, '16.0'/" ios/App/Podfile
           sed -i '' \
             's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*/IPHONEOS_DEPLOYMENT_TARGET = 16.0/g' \
             ios/App/App.xcodeproj/project.pbxproj
-          echo "platform :ios line → $(grep 'platform :ios' ios/App/Podfile)"
+          echo "✓ $(grep 'platform :ios' ios/App/Podfile)"
 
-      # ── 6. Fix bundle ID to match provisioning profile ──
+      # ── 6. Fix bundle ID ──
       - name: Set bundle ID to match provisioning profile
         run: |
           sed -i '' \
             's/PRODUCT_BUNDLE_IDENTIFIER = com.veltro.app/PRODUCT_BUNDLE_IDENTIFIER = xyz.appinstall.nov.carbon.lam/g' \
             ios/App/App.xcodeproj/project.pbxproj
-          echo "Bundle ID → $(grep 'PRODUCT_BUNDLE_IDENTIFIER' ios/App/App.xcodeproj/project.pbxproj | head -1)"
+          echo "✓ $(grep 'PRODUCT_BUNDLE_IDENTIFIER' ios/App/App.xcodeproj/project.pbxproj | head -1)"
 
       # ── 7. CocoaPods ──
       - name: Install CocoaPods
@@ -55,7 +55,31 @@ jobs:
           cd ios/App
           pod install --repo-update
 
-      # ── 8. Install certificates ──
+      # ── 8. Patch Pods to use automatic signing ──
+      - name: Patch Pods project for automatic signing
+        run: |
+          PODS_PBXPROJ="ios/App/Pods/Pods.xcodeproj/project.pbxproj"
+
+          # Remove any hardcoded PROVISIONING_PROFILE lines
+          sed -i '' '/PROVISIONING_PROFILE/d' "$PODS_PBXPROJ"
+
+          # Set automatic code sign style
+          sed -i '' \
+            's/CODE_SIGN_STYLE = Manual/CODE_SIGN_STYLE = Automatic/g' \
+            "$PODS_PBXPROJ"
+
+          # Disable code signing entirely on pod targets
+          sed -i '' \
+            's/CODE_SIGNING_REQUIRED = YES/CODE_SIGNING_REQUIRED = NO/g' \
+            "$PODS_PBXPROJ"
+          sed -i '' \
+            's/CODE_SIGNING_ALLOWED = YES/CODE_SIGNING_ALLOWED = NO/g' \
+            "$PODS_PBXPROJ"
+
+          echo "✓ Pods signing patched"
+          grep -c "PROVISIONING_PROFILE" "$PODS_PBXPROJ" && echo "⚠ PROVISIONING_PROFILE still present" || echo "✓ No PROVISIONING_PROFILE in Pods"
+
+      # ── 9. Install certificates ──
       - name: Install Apple certificates and profile
         env:
           IOS_P12_BASE64: ${{ secrets.IOS_P12_BASE64 }}
@@ -83,27 +107,14 @@ jobs:
             -S apple-tool:,apple: \
             -s -k "build123" build.keychain
 
-          echo "── Available signing identities ──"
+          echo "── Signing identities ──"
           security find-identity -v -p codesigning build.keychain
 
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp profile.mobileprovision \
             ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.mobileprovision
 
-      # ── 9. Write xcconfig to scope signing to App target only ──
-      - name: Write signing xcconfig
-        run: |
-          cat > /tmp/signing.xcconfig << EOF
-          CODE_SIGN_STYLE = Manual
-          CODE_SIGN_IDENTITY = iPhone Distribution
-          DEVELOPMENT_TEAM = ZDV8SQG3XZ
-          PROVISIONING_PROFILE = $PROFILE_UUID
-          OTHER_CODE_SIGN_FLAGS = --keychain build.keychain
-          EOF
-          echo "xcconfig written ✓"
-          cat /tmp/signing.xcconfig
-
-      # ── 10. Archive using xcconfig for App only, Pods get no profile ──
+      # ── 10. Archive ──
       - name: Archive
         run: |
           xcodebuild \
@@ -112,8 +123,12 @@ jobs:
             -configuration Release \
             -archivePath $RUNNER_TEMP/Veltro.xcarchive \
             -destination "generic/platform=iOS" \
-            -xcconfig /tmp/signing.xcconfig \
-            archive
+            archive \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="iPhone Distribution" \
+            DEVELOPMENT_TEAM=ZDV8SQG3XZ \
+            PROVISIONING_PROFILE="$PROFILE_UUID" \
+            OTHER_CODE_SIGN_FLAGS="--keychain build.keychain"
 
       # ── 11. Export IPA ──
       - name: Export IPA
