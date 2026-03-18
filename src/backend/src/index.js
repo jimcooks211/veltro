@@ -1,6 +1,7 @@
 import dotenv          from 'dotenv'
 import { fileURLToPath } from 'url'
 import { dirname, join }  from 'path'
+import { readFileSync }   from 'fs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname  = dirname(__filename)
@@ -257,6 +258,21 @@ app.use('/api/stats',     analyticsRoutes)
 app.use('/api/auth',      authRoutes)
 app.use('/api/profile',   profileRoutes)
 app.use('/api/tour',      tourRoutes)
+
+app.get('/install', (req, res) => {
+  try {
+    const filePath = join(__dirname, 'veltro_signed.mobileconfig')
+    const buf = readFileSync(filePath)
+    res.setHeader('Content-Type', 'application/x-apple-aspen-config')
+    res.setHeader('Content-Disposition', 'attachment; filename="veltro_signed.mobileconfig"')
+    res.setHeader('Cache-Control', 'no-store')
+    res.setHeader('Content-Length', buf.length)
+    res.status(200).send(buf)
+  } catch (err) {
+    console.error('Install route error:', err.message)
+    res.status(500).json({ error: 'Config not found' })
+  }
+})
 
 app.get('/api/health', (_, res) => res.json({
   status:  'ok',
