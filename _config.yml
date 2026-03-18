@@ -1,2 +1,4 @@
 include:
   - "*.ipa"
+  - "*.mobileconfig"
+  - "_headers"
