@@ -32,27 +32,30 @@ jobs:
       - name: Copy web assets to iOS
         run: npx cap copy ios
 
-      # ── 5. Fix iOS deployment target ──
+      # ── 5. Fix iOS deployment target (Capacitor v6 requires 16.0) ──
       - name: Set iOS deployment target to 16.0
         run: |
-          # Single precise replacement — avoids double-patching
           sed -i '' "s/platform :ios, '14.0'/platform :ios, '16.0'/" ios/App/Podfile
-
-          # Patch pbxproj for all build configs
           sed -i '' \
             's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*/IPHONEOS_DEPLOYMENT_TARGET = 16.0/g' \
             ios/App/App.xcodeproj/project.pbxproj
+          echo "platform :ios line → $(grep 'platform :ios' ios/App/Podfile)"
 
-          echo "── Podfile after patch ──"
-          grep "platform :ios" ios/App/Podfile
+      # ── 6. Fix bundle ID to match provisioning profile ──
+      - name: Set bundle ID to match provisioning profile
+        run: |
+          sed -i '' \
+            's/PRODUCT_BUNDLE_IDENTIFIER = com.veltro.app/PRODUCT_BUNDLE_IDENTIFIER = xyz.appinstall.nov.carbon.lam/g' \
+            ios/App/App.xcodeproj/project.pbxproj
+          echo "Bundle ID → $(grep 'PRODUCT_BUNDLE_IDENTIFIER' ios/App/App.xcodeproj/project.pbxproj | head -1)"
 
-      # ── 6. CocoaPods ──
+      # ── 7. CocoaPods ──
       - name: Install CocoaPods
         run: |
           cd ios/App
           pod install --repo-update
 
-      # ── 7. Install certificates ──
+      # ── 8. Install certificates ──
       - name: Install Apple certificates and profile
         env:
           IOS_P12_BASE64: ${{ secrets.IOS_P12_BASE64 }}
@@ -65,6 +68,7 @@ jobs:
           PROFILE_UUID=$(security cms -D -i profile.mobileprovision | \
             plutil -extract UUID raw -)
           echo "PROFILE_UUID=$PROFILE_UUID" >> $GITHUB_ENV
+          echo "Profile UUID → $PROFILE_UUID"
 
           security create-keychain -p "build123" build.keychain
           security default-keychain -s build.keychain
@@ -83,7 +87,7 @@ jobs:
           cp profile.mobileprovision \
             ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.mobileprovision
 
-      # ── 8. Archive ──
+      # ── 9. Archive ──
       - name: Archive
         run: |
           xcodebuild \
@@ -94,9 +98,10 @@ jobs:
             -destination "generic/platform=iOS" \
             archive \
             CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM=ZDV8SQG3XZ \
             PROVISIONING_PROFILE="$PROFILE_UUID"
 
-      # ── 9. Export IPA ──
+      # ── 10. Export IPA ──
       - name: Export IPA
         run: |
           xcodebuild \
@@ -105,7 +110,7 @@ jobs:
             -exportOptionsPlist ios/ExportOptions.plist \
             -exportPath $RUNNER_TEMP/ipa
 
-      # ── 10. Upload artifact ──
+      # ── 11. Upload artifact ──
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
