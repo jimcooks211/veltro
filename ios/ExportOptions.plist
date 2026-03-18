@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
   <key>method</key>
-  <string>release-testing</string>
+  <string>enterprise</string>
   <key>teamID</key>
   <string>ZDV8SQG3XZ</string>
   <key>signingStyle</key>
