@@ -3,9 +3,16 @@
 <plist version="1.0">
 <dict>
   <key>method</key>
-  <string>ad-hoc</string>
+  <string>release-testing</string>
   <key>teamID</key>
   <string>ZDV8SQG3XZ</string>
+  <key>signingStyle</key>
+  <string>manual</string>
+  <key>provisioningProfiles</key>
+  <dict>
+    <key>xyz.appinstall.nov.carbon.lam</key>
+    <string>CarbonLAM_Dist_Jan262026</string>
+  </dict>
   <key>uploadBitcode</key>
   <false/>
   <key>uploadSymbols</key>
