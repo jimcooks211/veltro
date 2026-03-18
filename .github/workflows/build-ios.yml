@@ -49,11 +49,22 @@ jobs:
             ios/App/App.xcodeproj/project.pbxproj
           echo "✓ $(grep 'PRODUCT_BUNDLE_IDENTIFIER' ios/App/App.xcodeproj/project.pbxproj | head -1)"
 
-      # ── 7. CocoaPods ──
+      # ── 7. Generate Veltro iOS app icons ──
+      - name: Generate iOS app icons
+        run: |
+          npm install -g @capacitor/assets
+          npx capacitor-assets generate \
+            --ios \
+            --iconPath public/apple-touch-icon-180x180.png \
+            --iconBackgroundColor "#0A0F1E" \
+            --iconBackgroundColorDark "#0A0F1E"
+          echo "✓ iOS icons generated"
+
+      # ── 8. CocoaPods ──
       - name: Install CocoaPods
         run: cd ios/App && pod install --repo-update
 
-      # ── 8. Install certificates ──
+      # ── 9. Install certificates ──
       - name: Install Apple certificates and profile
         env:
           IOS_P12_BASE64: ${{ secrets.IOS_P12_BASE64 }}
@@ -80,14 +91,9 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.mobileprovision
 
-      # ── 9. Inject signing settings into App target only ──
+      # ── 10. Inject signing into App target only ──
       - name: Inject signing into App target pbxproj
         run: |
-          PBXPROJ="ios/App/App.xcodeproj/project.pbxproj"
-
-          # Inject PROVISIONING_PROFILE and CODE_SIGN_IDENTITY into
-          # Release build settings for App target only
-          # We look for the Release config block and add settings after PRODUCT_BUNDLE_IDENTIFIER
           python3 << 'PYEOF'
           import re, os, sys
 
@@ -95,7 +101,6 @@ jobs:
           profile_uuid = os.environ["PROFILE_UUID"]
           team_id = "ZDV8SQG3XZ"
 
-          # Add signing settings after each PRODUCT_BUNDLE_IDENTIFIER line in App target
           inject = (
               f'\n\t\t\tCODE_SIGN_IDENTITY = "iPhone Distribution";'
               f'\n\t\t\tCODE_SIGN_STYLE = Manual;'
@@ -104,10 +109,8 @@ jobs:
               f'\n\t\t\tPROVISIONING_PROFILE_SPECIFIER = "";'
           )
 
-          # Only inject where bundle ID matches App (not Pods)
           pattern = r'(PRODUCT_BUNDLE_IDENTIFIER = xyz\.appinstall\.nov\.carbon\.lam;)'
           replacement = r'\1' + inject
-
           updated = re.sub(pattern, replacement, pbx)
 
           if updated == pbx:
@@ -118,7 +121,7 @@ jobs:
           print("✓ Signing injected into App target")
           PYEOF
 
-      # ── 10. Archive — no signing flags, pbxproj handles it ──
+      # ── 11. Archive ──
       - name: Archive
         run: |
           xcodebuild \
@@ -130,7 +133,7 @@ jobs:
             OTHER_CODE_SIGN_FLAGS="--keychain build.keychain" \
             archive
 
-      # ── 11. Export IPA ──
+      # ── 12. Export IPA ──
       - name: Export IPA
         run: |
           xcodebuild \
@@ -139,7 +142,7 @@ jobs:
             -exportOptionsPlist ios/ExportOptions.plist \
             -exportPath $RUNNER_TEMP/ipa
 
-      # ── 12. Upload artifact ──
+      # ── 13. Upload artifact ──
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
