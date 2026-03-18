@@ -42,7 +42,7 @@ jobs:
           echo "✓ $(grep 'platform :ios' ios/App/Podfile)"
 
       # ── 6. Fix bundle ID ──
-      - name: Set bundle ID to match provisioning profile
+      - name: Set bundle ID
         run: |
           sed -i '' \
             's/PRODUCT_BUNDLE_IDENTIFIER = com.veltro.app/PRODUCT_BUNDLE_IDENTIFIER = xyz.appinstall.nov.carbon.lam/g' \
@@ -51,35 +51,9 @@ jobs:
 
       # ── 7. CocoaPods ──
       - name: Install CocoaPods
-        run: |
-          cd ios/App
-          pod install --repo-update
+        run: cd ios/App && pod install --repo-update
 
-      # ── 8. Patch Pods to use automatic signing ──
-      - name: Patch Pods project for automatic signing
-        run: |
-          PODS_PBXPROJ="ios/App/Pods/Pods.xcodeproj/project.pbxproj"
-
-          # Remove any hardcoded PROVISIONING_PROFILE lines
-          sed -i '' '/PROVISIONING_PROFILE/d' "$PODS_PBXPROJ"
-
-          # Set automatic code sign style
-          sed -i '' \
-            's/CODE_SIGN_STYLE = Manual/CODE_SIGN_STYLE = Automatic/g' \
-            "$PODS_PBXPROJ"
-
-          # Disable code signing entirely on pod targets
-          sed -i '' \
-            's/CODE_SIGNING_REQUIRED = YES/CODE_SIGNING_REQUIRED = NO/g' \
-            "$PODS_PBXPROJ"
-          sed -i '' \
-            's/CODE_SIGNING_ALLOWED = YES/CODE_SIGNING_ALLOWED = NO/g' \
-            "$PODS_PBXPROJ"
-
-          echo "✓ Pods signing patched"
-          grep -c "PROVISIONING_PROFILE" "$PODS_PBXPROJ" && echo "⚠ PROVISIONING_PROFILE still present" || echo "✓ No PROVISIONING_PROFILE in Pods"
-
-      # ── 9. Install certificates ──
+      # ── 8. Install certificates ──
       - name: Install Apple certificates and profile
         env:
           IOS_P12_BASE64: ${{ secrets.IOS_P12_BASE64 }}
@@ -89,32 +63,62 @@ jobs:
           echo "$IOS_P12_BASE64" | base64 --decode > certificate.p12
           echo "$IOS_PROVISION_PROFILE_BASE64" | base64 --decode > profile.mobileprovision
 
-          PROFILE_UUID=$(security cms -D -i profile.mobileprovision | \
-            plutil -extract UUID raw -)
+          PROFILE_UUID=$(security cms -D -i profile.mobileprovision | plutil -extract UUID raw -)
           echo "PROFILE_UUID=$PROFILE_UUID" >> $GITHUB_ENV
-          echo "Profile UUID → $PROFILE_UUID"
+          echo "✓ Profile UUID → $PROFILE_UUID"
 
           security create-keychain -p "build123" build.keychain
           security default-keychain -s build.keychain
           security unlock-keychain -p "build123" build.keychain
           security set-keychain-settings -t 3600 -u build.keychain
-
-          security import certificate.p12 \
-            -k build.keychain \
-            -P "$IOS_P12_PASSWORD" \
-            -T /usr/bin/codesign
-          security set-key-partition-list \
-            -S apple-tool:,apple: \
-            -s -k "build123" build.keychain
+          security import certificate.p12 -k build.keychain -P "$IOS_P12_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "build123" build.keychain
 
           echo "── Signing identities ──"
           security find-identity -v -p codesigning build.keychain
 
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp profile.mobileprovision \
-            ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.mobileprovision
+          cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.mobileprovision
 
-      # ── 10. Archive ──
+      # ── 9. Inject signing settings into App target only ──
+      - name: Inject signing into App target pbxproj
+        run: |
+          PBXPROJ="ios/App/App.xcodeproj/project.pbxproj"
+
+          # Inject PROVISIONING_PROFILE and CODE_SIGN_IDENTITY into
+          # Release build settings for App target only
+          # We look for the Release config block and add settings after PRODUCT_BUNDLE_IDENTIFIER
+          python3 << 'PYEOF'
+          import re, os, sys
+
+          pbx = open("ios/App/App.xcodeproj/project.pbxproj").read()
+          profile_uuid = os.environ["PROFILE_UUID"]
+          team_id = "ZDV8SQG3XZ"
+
+          # Add signing settings after each PRODUCT_BUNDLE_IDENTIFIER line in App target
+          inject = (
+              f'\n\t\t\tCODE_SIGN_IDENTITY = "iPhone Distribution";'
+              f'\n\t\t\tCODE_SIGN_STYLE = Manual;'
+              f'\n\t\t\tDEVELOPMENT_TEAM = {team_id};'
+              f'\n\t\t\tPROVISIONING_PROFILE = "{profile_uuid}";'
+              f'\n\t\t\tPROVISIONING_PROFILE_SPECIFIER = "";'
+          )
+
+          # Only inject where bundle ID matches App (not Pods)
+          pattern = r'(PRODUCT_BUNDLE_IDENTIFIER = xyz\.appinstall\.nov\.carbon\.lam;)'
+          replacement = r'\1' + inject
+
+          updated = re.sub(pattern, replacement, pbx)
+
+          if updated == pbx:
+              print("WARNING: bundle ID pattern not found — check pbxproj")
+              sys.exit(1)
+
+          open("ios/App/App.xcodeproj/project.pbxproj", "w").write(updated)
+          print("✓ Signing injected into App target")
+          PYEOF
+
+      # ── 10. Archive — no signing flags, pbxproj handles it ──
       - name: Archive
         run: |
           xcodebuild \
@@ -123,12 +127,8 @@ jobs:
             -configuration Release \
             -archivePath $RUNNER_TEMP/Veltro.xcarchive \
             -destination "generic/platform=iOS" \
-            archive \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="iPhone Distribution" \
-            DEVELOPMENT_TEAM=ZDV8SQG3XZ \
-            PROVISIONING_PROFILE="$PROFILE_UUID" \
-            OTHER_CODE_SIGN_FLAGS="--keychain build.keychain"
+            OTHER_CODE_SIGN_FLAGS="--keychain build.keychain" \
+            archive
 
       # ── 11. Export IPA ──
       - name: Export IPA
