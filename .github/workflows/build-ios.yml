@@ -53,9 +53,12 @@ jobs:
       - name: Generate iOS app icons
         run: |
           npm install -g @capacitor/assets
+          # Copy icon to expected location for capacitor-assets
+          mkdir -p assets/icon
+          cp public/apple-touch-icon-180x180.png assets/icon/icon.png
+          cp public/apple-touch-icon-180x180.png assets/icon/icon-foreground.png
           npx capacitor-assets generate \
             --ios \
-            --iconPath public/apple-touch-icon-180x180.png \
             --iconBackgroundColor "#0A0F1E" \
             --iconBackgroundColorDark "#0A0F1E"
           echo "✓ iOS icons generated"
