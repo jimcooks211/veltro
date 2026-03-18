@@ -90,23 +90,23 @@
     </div>
 
     <h1 class="hero-title">Install <span class="accent">Veltro</span></h1>
-    <p class="hero-sub" id="hero-sub">Tap the button — Veltro appears on your home screen.</p>
+    <p class="hero-sub" id="hero-sub">Tap install, then tap Install once in Settings — Veltro is on your home screen.</p>
 
     <!-- step indicators -->
     <div class="steps-row" id="steps-row">
       <div class="step">
         <div class="step-dot" id="dot-1">1</div>
-        <span class="step-label">Tap Install</span>
+        <span class="step-label">Tap Install<br>below</span>
       </div>
       <div style="flex:1;height:1px;background:rgba(26,86,255,.15);align-self:flex-start;margin-top:14px"></div>
       <div class="step">
         <div class="step-dot" id="dot-2">2</div>
-        <span class="step-label">Tap Install<br>to confirm</span>
+        <span class="step-label">Tap Install<br>in Settings</span>
       </div>
       <div style="flex:1;height:1px;background:rgba(26,86,255,.15);align-self:flex-start;margin-top:14px"></div>
       <div class="step">
         <div class="step-dot" id="dot-3" style="background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.2);color:var(--green)">✓</div>
-        <span class="step-label">On home<br>screen</span>
+        <span class="step-label">Icon on<br>home screen</span>
       </div>
     </div>
 
@@ -216,12 +216,21 @@ else {
 
 // ── Tap handlers ─────────────────────────────────────────────────────────────
 function onInstallTap() {
-  // iOS picks up the mobileconfig automatically via the href
-  // show a gentle hint so user knows what to expect
-  var h = document.getElementById('hint-box')
-  h.style.display = 'block'
-  h.textContent   = 'Tap "Install" on the sheet that appears — done!'
-  setTimeout(function() { h.style.display = 'none' }, 6000)
+  if (!isIOS) return;
+  // After a short delay (profile starts downloading), deep-link straight
+  // into Settings → VPN & Device Management so user sees the profile ready
+  // to install without having to navigate manually.
+  setTimeout(function() {
+    // Open Settings directly at the profile installation screen
+    window.location.href = 'App-Prefs:root=General&path=ManagedConfigurationList';
+  }, 2200);
+
+  // Fallback: show a clear instruction if deep-link doesn't fire
+  setTimeout(function() {
+    var h = document.getElementById('hint-box');
+    h.style.display = 'block';
+    h.innerHTML = 'Profile downloaded — opening Settings now.<br><small style="opacity:.6">Go to General → VPN & Device Management → Install</small>';
+  }, 800);
 }
 
 function androidInstall() {
