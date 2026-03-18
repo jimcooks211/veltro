@@ -32,7 +32,7 @@ jobs:
       - name: Copy web assets to iOS
         run: npx cap copy ios
 
-      # ── 5. Fix iOS deployment target (Capacitor v6 requires 16.0) ──
+      # ── 5. Fix iOS deployment target ──
       - name: Set iOS deployment target to 16.0
         run: |
           sed -i '' "s/platform :ios, '14.0'/platform :ios, '16.0'/" ios/App/Podfile
@@ -70,10 +70,6 @@ jobs:
           echo "PROFILE_UUID=$PROFILE_UUID" >> $GITHUB_ENV
           echo "Profile UUID → $PROFILE_UUID"
 
-          # Print cert type for debugging
-          openssl pkcs12 -in certificate.p12 -nokeys -passin pass:"$IOS_P12_PASSWORD" 2>/dev/null | \
-            openssl x509 -noout -subject 2>/dev/null | head -1 || true
-
           security create-keychain -p "build123" build.keychain
           security default-keychain -s build.keychain
           security unlock-keychain -p "build123" build.keychain
@@ -87,7 +83,6 @@ jobs:
             -S apple-tool:,apple: \
             -s -k "build123" build.keychain
 
-          # Print what identities are available
           echo "── Available signing identities ──"
           security find-identity -v -p codesigning build.keychain
 
@@ -96,6 +91,7 @@ jobs:
             ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.mobileprovision
 
       # ── 9. Archive ──
+      # Scope signing only to the App target — Pods use CODE_SIGNING_ALLOWED=NO
       - name: Archive
         run: |
           xcodebuild \
@@ -108,7 +104,11 @@ jobs:
             CODE_SIGN_STYLE=Manual \
             CODE_SIGN_IDENTITY="iPhone Distribution" \
             DEVELOPMENT_TEAM=ZDV8SQG3XZ \
-            PROVISIONING_PROFILE="$PROFILE_UUID"
+            PROVISIONING_PROFILE="$PROFILE_UUID" \
+            -target App \
+            OTHER_CODE_SIGN_FLAGS="--keychain build.keychain" \
+            PODS_CODE_SIGN_STYLE=Automatic \
+            PODS_DEVELOPMENT_TEAM=ZDV8SQG3XZ
 
       # ── 10. Export IPA ──
       - name: Export IPA
