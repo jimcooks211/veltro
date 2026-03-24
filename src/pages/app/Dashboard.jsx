@@ -164,29 +164,6 @@ export default function Dashboard() {
     }
     init()
   }, [routeUserId])
-                id:        tokenUserId,
-                firstName: s.firstName || s.fullName?.split(' ')[0] || '',
-                lastName:  s.lastName  || s.fullName?.split(' ').slice(1).join(' ') || '',
-                email:     s.email     || '',
-                avatar:    '',
-                username:  '',
-              })
-            }
-          } catch {}
-        }
-
-        setGuardStatus('ok')
-
-      } catch {
-        nukeAllStorage()
-        window.location.replace('/auth')
-      }
-    }
-
-    init()
-  }, [routeUserId]) // eslint-disable-line
-
-  /* close mobile drawer on desktop resize */
   useEffect(() => {
     const h = () => { if (window.innerWidth > 768) setMobileMenuOpen(false) }
     window.addEventListener('resize', h)
