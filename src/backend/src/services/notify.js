@@ -21,34 +21,38 @@ export async function createNotification({ userId, type, title, message, meta = 
  * parseUA(uaString) — minimal browser/OS/device detection, no extra package needed.
  */
 export function parseUA(ua = '') {
+  // Handle empty or invalid user agents
+  if (!ua || typeof ua !== 'string' || ua.length < 10) {
+    return { browser: 'Unknown Browser', os: 'Unknown OS', device_type: 'unknown' }
+  }
+
   let browser = 'Unknown Browser'
-  let os      = 'Unknown OS'
-  let device  = 'unknown'
+  let os = 'Unknown OS'
+  let device = 'unknown'
 
-  // Browser
-  if      (/Edg\//.test(ua))     browser = 'Edge'
-  else if (/OPR\//.test(ua))     browser = 'Opera'
-  else if (/Chrome\//.test(ua))  browser = 'Chrome'
-  else if (/Firefox\//.test(ua)) browser = 'Firefox'
-  else if (/Safari\//.test(ua))  browser = 'Safari'
+  // Browser detection - more comprehensive
+  const uaLower = ua.toLowerCase()
+  if (uaLower.includes('edg/')) browser = 'Edge'
+  else if (uaLower.includes('opr/') || uaLower.includes('opera')) browser = 'Opera'
+  else if (uaLower.includes('chrome') && !uaLower.includes('edg/')) browser = 'Chrome'
+  else if (uaLower.includes('firefox')) browser = 'Firefox'
+  else if (uaLower.includes('safari') && !uaLower.includes('chrome')) browser = 'Safari'
+  else if (uaLower.includes('trident') || uaLower.includes('msie')) browser = 'Internet Explorer'
 
-  // Append version
-  const verMatch = ua.match(new RegExp(`${browser.replace('Chrome','Chrome|CriOS')}[/ ]([\\d.]+)`))
-  if (verMatch) browser += ` ${verMatch[1].split('.')[0]}`
+  // OS detection - more comprehensive
+  if (uaLower.includes('windows nt 10') || uaLower.includes('windows nt 11')) os = 'Windows 11/10'
+  else if (uaLower.includes('windows nt')) os = 'Windows'
+  else if (uaLower.includes('mac os x') || uaLower.includes('macos')) os = 'macOS'
+  else if (uaLower.includes('android')) os = 'Android'
+  else if (uaLower.includes('iphone') || uaLower.includes('ipad')) os = 'iOS'
+  else if (uaLower.includes('linux')) os = 'Linux'
+  else if (uaLower.includes('cros')) os = 'Chrome OS'
 
-  // OS
-  if      (/Windows NT 10/.test(ua)) os = 'Windows 11/10'
-  else if (/Windows NT/.test(ua))    os = 'Windows'
-  else if (/Mac OS X/.test(ua))      os = 'macOS'
-  else if (/Android/.test(ua))       os = 'Android'
-  else if (/iPhone|iPad/.test(ua))   os = 'iOS'
-  else if (/Linux/.test(ua))         os = 'Linux'
-
-  // Device
-  if      (/iPad/.test(ua))                device = 'tablet'
-  else if (/iPhone|Android.*Mobile/.test(ua)) device = 'mobile'
-  else if (/Android/.test(ua))             device = 'tablet'
-  else                                     device = 'desktop'
+  // Device detection
+  if (uaLower.includes('ipad')) device = 'tablet'
+  else if (uaLower.includes('iphone') || (uaLower.includes('android') && uaLower.includes('mobile'))) device = 'mobile'
+  else if (uaLower.includes('android')) device = 'tablet'
+  else device = 'desktop'
 
   return { browser, os, device_type: device }
 }
