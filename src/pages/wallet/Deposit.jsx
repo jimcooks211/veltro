@@ -746,6 +746,13 @@ export default function Deposit() {
   const { user } = useOutletContext() ?? {}
   const navigate  = useNavigate()
 
+  const [step, setStep] = useState(1)
+  const [method, setMethod] = useState(null)
+  const [amount, setAmount] = useState('')
+  const [card, setCard] = useState({ number:'', expiry:'', cvv:'', name:'' })
+  const [cryptoAsset, setCryptoAsset] = useState(null)
+  const [usdcNetwork, setUsdcNetwork] = useState(null)
+  const [loading, setLoading] = useState(false)
   const [cryptoAssets, setCryptoAssets] = useState([])
   const [usdcNetworks, setUsdcNetworks] = useState([])
   const [addressesLoading, setAddressesLoading] = useState(true)
