@@ -19,12 +19,14 @@ import './Navbar.css'
 function NotificationBell() {
   const [open, setOpen] = useState(false)
   const [count, setCount] = useState(0)
+  const [notifications, setNotifications] = useState([])
+  const [loading, setLoading] = useState(false)
   const ref = useRef(null)
 
   useEffect(() => {
     // Fetch unread notification count
     apiGet('/api/notifications/unread-count')
-      .then(({ count: unreadCount }) => setCount(unreadCount))
+      .then(({ unread }) => setCount(unread))
       .catch(() => setCount(0)) // Fallback to 0 on error
   }, [])
 
@@ -34,6 +36,31 @@ function NotificationBell() {
     document.addEventListener('mousedown', h)
     return () => document.removeEventListener('mousedown', h)
   }, [open])
+
+  useEffect(() => {
+    if (!open || notifications.length > 0) return
+    // Fetch notifications when panel opens
+    setLoading(true)
+    apiGet('/api/notifications?limit=10')
+      .then(({ notifications: notifs }) => setNotifications(notifs))
+      .catch(() => setNotifications([]))
+      .finally(() => setLoading(false))
+  }, [open, notifications.length])
+
+  const formatTime = (dateStr) => {
+    const date = new Date(dateStr)
+    const now = new Date()
+    const diffMs = now - date
+    const diffMins = Math.floor(diffMs / (1000 * 60))
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+
+    if (diffMins < 1) return 'Just now'
+    if (diffMins < 60) return `${diffMins}m ago`
+    if (diffHours < 24) return `${diffHours}h ago`
+    if (diffDays < 7) return `${diffDays}d ago`
+    return date.toLocaleDateString()
+  }
 
   return (
     <div ref={ref} className='vlt-nb-wrap'>
@@ -53,9 +80,23 @@ function NotificationBell() {
             <span>Notifications</span>
             {count > 0 && <span className='vlt-nb-count'>{count} new</span>}
           </div>
-          <div className='vlt-nb-empty'>
-            <Bell size={28} weight='duotone' className='vlt-nb-empty-icon' />
-            <p>You're all caught up</p>
+          <div className='vlt-nb-content'>
+            {loading ? (
+              <div className='vlt-nb-loading'>Loading...</div>
+            ) : notifications.length > 0 ? (
+              notifications.map(n => (
+                <div key={n.id} className={`vlt-nb-item ${n.is_read ? '' : 'unread'}`}>
+                  <div className='vlt-nb-item-title'>{n.title}</div>
+                  <div className='vlt-nb-item-message'>{n.message}</div>
+                  <div className='vlt-nb-item-time'>{formatTime(n.created_at)}</div>
+                </div>
+              ))
+            ) : (
+              <div className='vlt-nb-empty'>
+                <Bell size={28} weight='duotone' className='vlt-nb-empty-icon' />
+                <p>You're all caught up</p>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -99,7 +140,7 @@ function UserMenu({ user, onThemeToggle, isDark, onLogout }) {
         onClick={() => setOpen(o => !o)}
       >
         <img
-          src={user?.avatar || '/default-avatar.png'}
+          src={user?.avatar || '/default-avatar.svg'}
           alt='avatar'
           className='vlt-um-avatar'
         />
@@ -118,7 +159,7 @@ function UserMenu({ user, onThemeToggle, isDark, onLogout }) {
         <div className='vlt-um-panel'>
           <div className='vlt-um-panel-header'>
             <img
-              src={user?.avatar || '/default-avatar.png'}
+              src={user?.avatar || '/default-avatar.svg'}
               alt='avatar'
               className='vlt-um-ph-avatar'
             />

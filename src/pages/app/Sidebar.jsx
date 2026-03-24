@@ -313,7 +313,7 @@ export default function Sidebar({
             onKeyDown={e => e.key === 'Enter' && setPopupOpen(o => !o)}
           >
             <img
-              src={user?.avatar || '/default-avatar.png'}
+              src={user?.avatar || '/default-avatar.svg'}
               alt='avatar'
               className='vlt-user-avatar'
             />
