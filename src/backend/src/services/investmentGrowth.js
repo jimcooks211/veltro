@@ -15,7 +15,7 @@ export async function applyInvestmentGrowth() {
     const [investments] = await db.execute(
       `SELECT i.*, u.id AS uid
        FROM investments i
-       JOIN users u ON u.id = i.user_id
+       JOIN users u ON u.id = i.user_id COLLATE utf8mb4_0900_ai_ci
        WHERE i.status = 'active'
          AND i.quantity > 0
          AND i.current_value > 0
