@@ -251,7 +251,7 @@ function AvatarBlock({ profile, onAvatarChange }) {
    ROOT — wired to real /api/profile/me
 ════════════════════════════════════════════════════════ */
 export default function ProfilePage() {
-  const { user: ctxUser } = useOutletContext() ?? {}
+  const { user: ctxUser, refreshUser } = useOutletContext() ?? {}
   const navigate = useNavigate()
 
   /* ── state ── */
@@ -367,6 +367,9 @@ export default function ProfilePage() {
       setSaved({ ...profile })
       setWasSaved(true)
       setTimeout(() => setWasSaved(false), 2200)
+      
+      // Refresh user context to update navbar/sidebar with new avatar
+      if (refreshUser) await refreshUser()
     } catch (err) {
       console.error('Profile save error:', err.message)
     } finally {

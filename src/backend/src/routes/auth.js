@@ -563,7 +563,8 @@ router.get('/sessions', requireAuth, async (req, res) => {
   try {
     const userId = req.user?.sub || req.userId
     const [sessions] = await db.execute(
-      `SELECT id, ip_address, user_agent, created_at, expires_at
+      `SELECT id, ip_address, user_agent, created_at, expires_at,
+              city, country, country_code, browser, os, device_type
        FROM sessions
        WHERE user_id = ? AND is_revoked = 0 AND expires_at > NOW()
        ORDER BY created_at DESC
