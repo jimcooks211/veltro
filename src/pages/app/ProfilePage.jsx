@@ -199,9 +199,18 @@ function AvatarBlock({ profile, onAvatarChange }) {
   const pick = e => {
     const f = e.target.files?.[0]
     if (!f) return
-    const url = URL.createObjectURL(f)
-    setPreview(url)
-    onAvatarChange?.(url)
+
+    // Create preview URL for immediate display
+    const previewUrl = URL.createObjectURL(f)
+    setPreview(previewUrl)
+
+    // Convert to data URL for storage
+    const reader = new FileReader()
+    reader.onload = () => {
+      const dataUrl = reader.result
+      onAvatarChange?.(dataUrl)
+    }
+    reader.readAsDataURL(f)
   }
   const src = preview || profile.avatar_url
   const kyc = KYC_META[profile.kyc_status]
