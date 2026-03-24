@@ -1,5 +1,6 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
+import { apiGet, apiPost } from '../../utils/api.js'
 import {
   UserCircle, CaretRight, Check, X, Camera, Pencil,
   EnvelopeSimple, Phone, MapPin, Briefcase, Globe,
@@ -247,40 +248,148 @@ function AvatarBlock({ profile, onAvatarChange }) {
 }
 
 /* ════════════════════════════════════════════════════════
-   ROOT
+   ROOT — wired to real /api/profile/me
 ════════════════════════════════════════════════════════ */
 export default function ProfilePage() {
-  useOutletContext?.()
+  const { user: ctxUser } = useOutletContext() ?? {}
   const navigate = useNavigate()
-  const [profile, setProfile]     = useState({ ...MOCK_PROFILE })
-  const [saved,   setSaved]       = useState({ ...MOCK_PROFILE })
-  const [user,    setUser]        = useState({ ...MOCK_USER })
-  const [saving,  setSaving]      = useState(false)
-  const [wasSaved, setWasSaved]   = useState(false)
-  const [editBio,  setEditBio]    = useState(false)
 
-  const dirty = JSON.stringify(profile) !== JSON.stringify(saved) ||
-                JSON.stringify(user)    !== JSON.stringify({ ...MOCK_USER })
+  /* ── state ── */
+  const [profile, setProfile]   = useState(null)
+  const [saved,   setSaved]     = useState(null)
+  const [userMeta,setUserMeta]  = useState(null)
+  const [loading, setLoading]   = useState(true)
+  const [saving,  setSaving]    = useState(false)
+  const [wasSaved,setWasSaved]  = useState(false)
+  const [editBio, setEditBio]   = useState(false)
+
+  /* ── fetch from API ── */
+  useEffect(() => {
+    apiGet('/api/profile/me')
+      .then(data => {
+        const p = data.profile || data
+        const profileData = {
+          first_name:            p.first_name            || ctxUser?.firstName || '',
+          last_name:             p.last_name             || ctxUser?.lastName  || '',
+          username:              p.username              || ctxUser?.username  || '',
+          display_name:          p.display_name          || `${p.first_name||''} ${p.last_name||''}`.trim() || '',
+          bio:                   p.bio                   || '',
+          date_of_birth:         p.date_of_birth         || '',
+          gender:                p.gender                || 'male',
+          avatar_url:            p.avatar_url            || null,
+          avatar_type:           p.avatar_type           || 'preset',
+          phone:                 p.phone                 || '',
+          phone_country:         p.phone_country         || '',
+          address_line1:         p.address_line1         || '',
+          address_line2:         p.address_line2         || '',
+          city:                  p.city                  || '',
+          state:                 p.state                 || '',
+          zip:                   p.zip                   || '',
+          country:               p.country               || '',
+          country_code:          p.country_code          || '',
+          website:               p.website               || '',
+          kyc_status:            p.kyc_status            || 'none',
+          kyc_submitted_at:      p.kyc_submitted_at      || null,
+          kyc_reviewed_at:       p.kyc_reviewed_at       || null,
+          occupation:            p.occupation            || '',
+          investment_experience: p.investment_experience || 'limited',
+          investment_goal:       p.investment_goal       || 'wealth_growth',
+        }
+        const metaData = {
+          id:                  p.user_id || ctxUser?.id || '',
+          email:               p.email                 || ctxUser?.email || '',
+          role:                p.role                  || 'user',
+          plan:                p.plan                  || ctxUser?.plan || 'starter',
+          risk_profile:        p.risk_profile          || ctxUser?.riskProfile || 'balanced',
+          is_verified:         p.is_verified ?? 1,
+          registration_step:   p.registration_step     || 'complete',
+          login_count:         p.login_count           || 0,
+          last_login_at:       p.last_login_at         || '—',
+          last_login_ip:       p.last_login_ip         || '—',
+          created_at:          p.created_at            || '—',
+          onboarding_complete: p.onboarding_complete   || 1,
+        }
+        setProfile(profileData)
+        setSaved(profileData)
+        setUserMeta(metaData)
+      })
+      .catch(() => {
+        // Graceful fallback using context user
+        const fallback = {
+          first_name: ctxUser?.firstName||'', last_name: ctxUser?.lastName||'',
+          username: ctxUser?.username||'', display_name: `${ctxUser?.firstName||''} ${ctxUser?.lastName||''}`.trim(),
+          bio:'', date_of_birth:'', gender:'male', avatar_url: ctxUser?.avatar||null,
+          avatar_type:'preset', phone:'', phone_country:'', address_line1:'', address_line2:'',
+          city:'', state:'', zip:'', country:'', country_code:'', website:'',
+          kyc_status:'none', kyc_submitted_at:null, kyc_reviewed_at:null,
+          occupation:'', investment_experience:'limited', investment_goal:'wealth_growth',
+        }
+        const fallbackMeta = {
+          id: ctxUser?.id||'', email: ctxUser?.email||'', role:'user',
+          plan: ctxUser?.plan||'starter', risk_profile: ctxUser?.riskProfile||'balanced',
+          is_verified:1, registration_step:'complete', login_count:0,
+          last_login_at:'—', last_login_ip:'—', created_at:'—', onboarding_complete:1,
+        }
+        setProfile(fallback); setSaved(fallback); setUserMeta(fallbackMeta)
+      })
+      .finally(() => setLoading(false))
+  }, [ctxUser?.id])
+
+  const dirty = profile && saved && JSON.stringify(profile) !== JSON.stringify(saved)
 
   const set  = useCallback((k, v) => setProfile(p => ({ ...p, [k]: v })), [])
-  const setU = useCallback((k, v) => setUser(u => ({ ...u, [k]: v })), [])
 
   const handleSave = async () => {
     setSaving(true)
-    await new Promise(r => setTimeout(r, 900))
-    setSaved({ ...profile })
-    setSaving(false)
-    setWasSaved(true)
-    setTimeout(() => setWasSaved(false), 2200)
+    try {
+      await apiPost('/api/profile/update', {
+        first_name:            profile.first_name,
+        last_name:             profile.last_name,
+        username:              profile.username,
+        display_name:          profile.display_name,
+        bio:                   profile.bio,
+        date_of_birth:         profile.date_of_birth || null,
+        gender:                profile.gender,
+        phone:                 profile.phone,
+        phone_country:         profile.phone_country,
+        address_line1:         profile.address_line1,
+        address_line2:         profile.address_line2,
+        city:                  profile.city,
+        state:                 profile.state,
+        zip:                   profile.zip,
+        country:               profile.country,
+        country_code:          profile.country_code,
+        website:               profile.website,
+        occupation:            profile.occupation,
+        investment_experience: profile.investment_experience,
+        investment_goal:       profile.investment_goal,
+      })
+      setSaved({ ...profile })
+      setWasSaved(true)
+      setTimeout(() => setWasSaved(false), 2200)
+    } catch (err) {
+      console.error('Profile save error:', err.message)
+    } finally {
+      setSaving(false)
+    }
   }
-  const handleDiscard = () => {
-    setProfile({ ...saved })
-    setUser({ ...MOCK_USER })
+  const handleDiscard = () => { setProfile({ ...saved }) }
+
+  /* ── loading state ── */
+  if (loading) {
+    return (
+      <div className="pp-root" style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:400 }}>
+        <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12, color:'var(--vlt-text-muted)' }}>
+          <CircleNotch size={28} weight="duotone" style={{ animation:'spin 0.8s linear infinite', opacity:0.5 }}/>
+          <span style={{ fontFamily:'Inter,sans-serif', fontSize:13 }}>Loading profile…</span>
+        </div>
+      </div>
+    )
   }
 
-  const kyc  = KYC_META[profile.kyc_status]
-  const plan = PLAN_META[user.plan]
-  const risk = RISK_META[user.risk_profile]
+  const kyc  = KYC_META[profile.kyc_status] || KYC_META.none
+  const plan = PLAN_META[userMeta?.plan] || PLAN_META.starter
+  const risk = RISK_META[userMeta?.risk_profile] || RISK_META.balanced
 
   return (
     <div className="pp-root">
@@ -312,12 +421,12 @@ export default function ProfilePage() {
 
       {/* ─── ACCOUNT STATS ─── */}
       <div className="pp-stats-row">
-        <StatCard icon={ChartLineUp}  color="#00FFD1" label="Total Logins"   value={user.login_count}  sub="All time" />
-        <StatCard icon={CurrencyDollar}        color="#FFB800" label="Plan"           value={plan.label}        sub={`Active since ${MOCK_USER.created_at}`} />
+        <StatCard icon={ChartLineUp}  color="#00FFD1" label="Total Logins"   value={userMeta?.login_count ?? 0}  sub="All time" />
+        <StatCard icon={CurrencyDollar}        color="#FFB800" label="Plan"           value={plan.label}        sub={`Active since ${String(userMeta?.created_at||'—').split('T')[0]}`} />
         <StatCard icon={ShieldCheck}  color={kyc.color} label="KYC Status"  value={kyc.label}         sub={profile.kyc_reviewed_at ? `Verified ${profile.kyc_reviewed_at}` : '—'} />
         <StatCard icon={TrendUp}      color={risk.color} label="Risk Profile" value={risk.label}       sub="Investment style" />
-        <StatCard icon={Lock}         color="#9945FF" label="Last Login"     value={user.last_login_at.split(' ·')[0]} sub={user.last_login_ip} />
-        <StatCard icon={Lightning}      color="#1A56FF" label="Account Role"   value={user.role.charAt(0).toUpperCase()+user.role.slice(1)} sub={`Step: ${user.registration_step}`} />
+        <StatCard icon={Lock}         color="#9945FF" label="Last Login"     value={String(userMeta?.last_login_at||'—').split('T')[0]} sub={userMeta?.last_login_ip||'—'} />
+        <StatCard icon={Lightning}      color="#1A56FF" label="Account Role"   value={String(userMeta?.role||'user').charAt(0).toUpperCase()+String(userMeta?.role||'user').slice(1)} sub={`Step: ${userMeta?.registration_step||'complete'}`} />
       </div>
 
       {/* ─── MAIN GRID ─── */}
@@ -362,15 +471,15 @@ export default function ProfilePage() {
             <Section title="Account Information" icon={IdentificationCard} iconColor="#1A56FF">
               <div className="pp-info-grid">
                 {[
-                  { l:'User ID',         v:MOCK_USER.id.slice(0,18)+'…'         },
-                  { l:'Email Address',   v:MOCK_USER.email                       },
-                  { l:'Email Verified',  v:MOCK_USER.is_verified ? '✓ Verified' : '✗ Not verified',
-                    c: MOCK_USER.is_verified ? '#00C076' : '#FF3D57'             },
-                  { l:'Account Role',    v:MOCK_USER.role                        },
-                  { l:'Onboarding',      v:MOCK_USER.onboarding_complete ? 'Complete' : 'Incomplete' },
-                  { l:'Member Since',    v:MOCK_USER.created_at                  },
-                  { l:'Last Login',      v:MOCK_USER.last_login_at               },
-                  { l:'Login IP',        v:MOCK_USER.last_login_ip               },
+                  { l:'User ID',         v: String(userMeta?.id||'—').slice(0,18)+'…'         },
+                  { l:'Email Address',   v: userMeta?.email || '—'                             },
+                  { l:'Email Verified',  v: (userMeta?.is_verified) ? '✓ Verified' : '✗ Not verified',
+                    c: (userMeta?.is_verified) ? '#00C076' : '#FF3D57'                          },
+                  { l:'Account Role',    v: userMeta?.role || 'user'                           },
+                  { l:'Onboarding',      v: userMeta?.onboarding_complete ? 'Complete' : 'Incomplete' },
+                  { l:'Member Since',    v: String(userMeta?.created_at||'—').split('T')[0]    },
+                  { l:'Last Login',      v: String(userMeta?.last_login_at||'—').split('T')[0] },
+                  { l:'Login IP',        v: userMeta?.last_login_ip || '—'                     },
                 ].map(r => (
                   <div key={r.l} className="pp-info-row">
                     <span className="pp-info-l">{r.l}</span>
@@ -436,7 +545,7 @@ export default function ProfilePage() {
                 <Field label="Email Address" span>
                   <div className="pp-input-ico-wrap">
                     <EnvelopeSimple size={12} className="pp-input-ico" />
-                    <input className="pp-input ico" value={MOCK_USER.email} readOnly />
+                    <input className="pp-input ico" value={userMeta?.email || ''} readOnly />
                     <span className="pp-input-locked"><Lock size={9} weight="fill" />Managed in Security</span>
                   </div>
                 </Field>
@@ -514,14 +623,15 @@ export default function ProfilePage() {
                   <div className="pp-plan-pills">
                     {PLAN_OPTS.map(p => {
                       const m = PLAN_META[p]
+                      const isActive = (userMeta?.plan || 'starter') === p
                       return (
                         <button key={p}
-                          className={`pp-plan-pill ${user.plan === p ? 'on' : ''}`}
-                          style={user.plan === p ? { color:m.color, borderColor:`${m.color}55`, background:`${m.color}12` } : {}}
-                          onClick={() => setU('plan', p)}>
-                          <Star size={9} weight={user.plan === p ? 'fill' : 'regular'} />
+                          className={`pp-plan-pill ${isActive ? 'on' : ''}`}
+                          style={isActive ? { color:m.color, borderColor:`${m.color}55`, background:`${m.color}12` } : {}}
+                          onClick={() => setUserMeta(u => ({...u, plan: p}))}>
+                          <Star size={9} weight={isActive ? 'fill' : 'regular'} />
                           {m.label}
-                          {user.plan === p && <Check size={8} weight="bold" style={{ marginLeft:'auto' }} />}
+                          {isActive && <Check size={8} weight="bold" style={{ marginLeft:'auto' }} />}
                         </button>
                       )
                     })}
@@ -533,14 +643,15 @@ export default function ProfilePage() {
                   <div className="pp-risk-pills">
                     {RISK_OPTS.map(r => {
                       const m = RISK_META[r]
+                      const isActive = (userMeta?.risk_profile || 'balanced') === r
                       return (
                         <button key={r}
-                          className={`pp-risk-pill ${user.risk_profile === r ? 'on' : ''}`}
-                          style={user.risk_profile === r ? { color:m.color, borderColor:`${m.color}55`, background:`${m.color}12` } : {}}
-                          onClick={() => setU('risk_profile', r)}>
+                          className={`pp-risk-pill ${isActive ? 'on' : ''}`}
+                          style={isActive ? { color:m.color, borderColor:`${m.color}55`, background:`${m.color}12` } : {}}
+                          onClick={() => setUserMeta(u => ({...u, risk_profile: r}))}>
                           <span className="pp-risk-ico">{m.icon}</span>
                           {m.label}
-                          {user.risk_profile === r && <Check size={8} weight="bold" style={{ marginLeft:'auto' }} />}
+                          {isActive && <Check size={8} weight="bold" style={{ marginLeft:'auto' }} />}
                         </button>
                       )
                     })}

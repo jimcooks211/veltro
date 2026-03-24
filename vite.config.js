@@ -3,8 +3,13 @@ import tailwindcss from "@tailwindcss/vite"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 import { VitePWA } from "vite-plugin-pwa"
+import { fileURLToPath } from "url"
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
+  // Keep cache inside the project to avoid Windows path-with-spaces rename bug
+  cacheDir: "C:/ViteCache/veltro",
   plugins: [
     react(),
     tailwindcss(),
@@ -65,6 +70,12 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     chunkSizeWarningLimit: 2000,
@@ -85,3 +96,4 @@ export default defineConfig({
     },
   },
 })
+

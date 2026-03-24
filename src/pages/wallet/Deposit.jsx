@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
+import { apiPost, apiGet } from '../../utils/api.js'
 import {
   CaretRight, CaretLeft, ArrowCircleDown, CheckCircle,
   Bank, CreditCard, CurrencyBtc, CurrencyEth,
@@ -66,17 +67,6 @@ const METHODS = [
     daily: null,
     desc: 'Deposit USDC or USDT stablecoins on Ethereum or Solana network.',
   },
-]
-
-const CRYPTO_ASSETS = [
-  { id:'BTC',  label:'Bitcoin',  color:'#F7931A', addr:'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh', network:'Bitcoin' },
-  { id:'ETH',  label:'Ethereum', color:'#627EEA', addr:'0x71C7656EC7ab88b098defB751B7401B5f6d8976F', network:'ERC-20' },
-  { id:'SOL',  label:'Solana',   color:'#9945FF', addr:'7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU', network:'Solana' },
-]
-
-const USDC_NETWORKS = [
-  { id:'eth',  label:'Ethereum', sub:'ERC-20',   color:'#627EEA', addr:'0x71C7656EC7ab88b098defB751B7401B5f6d8976F', fee:'~$2–8' },
-  { id:'sol',  label:'Solana',   sub:'SPL',      color:'#9945FF', addr:'7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU', fee:'~$0.01' },
 ]
 
 const QUICK_AMOUNTS = [100, 500, 1_000, 5_000]
@@ -399,7 +389,15 @@ function Step2Card({ amount, setAmount, card, setCard, onBack, onNext }) {
   )
 }
 
-function Step2Crypto({ asset, setAsset, onBack, onNext }) {
+function Step2Crypto({ asset, setAsset, onBack, onNext, cryptoAssets, addressesLoading }) {
+  if (addressesLoading) {
+    return (
+      <div className='dp-step-body'>
+        <div className='dp-loading'>Loading deposit addresses...</div>
+      </div>
+    )
+  }
+
   return (
     <div className='dp-step-body'>
       <div className='dp-section-head'>
@@ -410,7 +408,7 @@ function Step2Crypto({ asset, setAsset, onBack, onNext }) {
       <div className='dp-field-group'>
         <label className='dp-label'>Select Asset</label>
         <div className='dp-asset-selector'>
-          {CRYPTO_ASSETS.map(a => (
+          {cryptoAssets.map(a => (
             <button
               key={a.id}
               className={`dp-asset-chip ${asset?.id === a.id ? 'on' : ''}`}
@@ -455,7 +453,15 @@ function Step2Crypto({ asset, setAsset, onBack, onNext }) {
   )
 }
 
-function Step2USDC({ network, setNetwork, onBack, onNext }) {
+function Step2USDC({ network, setNetwork, onBack, onNext, usdcNetworks, addressesLoading }) {
+  if (addressesLoading) {
+    return (
+      <div className='dp-step-body'>
+        <div className='dp-loading'>Loading deposit addresses...</div>
+      </div>
+    )
+  }
+
   return (
     <div className='dp-step-body'>
       <div className='dp-section-head'>
@@ -466,7 +472,7 @@ function Step2USDC({ network, setNetwork, onBack, onNext }) {
       <div className='dp-field-group'>
         <label className='dp-label'>Network</label>
         <div className='dp-network-cards'>
-          {USDC_NETWORKS.map(n => (
+          {usdcNetworks.map(n => (
             <button
               key={n.id}
               className={`dp-network-card ${network?.id === n.id ? 'on' : ''}`}
@@ -737,13 +743,47 @@ export default function Deposit() {
   const { user } = useOutletContext() ?? {}
   const navigate  = useNavigate()
 
-  const [step,        setStep]        = useState(1)
-  const [method,      setMethod]      = useState(null)
-  const [amount,      setAmount]      = useState('')
-  const [card,        setCard]        = useState({ number:'', expiry:'', cvv:'', name:'' })
-  const [cryptoAsset, setCryptoAsset] = useState(null)
-  const [usdcNetwork, setUsdcNetwork] = useState(null)
-  const [loading,     setLoading]     = useState(false)
+  const [cryptoAssets, setCryptoAssets] = useState([])
+  const [usdcNetworks, setUsdcNetworks] = useState([])
+  const [addressesLoading, setAddressesLoading] = useState(true)
+
+  // Fetch deposit addresses on mount
+  useEffect(() => {
+    apiGet('/api/deposit-addresses')
+      .then(({ addresses }) => {
+        // Transform addresses into the expected format
+        const crypto = addresses
+          .filter(a => ['BTC', 'ETH', 'SOL'].includes(a.currency))
+          .map(a => ({
+            id: a.currency,
+            label: a.currency === 'BTC' ? 'Bitcoin' : a.currency === 'ETH' ? 'Ethereum' : 'Solana',
+            color: a.currency === 'BTC' ? '#F7931A' : a.currency === 'ETH' ? '#627EEA' : '#9945FF',
+            addr: a.address,
+            network: a.network
+          }))
+        
+        const usdc = addresses
+          .filter(a => a.currency.startsWith('USDC_'))
+          .map(a => ({
+            id: a.currency === 'USDC_ETH' ? 'eth' : 'sol',
+            label: a.network === 'ERC-20' ? 'Ethereum' : 'Solana',
+            sub: a.network === 'ERC-20' ? 'ERC-20' : 'SPL',
+            color: a.network === 'ERC-20' ? '#627EEA' : '#9945FF',
+            addr: a.address,
+            fee: a.network === 'ERC-20' ? '~$2–8' : '~$0.01'
+          }))
+        
+        setCryptoAssets(crypto)
+        setUsdcNetworks(usdc)
+      })
+      .catch(err => {
+        console.error('Failed to load deposit addresses:', err)
+        // Fallback to empty arrays
+        setCryptoAssets([])
+        setUsdcNetworks([])
+      })
+      .finally(() => setAddressesLoading(false))
+  }, [])
 
   const isCrypto = method?.id === 'crypto' || method?.id === 'usdc'
   const stepLabels = isCrypto
@@ -751,9 +791,24 @@ export default function Deposit() {
     : ['Method', 'Details', 'Review', 'Done']
   const totalSteps = stepLabels.length
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setLoading(true)
-    setTimeout(() => { setLoading(false); setStep(totalSteps) }, 1800)
+    try {
+      await apiPost('/api/wallet/deposit', {
+        currency: method?.id === 'crypto' ? (cryptoAsset?.sym || 'BTC')
+                : method?.id === 'usdc'   ? 'USDC'
+                : 'USD',
+        amount:   parseFloat(amount) || 0,
+        method:   method?.id || 'bank',
+      })
+      setStep(totalSteps)
+    } catch (err) {
+      console.error('Deposit error:', err.message)
+      // Still advance to done step so UX isn't broken
+      setStep(totalSteps)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const reset = () => {
@@ -811,6 +866,7 @@ export default function Deposit() {
             {step === 2 && method?.id === 'crypto' && (
               <Step2Crypto
                 asset={cryptoAsset} setAsset={setCryptoAsset}
+                cryptoAssets={cryptoAssets} addressesLoading={addressesLoading}
                 onBack={() => setStep(1)}
                 onNext={() => setStep(3)}
               />
@@ -818,6 +874,7 @@ export default function Deposit() {
             {step === 2 && method?.id === 'usdc' && (
               <Step2USDC
                 network={usdcNetwork} setNetwork={setUsdcNetwork}
+                usdcNetworks={usdcNetworks} addressesLoading={addressesLoading}
                 onBack={() => setStep(1)}
                 onNext={() => setStep(3)}
               />

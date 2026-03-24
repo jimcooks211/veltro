@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
+import { apiGet, apiPatch } from '../../utils/api.js'
 import {
   Bell, CaretRight, Check, X, Info,
   ShieldCheck, ArrowCircleDown, ArrowCircleUp, Swap,
@@ -141,6 +142,29 @@ export default function Notifications() {
   const [qTo,     setQTo]     = useState('08:00')
   const [soundOn, setSoundOn] = useState(true)
   const [volume,  setVolume]  = useState(65)
+  const [loading, setLoading] = useState(true)
+
+  /* ── load from API on mount ── */
+  useEffect(() => {
+    apiGet('/api/notifications/preferences')
+      .then(({ preferences: p }) => {
+        const m = {}
+        CATS.forEach(c => {
+          m[c.id] = {}
+          CHANNELS.forEach(ch => { m[c.id][ch.id] = !!p[`${c.id}_${ch.id}`] })
+        })
+        setMatrix(m)
+        setSaved(m)
+        setFreq(p.freq          || 'instant')
+        setQuietOn(!!p.quiet_hours_on)
+        setQFrom(p.quiet_from   || '22:00')
+        setQTo(p.quiet_to       || '08:00')
+        setSoundOn(!!p.sound_on)
+        setVolume(p.volume      ?? 65)
+      })
+      .catch(() => { /* keep defaults on error */ })
+      .finally(() => setLoading(false))
+  }, [])
 
   const dirty = JSON.stringify(matrix) !== JSON.stringify(saved)
 
@@ -156,11 +180,22 @@ export default function Notifications() {
     setMatrix(m)
   }
 
-  const save    = async () => { await new Promise(r => setTimeout(r, 700)); setSaved(matrix) }
+  /* ── flatten matrix + delivery prefs into API payload ── */
+  const buildPayload = () => {
+    const flat = {}
+    CATS.forEach(c => CHANNELS.forEach(ch => { flat[`${c.id}_${ch.id}`] = matrix[c.id][ch.id] }))
+    return { ...flat, freq, quiet_hours_on: quietOn, quiet_from: qFrom, quiet_to: qTo, sound_on: soundOn, volume }
+  }
+
+  const save = async () => {
+    await apiPatch('/api/notifications/preferences', buildPayload())
+    setSaved(matrix)
+  }
   const discard = () => setMatrix(saved)
 
   return (
     <div className="nt-root">
+      {loading && <div className="nt-loading">Loading preferences…</div>}
 
       {/* header */}
       <div className="nt-page-head">

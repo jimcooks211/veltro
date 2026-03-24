@@ -4,6 +4,8 @@ import bcrypt            from 'bcryptjs'
 import jwt               from 'jsonwebtoken'
 import crypto            from 'crypto'
 import { db, sendEmail } from '../config.js'
+import { requireAuth }   from '../middleware/auth.js'
+import { createNotification, parseUA, geoLookup } from '../services/notify.js'
 
 const router = Router()
 
@@ -243,6 +245,15 @@ router.post('/register', async (req, res) => {
     )
     await db.execute(`INSERT INTO wallets (user_id) VALUES (?)`, [userId])
 
+    // signup notification
+    createNotification({
+      userId,
+      type: 'signup',
+      title: 'Welcome to Veltro!',
+      message: `Your account has been created. Verify your email to get started.`,
+      meta: { email: email.toLowerCase() },
+    })
+
     try {
       await withEmailTimeout(sendVerificationEmail(email, code))
     } catch (mailErr) {
@@ -304,15 +315,29 @@ router.post('/verify-email', async (req, res) => {
       ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
       : new Date(Date.now() +  24 * 60 * 60 * 1000)
 
+    // resolve geo + ua in parallel (non-blocking)
+    const [geo, uaParsed] = await Promise.all([geoLookup(ip), Promise.resolve(parseUA(req.headers['user-agent'] || ''))])
+
     await db.execute(
-      `INSERT INTO sessions (user_id, refresh_token, ip_address, user_agent, expires_at)
-       VALUES (?, ?, ?, ?, ?)`,
-      [user.id, refreshToken, ip, req.headers['user-agent'] || null, expiresAt]
+      `INSERT INTO sessions (user_id, refresh_token, ip_address, user_agent, expires_at, city, country, country_code, browser, os, device_type)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [user.id, refreshToken, ip, req.headers['user-agent'] || null, expiresAt,
+       geo.city, geo.country, geo.country_code, uaParsed.browser, uaParsed.os, uaParsed.device_type]
     )
     await db.execute(
       `INSERT INTO security_log (user_id, event, ip_address) VALUES (?, 'login_success', ?)`,
       [user.id, ip]
     )
+
+    // login notification
+    const location = [geo.city, geo.country].filter(Boolean).join(', ') || ip
+    createNotification({
+      userId: user.id,
+      type: 'login',
+      title: 'New login to your account',
+      message: `Signed in from ${uaParsed.browser} on ${uaParsed.os} · ${location}`,
+      meta: { ip, browser: uaParsed.browser, os: uaParsed.os, device: uaParsed.device_type, city: geo.city, country: geo.country },
+    })
 
     const [[profile]] = await db.execute(
       `SELECT first_name, last_name, username, gender, date_of_birth,
@@ -493,6 +518,101 @@ router.post('/checkpoint', async (req, res) => {
     if (!page || typeof page !== 'string') return
     await db.execute(`UPDATE users SET last_page=? WHERE id=?`, [page.slice(0, 200), userId])
   } catch { /* silent */ }
+})
+
+/* ── POST /api/auth/change-password ─────────────────────────────
+   Authenticated password change — requires current password.
+──────────────────────────────────────────────────────────────── */
+router.post('/change-password', requireAuth, async (req, res) => {
+  try {
+    const userId = req.user?.sub || req.userId
+    const { currentPassword, newPassword } = req.body
+
+    if (!currentPassword || !newPassword)
+      return res.status(400).json({ message: 'Current and new password are required.' })
+    if (newPassword.length < 8)
+      return res.status(400).json({ message: 'New password must be at least 8 characters.' })
+
+    const [[user]] = await db.execute(
+      'SELECT password_hash FROM users WHERE id = ?', [userId]
+    )
+    if (!user) return res.status(404).json({ message: 'User not found.' })
+
+    const bcrypt  = await import('bcryptjs')
+    const valid   = await bcrypt.default.compare(currentPassword, user.password_hash)
+    if (!valid) return res.status(400).json({ message: 'Current password is incorrect.' })
+
+    const hashed  = await bcrypt.default.hash(newPassword, 12)
+    await db.execute(
+      'UPDATE users SET password_hash=?, updated_at=NOW() WHERE id=?',
+      [hashed, userId]
+    )
+
+    return res.json({ message: 'Password updated successfully.' })
+  } catch (err) {
+    console.error('change-password error:', err.message)
+    return res.status(500).json({ message: 'Failed to update password.' })
+  }
+})
+
+/* ── GET /api/auth/sessions ──────────────────────────────────────
+   Returns all active (non-revoked, non-expired) sessions for the
+   authenticated user so the Security page can display real devices.
+──────────────────────────────────────────────────────────────── */
+router.get('/sessions', requireAuth, async (req, res) => {
+  try {
+    const userId = req.user?.sub || req.userId
+    const [sessions] = await db.execute(
+      `SELECT id, ip_address, user_agent, created_at, expires_at
+       FROM sessions
+       WHERE user_id = ? AND is_revoked = 0 AND expires_at > NOW()
+       ORDER BY created_at DESC
+       LIMIT 20`,
+      [userId]
+    )
+    return res.json({ sessions })
+  } catch (err) {
+    console.error('GET sessions error:', err.message)
+    return res.status(500).json({ message: 'Failed to load sessions.' })
+  }
+})
+
+/* ── DELETE /api/auth/sessions/:id ───────────────────────────────
+   Revoke a specific session (sign out that device).
+──────────────────────────────────────────────────────────────── */
+router.delete('/sessions/:id', requireAuth, async (req, res) => {
+  try {
+    const userId    = req.user?.sub || req.userId
+    const sessionId = req.params.id
+    const [result]  = await db.execute(
+      `UPDATE sessions SET is_revoked = 1 WHERE id = ? AND user_id = ?`,
+      [sessionId, userId]
+    )
+    if (result.affectedRows === 0)
+      return res.status(404).json({ message: 'Session not found.' })
+    return res.json({ message: 'Session revoked.' })
+  } catch (err) {
+    console.error('DELETE session error:', err.message)
+    return res.status(500).json({ message: 'Failed to revoke session.' })
+  }
+})
+
+/* ── DELETE /api/auth/sessions (all others) ──────────────────────
+   Revoke all sessions; optionally keep the current refresh token.
+──────────────────────────────────────────────────────────────── */
+router.delete('/sessions', requireAuth, async (req, res) => {
+  try {
+    const userId       = req.user?.sub || req.userId
+    const { keepToken } = req.body
+    let query  = `UPDATE sessions SET is_revoked = 1 WHERE user_id = ?`
+    const params = [userId]
+    if (keepToken) { query += ` AND refresh_token != ?`; params.push(keepToken) }
+    await db.execute(query, params)
+    return res.json({ message: 'All other sessions revoked.' })
+  } catch (err) {
+    console.error('DELETE all sessions error:', err.message)
+    return res.status(500).json({ message: 'Failed to revoke sessions.' })
+  }
 })
 
 export default router

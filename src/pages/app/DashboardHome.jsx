@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
+import { apiGet } from '../../utils/api.js'
 import {
   ComposedChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip as RTip, Legend, ResponsiveContainer,
@@ -705,15 +706,26 @@ export default function DashboardHome() {
   const { user, isDark } = useOutletContext() ?? {}
   const fn = user?.firstName || 'Investor'
 
-  const INVESTED      = 21200
-  const BASE_PORT_VAL = 25180
-
-  const [prices, setPrices]     = useState({ ...BASE_PRICES })
-  const [flash,  setFlash]      = useState({})
-  const [portVal, setPortVal]   = useState(BASE_PORT_VAL)
+  const [prices, setPrices]       = useState({ ...BASE_PRICES })
+  const [flash,  setFlash]        = useState({})
+  const [portVal, setPortVal]     = useState(0)
+  const [invested, setInvested]   = useState(0)
   const [portFlash, setPortFlash] = useState(null)
-  const [candles, setCandles]   = useState(BASE_CANDLES)
-  const [perfTab, setPerfTab]   = useState('All')
+  const [candles, setCandles]     = useState(BASE_CANDLES)
+  const [perfTab, setPerfTab]     = useState('All')
+  const [liveSummary, setLiveSummary] = useState(null)
+
+  // All figures come from DB — zero for new users
+  useEffect(() => {
+    apiGet('/api/portfolio/summary')
+      .then(data => {
+        setLiveSummary(data)
+        const totalVal = Number(data.cash_balance || 0) + Number(data.total_invested || 0)
+        setInvested(Number(data.total_invested || 0))
+        setPortVal(totalVal)
+      })
+      .catch(() => {})
+  }, [])
 
   const canvasRef = useRef(null)
   const card0Ref  = useRef(null)
@@ -737,16 +749,17 @@ export default function DashboardHome() {
           last.c = next.AAPL; last.h = Math.max(last.h, next.AAPL); last.l = Math.min(last.l, next.AAPL)
           arr[arr.length - 1] = last; return arr
         })
-        /* Update portfolio value */
+        /* Update portfolio value — only if user has holdings */
         const aaplDelta = (next.AAPL - prev.AAPL) / prev.AAPL
         setPortVal(v => {
+          if (v === 0) return 0  // new user, no holdings
           const newV = v * (1 + aaplDelta * 1.4)
           const dir  = newV > v ? 'up' : 'dn'
           if (Math.abs(aaplDelta) > 0.0004) {
             setPortFlash(dir); setTimeout(() => setPortFlash(null), 800)
             setTimeout(() => spawn(card0Ref.current, dir === 'up'), 40)
           }
-          return Math.max(20000, newV)
+          return Math.max(0, newV)
         })
         if (Object.keys(newFlash).length) { setFlash(newFlash); setTimeout(() => setFlash({}), 700) }
         return next
@@ -755,11 +768,14 @@ export default function DashboardHome() {
     const id = setInterval(poll, 2800); return () => clearInterval(id)
   }, [spawn])
 
-  const dayPnl  = portVal - BASE_PORT_VAL
-  const dayPct  = (dayPnl / BASE_PORT_VAL) * 100
-  const totPct  = ((portVal - INVESTED) / INVESTED) * 100
+  const liveInvested   = liveSummary ? Number(liveSummary.total_invested   || 0) : invested
+  const liveCash       = liveSummary ? Number(liveSummary.cash_balance      || 0) : 0
+  const liveOpenPos    = liveSummary ? Number(liveSummary.open_positions    || 0) : 0
+  const liveRealisedPnl = liveSummary ? Number(liveSummary.total_realised_pnl || 0) : 0
+  const dayPnl  = portVal - liveInvested
+  const dayPct  = liveInvested > 0 ? (dayPnl / liveInvested) * 100 : 0
+  const totPct  = liveInvested > 0 ? ((portVal - liveInvested) / liveInvested) * 100 : 0
   const portFmt = $K(portVal)
-  const dayFmt  = `${dayPnl >= 0 ? '+' : ''}${$K(Math.abs(dayPnl))}`
   const aaplLive = prices.AAPL
   const aaplPct  = ((aaplLive - BASE_PRICES.AAPL) / BASE_PRICES.AAPL) * 100
 
@@ -786,12 +802,12 @@ export default function DashboardHome() {
       {/* Stat cards */}
       <div className='dh-stats'>
         <StatCard cardRef={card0Ref} label='Portfolio Value' value={portFmt} pct={totPct}
-          sub={`vs. ${$K(INVESTED)} invested`} Icon={Wallet} up={portVal >= INVESTED} delay={0} flashDir={portFlash}/>
-        <StatCard label='Open Positions' value='8' pct={14.3} sub='vs. 7 last week'
-          Icon={Briefcase} up delay={55}/>
-        <StatCard label="Today's P&L" value={dayFmt} pct={Math.abs(dayPct)} sub='Unrealised since open'
-          Icon={ChartLineUp} up={dayPnl >= 0} delay={110} flashDir={portFlash}/>
-        <StatCard label='Win Rate' value='73.2%' pct={8.5} sub='vs. 67.4% last period'
+          sub={liveInvested > 0 ? `vs. ${$K(liveInvested)} invested` : 'No holdings yet'} Icon={Wallet} up={portVal >= liveInvested} delay={0} flashDir={portFlash}/>
+        <StatCard label='Open Positions' value={String(liveOpenPos)} pct={0} sub='active holdings'
+          Icon={Briefcase} up={liveOpenPos > 0} delay={55}/>
+        <StatCard label="Today's P&L" value={`${liveRealisedPnl >= 0 ? '+' : ''}${$K(Math.abs(liveRealisedPnl))}`} pct={Math.abs(dayPct)} sub='Realised P&L'
+          Icon={ChartLineUp} up={liveRealisedPnl >= 0} delay={110} flashDir={portFlash}/>
+        <StatCard label='Win Rate' value={liveOpenPos > 0 ? '—' : '—'} pct={0} sub='no trades yet'
           Icon={Target} up delay={165}/>
       </div>
 
@@ -809,7 +825,7 @@ export default function DashboardHome() {
                 <span key={portFmt} className={`dh-cval${portFlash ? ` flash-${portFlash}` : ''}`}>{portFmt}</span>
                 <span className={`dh-cpct ${totPct >= 0 ? 'up' : 'dn'}`}>{pf(totPct)}</span>
               </div>
-              <p className='dh-clab'>Total portfolio value · all time</p>
+              <p className='dh-clab'>{liveInvested > 0 ? 'Total portfolio value · all time' : 'Deposit funds to begin'}</p>
             </div>
             <div className='dh-tabs'>
               {['1Y','3Y','All'].map(t => (

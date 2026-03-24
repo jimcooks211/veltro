@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
+import { apiGet, apiPost, apiDelete } from '../../utils/api.js'
 import {
   ShieldCheck, CaretRight, Check, X, Eye, EyeSlash,
   Fingerprint, Shield, Bell, Globe, Clock, Key,
@@ -120,13 +121,6 @@ function StrengthBar({ pw }) {
   )
 }
 
-/* ── mock data ──────────────────────────────────────────── */
-const SESSIONS_MOCK = [
-  { id:1, device:'Chrome 122', os:'macOS Sonoma',  ip:'192.168.1.100', loc:'New York, US', Icon:Desktop, last:'Now',    cur:true  },
-  { id:2, device:'Safari',     os:'iPhone 15 Pro', ip:'172.20.10.4',   loc:'New York, US', Icon:Phone,   last:'3h ago', cur:false },
-  { id:3, device:'Firefox 123',os:'Windows 11',    ip:'203.45.89.12',  loc:'London, UK',   Icon:Desktop, last:'Mar 7',  cur:false },
-]
-
 /* ── main ───────────────────────────────────────────────── */
 export default function Security() {
   useOutletContext?.()
@@ -134,7 +128,8 @@ export default function Security() {
   const [saved, setSaved] = useState(sec)
   const [pw, setPw]       = useState({ cur:'', next:'', conf:'' })
   const [showPw, setShowPw] = useState({ cur:false, next:false, conf:false })
-  const [sessions, setSessions] = useState(SESSIONS_MOCK)
+  const [sessions, setSessions] = useState([])
+  const [sessLoading, setSessLoading] = useState(true)
   const [keys, setKeys]   = useState([
     { id:1, name:'Trading Bot', created:'Jan 15', scopes:['read','trade'], preview:'sk-vlt-••••••1f3a' },
     { id:2, name:'Analytics',   created:'Feb 2',  scopes:['read'],         preview:'sk-vlt-••••••9c2e' },
@@ -143,6 +138,53 @@ export default function Security() {
   const [newKeyName, setNewKeyName] = useState('')
   const [revKey,  setRevKey]  = useState(null)
   const [copied,  setCopied]  = useState(false)
+
+  /* ── load real sessions ── */
+  useEffect(() => {
+    apiGet('/api/auth/sessions')
+      .then(({ sessions: raw }) => {
+        const parsed = (raw || []).map(s => {
+          const ua = s.user_agent || ''
+          let browser = s.browser || 'Unknown Browser'
+          let os      = s.os      || 'Unknown OS'
+          let DeviceIcon = Desktop
+          if (s.device_type === 'mobile')  DeviceIcon = Phone
+          else if (s.device_type === 'tablet') DeviceIcon = Phone
+          const loc = [s.city, s.country].filter(Boolean).join(', ') || s.ip_address || 'Unknown'
+          const when = formatRelative(s.created_at)
+          return { id: s.id, device: browser, os, ip: s.ip_address || '—', loc, Icon: DeviceIcon, last: when, cur: false }
+        })
+        // Mark the newest session as "current" (first in list, ordered by created_at DESC)
+        if (parsed.length) parsed[0].cur = true
+        setSessions(parsed)
+      })
+      .catch(() => setSessions([]))
+      .finally(() => setSessLoading(false))
+  }, [])
+
+  const formatRelative = (dateStr) => {
+    if (!dateStr) return 'Unknown'
+    const diff = Date.now() - new Date(dateStr).getTime()
+    if (diff < 60000)   return 'Just now'
+    if (diff < 3600000) return `${Math.floor(diff/60000)}m ago`
+    if (diff < 86400000) return `${Math.floor(diff/3600000)}h ago`
+    return new Date(dateStr).toLocaleDateString('en-US', { month:'short', day:'numeric' })
+  }
+
+  const revokeSession = async (id) => {
+    try {
+      await apiDelete(`/api/auth/sessions/${id}`)
+      setSessions(ss => ss.filter(x => x.id !== id))
+    } catch (err) { console.error('Revoke error:', err.message) }
+  }
+
+  const revokeAll = async () => {
+    try {
+      const rt = localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken')
+      await apiDelete('/api/auth/sessions', rt ? { keepToken: rt } : undefined)
+      setSessions(ss => ss.filter(x => x.cur))
+    } catch (err) { console.error('Revoke all error:', err.message) }
+  }
 
   const pwScore = [/[A-Z]/.test(pw.next), /[0-9]/.test(pw.next), /[^A-Za-z0-9]/.test(pw.next), pw.next.length >= 8].filter(Boolean).length
   const secScore = SEC_FACTORS.reduce((s, f) => s + (f.id === 'pw' ? pwScore >= 4 ? f.pts : 0 : sec[f.key] ? f.pts : 0), 0)
@@ -158,7 +200,19 @@ export default function Security() {
     navigator.clipboard?.writeText(revKey).catch(()=>{})
     setCopied(true); setTimeout(() => setCopied(false), 2000)
   }
-  const save    = async () => { await new Promise(r => setTimeout(r, 700)); setSaved(sec) }
+  const save    = async () => {
+    // Save security toggles — extend when 2FA backend is ready
+    setSaved(sec)
+  }
+  const changePassword = async () => {
+    if (!pw.cur || !pw.next || pw.next !== pw.conf) return
+    try {
+      await apiPost('/api/auth/change-password', { currentPassword: pw.cur, newPassword: pw.next })
+      setPw({ cur:'', next:'', conf:'' })
+    } catch (err) {
+      console.error('Password change error:', err.message)
+    }
+  }
   const discard = () => setSec(saved)
 
   return (
@@ -246,6 +300,10 @@ export default function Security() {
       {/* Sessions */}
       <Section title="Active sessions">
         <div className="sc-sessions">
+          {sessLoading && <div className="sc-sess-loading">Loading sessions…</div>}
+          {!sessLoading && sessions.length === 0 && (
+            <div className="sc-sess-loading">No active sessions found.</div>
+          )}
           {sessions.map(s => (
             <div key={s.id} className={`sc-session ${s.cur?'cur':''}`}>
               <div className="sc-sess-ico"><s.Icon size={14} weight="duotone"/></div>
@@ -257,14 +315,14 @@ export default function Security() {
                 <div className="sc-sess-meta">{s.ip} · {s.loc} · {s.last}</div>
               </div>
               {!s.cur && (
-                <button className="sc-revoke" onClick={() => setSessions(ss => ss.filter(x => x.id !== s.id))}>
+                <button className="sc-revoke" onClick={() => revokeSession(s.id)}>
                   <X size={10} weight="bold"/>Revoke
                 </button>
               )}
             </div>
           ))}
         </div>
-        <button className="sc-outline-btn">
+        <button className="sc-outline-btn" onClick={revokeAll}>
           <Prohibit size={12} weight="bold"/>Sign out all other sessions
         </button>
       </Section>

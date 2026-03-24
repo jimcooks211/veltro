@@ -1,6 +1,6 @@
 // src/routes/analytics.js
 import { Router } from 'express'
-import { db }     from '../index.js'
+import { db }     from '../config.js'
 import crypto     from 'crypto'
 
 const router = Router()

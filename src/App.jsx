@@ -9,15 +9,15 @@ import Privacy        from './pages/legal/Privacy'
 import RiskDisclosure from './pages/legal/RiskDisclosure'
 
 /* ── Auth ── */
-import Onboarding     from './pages/auth/Onboarding'
-import ResetPassword  from './pages/auth/ResetPassword'
-import CreateProfile  from './pages/auth/Profile'
-import Onboard        from './pages/auth/Onboard'
+import Onboarding    from './pages/auth/Onboarding'
+import ResetPassword from './pages/auth/ResetPassword'
+import CreateProfile from './pages/auth/Profile'
+import Onboard       from './pages/auth/Onboard'
 
 /* ── Dashboard shell ── */
 import Dashboard from './pages/app/Dashboard'
 
-/* ── Dashboard child pages (render inside Outlet) ── */
+/* ── Dashboard child pages ── */
 import DashboardHome  from './pages/app/DashboardHome'
 import Markets        from './pages/app/Markets'
 import MarketDetail   from './pages/app/MarketDetail'
@@ -30,12 +30,13 @@ import Transactions   from './pages/app/Transactions'
 import News           from './pages/app/News'
 import Support        from './pages/app/Support'
 
-/* ── Wallet (inside dashboard) ── */
+/* ── Wallet ── */
 import Wallet   from './pages/wallet/Wallet'
 import Deposit  from './pages/wallet/Deposit'
 import Withdraw from './pages/wallet/Withdraw'
+import Transfer from './pages/wallet/Transfer'
 
-/* ── Settings (inside dashboard) ── */
+/* ── Settings ── */
 import Settings      from './pages/settings/Settings'
 import Security      from './pages/settings/Security'
 import KYC           from './pages/settings/KYC'
@@ -50,49 +51,48 @@ export default function App() {
         <Route path='/' element={<Landing />} />
 
         {/* ── Legal ── */}
-        <Route path='/legal/terms'            element={<Terms />} />
-        <Route path='/legal/privacy'          element={<Privacy />} />
-        <Route path='/legal/risk-disclosure'  element={<RiskDisclosure />} />
+        <Route path='/legal/terms'           element={<Terms />} />
+        <Route path='/legal/privacy'         element={<Privacy />} />
+        <Route path='/legal/risk-disclosure' element={<RiskDisclosure />} />
 
         {/* ── Auth ── */}
-        <Route path='/onboarding'             element={<Onboarding />} />
-        <Route path='/auth'                   element={<Onboarding />} />
-        <Route path='/reset-password'         element={<ResetPassword />} />
-        <Route path='/createprofile/:userId'  element={<CreateProfile />} />
-        <Route path='/veltrotour'             element={<Onboard />} />
+        <Route path='/onboarding'            element={<Onboarding />} />
+        <Route path='/auth'                  element={<Onboarding />} />
+        <Route path='/reset-password'        element={<ResetPassword />} />
+        <Route path='/createprofile/:userId' element={<CreateProfile />} />
+        <Route path='/veltrotour'            element={<Onboard />} />
 
-        {/* ── Dashboard shell — all sub-pages render via <Outlet /> ─────────
-            Every URL is scoped to the user:  /dashboard/:userId/...
-            The Outlet in Dashboard.jsx renders the matching child here.
-        ─────────────────────────────────────────────────────────────────── */}
+        {/* ── Dashboard shell ── */}
         <Route path='/dashboard/:userId' element={<Dashboard />}>
 
-          {/* index — shown at exactly /dashboard/:userId */}
+          {/* Index */}
           <Route index element={<DashboardHome />} />
 
           {/* Overview */}
-          <Route path='markets'              element={<Markets />} />
-          <Route path='markets/:symbol'      element={<MarketDetail />} />
-          <Route path='news'                 element={<News />} />
+          <Route path='markets'            element={<Markets />} />
+          <Route path='markets/:symbol'    element={<MarketDetail />} />
+          <Route path='news'               element={<News />} />
 
-          {/* Apps */}
-          <Route path='trade'                element={<Trade />} />
-          <Route path='orders'               element={<Orders />} />
-          <Route path='portfolio'            element={<Portfolio />} />
-          <Route path='watchlist'            element={<Watchlist />} />
-          <Route path='transactions'         element={<Transactions />} />
-          <Route path='profile'              element={<ProfilePage />} />
-          <Route path='support'              element={<Support />} />
+          {/* Trading */}
+          <Route path='trade'              element={<Trade />} />
+          <Route path='orders'             element={<Orders />} />
+          <Route path='portfolio'          element={<Portfolio />} />
+          <Route path='portfolio'          element={<Portfolio />} />
+          <Route path='watchlist'          element={<Watchlist />} />
+          <Route path='transactions'       element={<Transactions />} />
+          <Route path='profile'            element={<ProfilePage />} />
+          <Route path='support'            element={<Support />} />
 
           {/* Wallet */}
-          <Route path='wallet'               element={<Wallet />} />
-          <Route path='wallet/deposit'       element={<Deposit />} />
-          <Route path='wallet/withdraw'      element={<Withdraw />} />
+          <Route path='wallet'             element={<Wallet />} />
+          <Route path='wallet/deposit'     element={<Deposit />} />
+          <Route path='wallet/withdraw'    element={<Withdraw />} />
+          <Route path='wallet/transfer'    element={<Transfer />} />
 
           {/* Settings */}
-          <Route path='settings'             element={<Settings />} />
-          <Route path='settings/security'    element={<Security />} />
-          <Route path='settings/kyc'         element={<KYC />} />
+          <Route path='settings'           element={<Settings />} />
+          <Route path='settings/security'  element={<Security />} />
+          <Route path='settings/kyc'       element={<KYC />} />
           <Route path='settings/notifications' element={<Notifications />} />
 
         </Route>

@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
+import { apiGet, apiDelete } from '../../utils/api.js'
 import {
   CaretRight, CaretUp, CaretDown, CaretUpDown,
   X, Check, MagnifyingGlass, Funnel, Export,
@@ -391,15 +392,44 @@ export default function Orders() {
   useOutletContext?.()
   const navigate = useNavigate()
   const [tab,    setTab]    = useState('open')
-  const [orders, setOrders] = useState(ALL_ORDERS)
+  const [orders, setOrders] = useState([])        // start empty — no mock fallback
+  const [loading, setLoading] = useState(true)
 
-  const cancelOrder = id => setOrders(prev =>
-    prev.map(o => o.id === id ? { ...o, status:'cancelled' } : o)
-  )
+  // Fetch live orders — new users see clean empty state
+  useEffect(() => {
+    apiGet('/api/orders?limit=100')
+      .then(data => {
+        setOrders(Array.isArray(data.orders) ? data.orders : [])
+      })
+      .catch(() => { setOrders([]) })
+      .finally(() => setLoading(false))
+  }, [])
+
+  const cancelOrder = async id => {
+    try {
+      await apiDelete(`/api/orders/${id}`)
+      // Optimistically update local state
+      setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'cancelled' } : o))
+    } catch {
+      setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'cancelled' } : o))
+    }
+  }
 
   const openOrders  = orders.filter(o => ['open','partial'].includes(o.status))
   const histOrders  = orders.filter(o => ['filled','cancelled'].includes(o.status))
   const stats       = useMemo(() => calcStats(orders), [orders])
+
+  // Show loading state while fetching
+  if (loading) {
+    return (
+      <div className="od-root" style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:400 }}>
+        <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12, color:'var(--vlt-text-muted)' }}>
+          <ArrowClockwise size={28} weight='duotone' style={{ animation:'spin 0.8s linear infinite', opacity:0.5 }}/>
+          <span style={{ fontFamily:'Inter,sans-serif', fontSize:13 }}>Loading orders…</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="od-root">
@@ -415,7 +445,13 @@ export default function Orders() {
         </div>
 
         <div className="od-head-actions">
-          <button className="od-head-btn" onClick={() => setOrders(ALL_ORDERS)}>
+          <button className="od-head-btn" onClick={() => {
+            setLoading(true)
+            apiGet('/api/orders?limit=100')
+              .then(data => setOrders(Array.isArray(data.orders) ? data.orders : []))
+              .catch(() => setOrders([]))
+              .finally(() => setLoading(false))
+          }}>
             <ArrowClockwise size={12} weight="bold" />Refresh
           </button>
           <button className="od-head-btn primary" onClick={() => navigate('../trade')}>

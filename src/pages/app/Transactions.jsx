@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
+import { apiGet } from '../../utils/api.js'
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell,
 } from 'recharts'
@@ -195,7 +196,20 @@ export default function Transactions() {
   const [sort,     setSort]     = useState({ field:'created_at', dir:'desc' })
   const [selected, setSelected] = useState(null)
   const [page,     setPage]     = useState(1)
+  const [txRows,   setTxRows]   = useState([])     // start empty — no mock fallback
+  const [loading,  setLoading]  = useState(true)
+  const [chartData,setChartData]= useState(MONTHLY) // keep static 6-month chart as visual fixture
   const PER_PAGE = 10
+
+  // Fetch live transactions — new users see clean empty state
+  useEffect(() => {
+    apiGet('/api/wallet/transactions?limit=200')
+      .then(data => {
+        setTxRows(Array.isArray(data.transactions) ? data.transactions : [])
+      })
+      .catch(() => { setTxRows([]) })
+      .finally(() => setLoading(false))
+  }, [])
 
   const handleSort = f => setSort(s => ({
     field: f,
@@ -203,7 +217,7 @@ export default function Transactions() {
   }))
 
   const filtered = useMemo(() => {
-    let rows = [...TRANSACTIONS]
+    let rows = [...txRows]
     if (search) rows = rows.filter(t =>
       t.id.toLowerCase().includes(search.toLowerCase()) ||
       t.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -232,16 +246,17 @@ export default function Transactions() {
   const totalPages = Math.ceil(filtered.length / PER_PAGE)
 
   const stats = useMemo(() => {
-    const done = TRANSACTIONS.filter(t => t.status === 'completed')
+    const done = txRows.filter(t => t.status === 'completed')
+    const latestBal = txRows.length > 0 ? (Number(txRows[0]?.balance_after) || 0) : 0
     return {
-      currentBalance: TRANSACTIONS[0]?.balance_after ?? 0,
-      totalDeposited: done.filter(t => t.type === 'deposit').reduce((s,t) => s+t.amount, 0),
-      totalWithdrawn: done.filter(t => t.type === 'withdrawal').reduce((s,t) => s+t.amount, 0),
-      totalFeesPaid:  done.filter(t => !['deposit','credit','refund'].includes(t.type)).reduce((s,t) => s+t.fee, 0),
-      totalCredits:   done.filter(t => ['credit','refund'].includes(t.type)).reduce((s,t) => s+t.amount, 0),
-      pendingCount:   TRANSACTIONS.filter(t => t.status === 'pending').length,
+      currentBalance: latestBal,
+      totalDeposited: done.filter(t => t.type === 'deposit').reduce((s,t) => s+Number(t.amount||0), 0),
+      totalWithdrawn: done.filter(t => t.type === 'withdrawal').reduce((s,t) => s+Number(t.amount||0), 0),
+      totalFeesPaid:  done.filter(t => !['deposit','credit','refund'].includes(t.type)).reduce((s,t) => s+Number(t.fee||0), 0),
+      totalCredits:   done.filter(t => ['credit','refund'].includes(t.type)).reduce((s,t) => s+Number(t.amount||0), 0),
+      pendingCount:   txRows.filter(t => t.status === 'pending').length,
     }
-  }, [])
+  }, [txRows])
 
   /* Sort header button — renders a <div> (never <th>) */
   function SortTh({ field, label }) {
@@ -375,18 +390,27 @@ export default function Transactions() {
         </div>
 
         {/* Rows */}
-        {paginated.length === 0 ? (
+        {loading ? (
+          <div className="tx-empty" style={{ gap:10 }}>
+            <CircleNotch size={28} weight="duotone" style={{ animation:'spin 0.8s linear infinite', opacity:0.4 }}/>
+            <span>Loading transactions…</span>
+          </div>
+        ) : paginated.length === 0 ? (
           <div className="tx-empty">
             <Receipt size={28} weight="duotone" />
-            <span>No transactions match your filters</span>
+            <span>{txRows.length === 0 ? 'No transactions yet — make your first deposit to get started.' : 'No transactions match your filters'}</span>
           </div>
         ) : (
           <div className="tx-list">
             {paginated.map((t, idx) => {
-              const tm = TYPE_META[t.type] ?? TYPE_META.deposit
-              const credit = isCredit(t.type)
+              const txType = t.type || 'deposit'
+              const tm     = TYPE_META[txType] ?? TYPE_META.deposit
+              const credit = isCredit(txType)
+              const dateStr = t.created_at
+                ? new Date(t.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+                : '—'
               return (
-                <div key={t.id}
+                <div key={t.id||idx}
                   className={`tx-row ${t.status === 'failed' ? 'row-failed' : ''}`}
                   style={{ animationDelay:`${idx * 20}ms` }}
                   onClick={() => setSelected(t)}>
@@ -395,18 +419,18 @@ export default function Transactions() {
                       <tm.Icon size={11} weight="duotone" />
                     </div>
                     <div>
-                      <div className="tx-row-id">{t.id}</div>
-                      <div className="tx-row-desc">{t.description}</div>
+                      <div className="tx-row-id">{String(t.id||'').slice(0,16)}</div>
+                      <div className="tx-row-desc">{t.description||t.note||'—'}</div>
                     </div>
                   </div>
                   <span className="tx-type-chip" style={{ color:tm.color, background:tm.bg }}>{tm.label}</span>
-                  <span className={`tx-amount ${credit ? 'credit' : 'debit'}`}>{credit ? '+' : '−'}${fmt(t.amount)}</span>
-                  <span className="tx-fee">{t.fee > 0 ? `$${fmt(t.fee)}` : <span className="tx-no-fee">—</span>}</span>
-                  <span className={`tx-net ${credit ? 'credit' : 'debit'}`}>{credit ? '+' : '−'}${fmt(Math.abs(t.net_amount))}</span>
-                  <span className="tx-balance">${fmt(t.balance_after)}</span>
-                  <span className="tx-method">{METHOD_LABELS[t.payment_method] ?? t.payment_method}</span>
-                  <StatusBadge status={t.status} />
-                  <span className="tx-date">{t.created_at}</span>
+                  <span className={`tx-amount ${credit ? 'credit' : 'debit'}`}>{credit ? '+' : '−'}${fmt(Number(t.amount||0))}</span>
+                  <span className="tx-fee">{Number(t.fee||0) > 0 ? `$${fmt(Number(t.fee))}` : <span className="tx-no-fee">—</span>}</span>
+                  <span className={`tx-net ${credit ? 'credit' : 'debit'}`}>{credit ? '+' : '−'}${fmt(Math.abs(Number(t.net_amount||t.amount||0)))}</span>
+                  <span className="tx-balance">{Number(t.balance_after||0)>0 ? `$${fmt(Number(t.balance_after))}` : '—'}</span>
+                  <span className="tx-method">{METHOD_LABELS[t.payment_method||t.method] ?? (t.payment_method||'—')}</span>
+                  <StatusBadge status={t.status||'completed'} />
+                  <span className="tx-date">{dateStr}</span>
                 </div>
               )
             })}

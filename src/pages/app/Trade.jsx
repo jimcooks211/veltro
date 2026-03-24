@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { useOutletContext } from 'react-router-dom'
+import { apiPost } from '../../utils/api.js'
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine,
 } from 'recharts'
@@ -170,14 +171,16 @@ function RecentTrades({ trades, pair }) {
    ORDER FORM
 ════════════════════════════════════════════════════════ */
 function OrderForm({ pair, livePrice }) {
-  const [side,   setSide]   = useState('buy')
-  const [otype,  setOtype]  = useState('Limit')
-  const [price,  setPrice]  = useState(String(livePrice))
-  const [amount, setAmount] = useState('')
-  const [stopPx, setStopPx] = useState('')
-  const [tpsl,   setTpsl]   = useState(false)
-  const [tp, setTp] = useState('')
-  const [sl, setSl] = useState('')
+  const [side,      setSide]      = useState('buy')
+  const [otype,     setOtype]     = useState('Limit')
+  const [price,     setPrice]     = useState(String(livePrice))
+  const [amount,    setAmount]    = useState('')
+  const [stopPx,    setStopPx]    = useState('')
+  const [tpsl,      setTpsl]      = useState(false)
+  const [tp,        setTp]        = useState('')
+  const [sl,        setSl]        = useState('')
+  const [submitting,setSubmitting]= useState(false)
+  const [feedback,  setFeedback]  = useState(null) // { ok, msg }
 
   const BALANCE_USDT = 12_450.38
   const BALANCE_BASE = 0
@@ -195,7 +198,31 @@ function OrderForm({ pair, livePrice }) {
     setAmount((t / numPx).toFixed(6))
   }
 
-  const canSubmit = numAmt > 0 && numPx > 0
+  const canSubmit = numAmt > 0 && numPx > 0 && !submitting
+
+  const handleSubmit = async () => {
+    if (!canSubmit) return
+    setSubmitting(true)
+    setFeedback(null)
+    try {
+      await apiPost('/api/orders', {
+        symbol:     pair.base,
+        side:       side.toUpperCase(),
+        order_type: otype.toUpperCase().replace('-', '-'),
+        quantity:   numAmt,
+        price:      numPx,
+      })
+      setFeedback({ ok: true, msg: `${side === 'buy' ? 'Buy' : 'Sell'} order placed!` })
+      setAmount('')
+      setTp('')
+      setSl('')
+    } catch (err) {
+      setFeedback({ ok: false, msg: err.message || 'Order failed.' })
+    } finally {
+      setSubmitting(false)
+      setTimeout(() => setFeedback(null), 3500)
+    }
+  }
 
   return (
     <div className="tr-form">
@@ -330,13 +357,20 @@ function OrderForm({ pair, livePrice }) {
       )}
 
       {/* Submit */}
+      {feedback && (
+        <div className={`tr-feedback ${feedback.ok ? 'ok' : 'err'}`}>
+          {feedback.msg}
+        </div>
+      )}
       <button
         className={`tr-submit-btn ${side}`}
         disabled={!canSubmit}
-        onClick={() => { setAmount(''); setTp(''); setSl('') }}>
-        {side === 'buy'
-          ? <><TrendUp size={14} weight="bold" />Buy {pair.base}</>
-          : <><TrendDown size={14} weight="bold" />Sell {pair.base}</>}
+        onClick={handleSubmit}>
+        {submitting
+          ? <><ArrowClockwise size={14} weight="bold" className="tr-spin" />Placing…</>
+          : side === 'buy'
+            ? <><TrendUp size={14} weight="bold" />Buy {pair.base}</>
+            : <><TrendDown size={14} weight="bold" />Sell {pair.base}</>}
         {otype !== 'Market' && <span className="tr-submit-otype">{otype}</span>}
       </button>
 

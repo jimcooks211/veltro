@@ -1,0 +1,13 @@
+  const [txRows,    setTxRows]    = useState([])
+  const [txLoading, setTxLoading] = useState(true)
+  const [liveStats, setLiveStats] = useState(null)
+  const [liveMonthly, setLiveMonthly] = useState(null)
+  const PER_PAGE = 10
+
+  useEffect(() => {
+    apiGet('/api/transactions?limit=200')
+      .then(d => { setTxRows(d.transactions || []); if (d.stats) setLiveStats(d.stats) })
+      .catch(() => {}).finally(() => setTxLoading(false))
+    apiGet('/api/transactions/stats/monthly')
+      .then(d => { if (d.monthly?.length) setLiveMonthly(d.monthly) }).catch(() => {})
+  }, [])

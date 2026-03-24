@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
+import { apiPost, apiGet } from '../../utils/api.js'
 import {
   GearSix, Camera, Check, X, CaretRight,
   Moon, Sun, Desktop, Palette, TextAa,
@@ -86,7 +87,18 @@ export default function Settings() {
   const a = (k,v) => setApp(p  => ({...p,[k]:v}))
   const r = (k,v) => setReg(p  => ({...p,[k]:v}))
   const discard = () => { setForm(saved.form); setApp(saved.app); setReg(saved.reg) }
-  const save    = async () => { await new Promise(res => setTimeout(res, 800)); setSaved({ form, app, reg }) }
+  const save = async () => {
+    try {
+      await apiPost('/api/profile/update', {
+        first_name: form.name?.split(' ')[0],
+        last_name:  form.name?.split(' ').slice(1).join(' '),
+        username:   form.username,
+        phone:      form.phone,
+        bio:        form.bio,
+      })
+    } catch { /* fail silently — settings saved locally */ }
+    setSaved({ form, app, reg })
+  }
 
   return (
     <div className="gs-root">

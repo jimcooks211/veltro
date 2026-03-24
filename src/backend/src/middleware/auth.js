@@ -1,7 +1,7 @@
 // src/middleware/auth.js
 import jwt from 'jsonwebtoken'
 
-export function requireAuth(req, res, next) {
+export default function authMiddleware(req, res, next) {
   const header = req.headers.authorization
   if (!header?.startsWith('Bearer '))
     return res.status(401).json({ message: 'Authentication required.' })
@@ -9,7 +9,8 @@ export function requireAuth(req, res, next) {
   const token = header.split(' ')[1]
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET)
-    req.userId = payload.sub
+    req.user   = payload          // full payload
+    req.userId = payload.sub      // convenience alias
     next()
   } catch (err) {
     const expired = err.name === 'TokenExpiredError'
@@ -19,3 +20,6 @@ export function requireAuth(req, res, next) {
     })
   }
 }
+
+// Named export alias for routes that use requireAuth
+export { authMiddleware as requireAuth }

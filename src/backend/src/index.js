@@ -12,7 +12,6 @@ import crypto  from 'crypto'
 import cors    from 'cors'
 
 import { db, sendEmail } from './config.js'
-export { db }
 
 const app  = express()
 const PORT = process.env.PORT || 4000
@@ -248,16 +247,33 @@ app.post('/api/reset-password', async (req, res) => {
   }
 })
 
-import analyticsRoutes from './routes/analytics.js'
-import authRoutes      from './routes/auth.js'
-import profileRoutes   from './routes/profile.js'
-import tourRoutes      from './routes/Veltrotour.js'
+import analyticsRoutes    from './routes/analytics.js'
+import authRoutes         from './routes/auth.js'
+import profileRoutes      from './routes/profile.js'
+import tourRoutes         from './routes/Veltrotour.js'
+import walletRoutes       from './routes/wallet.js'
+import portfolioRoutes    from './routes/portfolio.js'
+import ordersRoutes       from './routes/orders.js'
+import investmentsRoutes  from './routes/investments.js'
+import transactionsRoutes from './routes/transactions.js'
+import transferRoutes       from './routes/transfer.js'
+import notificationsRoutes  from './routes/notifications.js'
+import depositAddressRoutes from './routes/deposit-addresses.js'
+import { startGrowthScheduler } from './services/investmentGrowth.js'
 
-app.use('/api/analytics', analyticsRoutes)
-app.use('/api/stats',     analyticsRoutes)
-app.use('/api/auth',      authRoutes)
-app.use('/api/profile',   profileRoutes)
-app.use('/api/tour',      tourRoutes)
+app.use('/api/analytics',    analyticsRoutes)
+app.use('/api/stats',        analyticsRoutes)
+app.use('/api/auth',         authRoutes)
+app.use('/api/profile',      profileRoutes)
+app.use('/api/tour',         tourRoutes)
+app.use('/api/wallet',       walletRoutes)
+app.use('/api/portfolio',    portfolioRoutes)
+app.use('/api/orders',       ordersRoutes)
+app.use('/api/investments',  investmentsRoutes)
+app.use('/api/transactions', transactionsRoutes)
+app.use('/api/transfer',      transferRoutes)
+app.use('/api/notifications',    notificationsRoutes)
+app.use('/api/deposit-addresses', depositAddressRoutes)
 
 // ── OTA distribution routes ───────────────────────────────────────────────
 // manifest.plist — iOS reads this to find the IPA URL
@@ -296,6 +312,9 @@ app.get('/api/health', (_, res) => res.json({
 }))
 
 app.listen(PORT, async () => {
+  startGrowthScheduler()
   console.log(`🚀  Veltro API running on http://localhost:${PORT}`)
   await testConnection()
 })
+
+

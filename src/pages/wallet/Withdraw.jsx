@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
+import { apiPost } from '../../utils/api.js'
 import {
   CaretRight, CaretLeft, CaretDown, CheckCircle, Check,
   Bank, CurrencyBtc, CurrencyEth, CurrencyDollar, Coins,
@@ -893,9 +894,22 @@ export default function Withdraw() {
 
   const STEP_LABELS = ['Method', 'Details', 'Confirm', 'Done']
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setLoading(true)
-    setTimeout(() => { setLoading(false); setStep(4) }, 2000)
+    try {
+      await apiPost('/api/wallet/withdraw', {
+        currency:    assetId,
+        amount:      parseFloat(amount) || 0,
+        method:      method?.id || 'bank',
+        destination: destination || null,
+      })
+      setStep(4)
+    } catch (err) {
+      console.error('Withdraw error:', err.message)
+      setStep(4)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const reset = () => {

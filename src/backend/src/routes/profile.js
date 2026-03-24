@@ -1,6 +1,6 @@
 // src/routes/profile.js
 import { Router } from 'express'
-import { db }     from '../index.js'
+import { db }     from '../config.js'
 import { requireAuth } from '../middleware/auth.js'
 
 const router = Router()
@@ -351,6 +351,72 @@ router.get('/me', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('Profile fetch error:', err.message)
     return res.status(500).json({ message: 'Could not fetch profile.' })
+  }
+})
+/* ── PUT /api/profile/update ─────────────────────────────────────
+   Partial profile update — only supplied fields are changed.
+   Used by Settings page.
+──────────────────────────────────────────────────────────────── */
+router.put('/update', requireAuth, async (req, res) => {
+  try {
+    const userId = req.user.sub
+    const {
+      first_name, last_name, username, phone,
+      bio, avatar_url, address_line1, address_line2,
+      city, state, zip, country, occupation,
+      investment_experience, website,
+    } = req.body
+
+    const [[existing]] = await db.execute(
+      'SELECT id FROM profiles WHERE user_id = ?', [userId]
+    )
+    if (!existing)
+      return res.status(404).json({ message: 'Profile not found. Create a profile first.' })
+
+    // Build dynamic SET clause from only provided fields
+    const fields = []
+    const vals   = []
+
+    if (first_name  !== undefined) { fields.push('first_name = ?');          vals.push(first_name.trim())  }
+    if (last_name   !== undefined) { fields.push('last_name = ?');           vals.push(last_name.trim())   }
+    if (phone       !== undefined) { fields.push('phone = ?');               vals.push(phone || null)      }
+    if (bio         !== undefined) { fields.push('bio = ?');                 vals.push(bio?.trim() || null)}
+    if (avatar_url  !== undefined) { fields.push('avatar_url = ?');          vals.push(avatar_url || null) }
+    if (address_line1 !== undefined){ fields.push('address_line1 = ?');      vals.push(address_line1 || null) }
+    if (address_line2 !== undefined){ fields.push('address_line2 = ?');      vals.push(address_line2 || null) }
+    if (city        !== undefined) { fields.push('city = ?');                vals.push(city || null)       }
+    if (state       !== undefined) { fields.push('state = ?');               vals.push(state || null)      }
+    if (zip         !== undefined) { fields.push('zip = ?');                 vals.push(zip || null)        }
+    if (country     !== undefined) { fields.push('country = ?');             vals.push(country || null)    }
+    if (occupation  !== undefined) { fields.push('occupation = ?');          vals.push(occupation || null) }
+    if (investment_experience !== undefined) { fields.push('investment_experience = ?'); vals.push(investment_experience || null) }
+    if (website     !== undefined) { fields.push('website = ?');             vals.push(website || null)    }
+
+    if (username !== undefined) {
+      const [[taken]] = await db.execute(
+        'SELECT id FROM profiles WHERE username = ? AND user_id != ?',
+        [username.toLowerCase().trim(), userId]
+      )
+      if (taken) return res.status(409).json({ message: 'Username already taken.' })
+      fields.push('username = ?')
+      vals.push(username.toLowerCase().trim())
+    }
+
+    if (fields.length === 0)
+      return res.status(400).json({ message: 'No fields to update.' })
+
+    fields.push('updated_at = NOW()')
+    vals.push(userId)
+
+    await db.execute(
+      `UPDATE profiles SET ${fields.join(', ')} WHERE user_id = ?`,
+      vals
+    )
+
+    return res.json({ message: 'Profile updated successfully.' })
+  } catch (err) {
+    console.error('profile/update error:', err.message)
+    return res.status(500).json({ message: 'Failed to update profile.' })
   }
 })
 

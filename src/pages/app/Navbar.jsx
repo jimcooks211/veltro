@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { apiGet } from '../../utils/api.js'
 import {
   List,
   MagnifyingGlass,
@@ -14,9 +16,17 @@ import {
 import './Navbar.css'
 
 /* ── NotificationBell ─────────────────────────────────────────────── */
-function NotificationBell({ count = 0 }) {
+function NotificationBell() {
   const [open, setOpen] = useState(false)
+  const [count, setCount] = useState(0)
   const ref = useRef(null)
+
+  useEffect(() => {
+    // Fetch unread notification count
+    apiGet('/api/notifications/unread-count')
+      .then(({ count: unreadCount }) => setCount(unreadCount))
+      .catch(() => setCount(0)) // Fallback to 0 on error
+  }, [])
 
   useEffect(() => {
     if (!open) return
@@ -54,7 +64,7 @@ function NotificationBell({ count = 0 }) {
 }
 
 /* ── UserMenu (navbar dropdown) ──────────────────────────────────── */
-function UserMenu({ user, onThemeToggle, isDark }) {
+function UserMenu({ user, onThemeToggle, isDark, onLogout }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
@@ -72,6 +82,14 @@ function UserMenu({ user, onThemeToggle, isDark }) {
   const experience = user?.investmentExperience
     ? user.investmentExperience.charAt(0).toUpperCase() + user.investmentExperience.slice(1)
     : 'Investor'
+
+  const handleLogout = () => {
+    if (onLogout) { onLogout(); return }
+    ;['accessToken', 'refreshToken'].forEach(k => {
+      sessionStorage.removeItem(k); localStorage.removeItem(k)
+    })
+    window.location.replace('/auth')
+  }
 
   return (
     <div ref={ref} className='vlt-um-wrap'>
@@ -98,7 +116,6 @@ function UserMenu({ user, onThemeToggle, isDark }) {
 
       {open && (
         <div className='vlt-um-panel'>
-          {/* header */}
           <div className='vlt-um-panel-header'>
             <img
               src={user?.avatar || '/default-avatar.png'}
@@ -130,12 +147,7 @@ function UserMenu({ user, onThemeToggle, isDark }) {
           <button
             type='button'
             className='vlt-um-item danger'
-            onClick={() => {
-              ;['accessToken', 'refreshToken'].forEach(k => {
-                sessionStorage.removeItem(k); localStorage.removeItem(k)
-              })
-              window.location.replace('/auth')
-            }}
+            onClick={handleLogout}
           >
             <SignOut size={14} weight='duotone' /> Sign out
           </button>
@@ -153,8 +165,9 @@ export default function Navbar({
   user,
   isDark,
   onThemeToggle,
+  onLogout,
 }) {
-  const [search,       setSearch]       = useState('')
+  const [search,        setSearch]       = useState('')
   const [searchFocused, setSearchFocused] = useState(false)
 
   return (
@@ -167,7 +180,6 @@ export default function Navbar({
       {/* ── left ── */}
       <div className='vlt-nb-left'>
 
-        {/* desktop: sidebar collapse toggle (≡) — always visible */}
         <button
           type='button'
           className='vlt-nb-sidebar-toggle'
@@ -177,7 +189,6 @@ export default function Navbar({
           <List size={19} weight='bold' />
         </button>
 
-        {/* mobile: open drawer */}
         <button
           type='button'
           className='vlt-nb-hamburger'
@@ -187,7 +198,6 @@ export default function Navbar({
           <List size={19} weight='bold' />
         </button>
 
-        {/* search */}
         <div className={['vlt-nb-search', searchFocused ? 'focused' : ''].filter(Boolean).join(' ')}>
           <MagnifyingGlass size={14} weight='bold' className='vlt-nb-search-icon' />
           <input
@@ -214,12 +224,10 @@ export default function Navbar({
       {/* ── right ── */}
       <div className='vlt-nb-right'>
 
-        {/* locale / flag */}
         <button type='button' className='vlt-nb-icon-btn' title='Language'>
           <span className='vlt-nb-flag'>🇺🇸</span>
         </button>
 
-        {/* theme */}
         <button
           type='button'
           className='vlt-nb-icon-btn'
@@ -231,16 +239,13 @@ export default function Navbar({
             : <Sun  size={17} weight='duotone' />}
         </button>
 
-        {/* transfers */}
         <button type='button' className='vlt-nb-icon-btn' title='Transfers'>
           <ArrowsLeftRight size={17} weight='duotone' />
         </button>
 
-        {/* notifications */}
-        <NotificationBell count={1} />
+        <NotificationBell />
 
-        {/* user */}
-        <UserMenu user={user} isDark={isDark} onThemeToggle={onThemeToggle} />
+        <UserMenu user={user} isDark={isDark} onThemeToggle={onThemeToggle} onLogout={onLogout} />
       </div>
     </header>
   )

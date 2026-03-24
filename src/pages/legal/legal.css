@@ -1,0 +1,270 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --veltro-navy: #080C1A;
+    --veltro-blue: #2563FF;
+    --veltro-cyan: #00C4F0;
+    --veltro-white: #EEF2FF;
+    --veltro-silver: #8A96B4;
+    --veltro-muted: rgba(174, 185, 214, 0.55);
+    --veltro-glass: rgba(255, 255, 255, 0.04);
+    --veltro-border: rgba(255, 255, 255, 0.10);
+    --veltro-surface: rgba(255, 255, 255, 0.035);
+    --veltro-green: #00D97E;
+    --veltro-red: #F03D55;
+    --veltro-yellow: #F5A800;
+    --veltro-gold: #E8A020;
+}
+
+.legal-page {
+    min-height: 100vh;
+    background-color: var(--veltro-navy);
+    color: var(--veltro-white);
+    font-family: var(--font-body);
+    padding: 0 0 6rem 0;
+}
+
+/* ── Hero ─────────────────────────────────────────────── */
+.legal-hero {
+    padding: 7rem 5% 4rem;
+    border-bottom: 1px solid var(--veltro-border);
+    position: relative;
+    overflow: hidden;
+}
+
+.legal-hero::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(37, 99, 255, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.legal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--veltro-glass);
+    border: 1px solid var(--veltro-border);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--veltro-silver);
+    margin-bottom: 1.5rem;
+}
+
+.legal-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--veltro-blue);
+}
+
+.legal-hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    margin: 0 0 1rem 0;
+    letter-spacing: -0.02em;
+}
+
+.legal-hero-sub {
+    color: var(--veltro-silver);
+    font-size: 14px;
+    margin-top: 0.5rem;
+}
+
+/* ── Body ─────────────────────────────────────────────── */
+.legal-body {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3.5rem 5%;
+    display: grid;
+    gap: 2.5rem;
+}
+
+/* ── Section ──────────────────────────────────────────── */
+.legal-section {
+    background: var(--veltro-glass);
+    border: 1px solid var(--veltro-border);
+    border-radius: 20px;
+    padding: 28px 32px;
+    transition: border-color 300ms ease;
+}
+
+.legal-section:hover {
+    border-color: rgba(37, 99, 255, 0.3);
+}
+
+.legal-section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 1.2rem;
+}
+
+.legal-section-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(37, 99, 255, 0.12);
+    border: 1px solid rgba(37, 99, 255, 0.25);
+    color: var(--veltro-blue);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Syne', sans-serif;
+}
+
+.legal-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--veltro-white);
+}
+
+.legal-section p {
+    color: var(--veltro-silver);
+    font-size: 14px;
+    line-height: 1.8;
+    margin: 0 0 0.9rem 0;
+}
+
+.legal-section p:last-child {
+    margin-bottom: 0;
+}
+
+.legal-section ul {
+    color: var(--veltro-silver);
+    font-size: 14px;
+    line-height: 1.8;
+    padding-left: 1.2rem;
+    margin: 0;
+    display: grid;
+    gap: 6px;
+}
+
+.legal-section ul li::marker {
+    color: var(--veltro-blue);
+}
+
+/* ── Highlight Box ────────────────────────────────────── */
+.legal-highlight {
+    background: rgba(37, 99, 255, 0.06);
+    border: 1px solid rgba(37, 99, 255, 0.2);
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-top: 1rem;
+}
+
+.legal-highlight p {
+    color: rgba(174, 185, 214, 0.85) !important;
+    font-size: 13px !important;
+}
+
+.legal-highlight-warn {
+    background: rgba(240, 61, 85, 0.06);
+    border: 1px solid rgba(240, 61, 85, 0.2);
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-top: 1rem;
+}
+
+.legal-highlight-warn p {
+    color: rgba(240, 61, 85, 0.85) !important;
+    font-size: 13px !important;
+}
+
+.legal-highlight-gold {
+    background: rgba(232, 160, 32, 0.06);
+    border: 1px solid rgba(232, 160, 32, 0.2);
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-top: 1rem;
+}
+
+.legal-highlight-gold p {
+    color: rgba(232, 160, 32, 0.9) !important;
+    font-size: 13px !important;
+}
+
+/* ── Contact Card ─────────────────────────────────────── */
+.legal-contact-card {
+    background: linear-gradient(135deg, rgba(37, 99, 255, 0.08), rgba(0, 196, 240, 0.05));
+    border: 1px solid rgba(37, 99, 255, 0.25);
+    border-radius: 20px;
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.legal-contact-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+}
+
+.legal-contact-card p {
+    color: var(--veltro-silver);
+    font-size: 13px;
+    margin: 0;
+}
+
+.legal-contact-btn {
+    background: var(--veltro-blue);
+    color: white;
+    border: none;
+    border-radius: 100px;
+    padding: 12px 28px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 200ms ease;
+}
+
+.legal-contact-btn:hover {
+    opacity: 0.85;
+}
+
+/* ── Divider ──────────────────────────────────────────── */
+.legal-divider {
+    height: 1px;
+    background: var(--veltro-border);
+    border-radius: 100px;
+    margin: 0.5rem 0;
+}
+
+/* ── Back link ────────────────────────────────────────── */
+.legal-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--veltro-silver);
+    font-size: 13px;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    transition: color 200ms ease;
+    text-decoration: none;
+}
+
+.legal-back:hover {
+    color: var(--veltro-white);
+}

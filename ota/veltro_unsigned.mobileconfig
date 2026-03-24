@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>PayloadType</key>
+      <string>com.apple.webClip.managed</string>
+
+      <key>PayloadVersion</key>
+      <integer>1</integer>
+
+      <key>PayloadIdentifier</key>
+      <string>xyz.appinstall.nov.carbon.lam.webclip</string>
+
+      <key>PayloadUUID</key>
+      <string>E7A2B5C1-3F9D-4E8A-B6C2-1A2B3C4D5E6F</string>
+
+      <key>PayloadDisplayName</key>
+      <string>Veltro Web Clip</string>
+
+      <key>Label</key>
+      <string>Veltro</string>
+
+      <key>URL</key>
+      <string>https://veltro.vercel.app</string>
+
+      <key>FullScreen</key>
+      <true/>
+
+      <key>IsRemovable</key>
+      <true/>
+
+      <key>Icon</key>
+      <data>
+        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
+      </data>
+
+    </dict>
+  </array>
+
+  <key>PayloadDisplayName</key>
+  <string>Veltro</string>
+
+  <key>PayloadDescription</key>
+  <string>Installs Veltro on your home screen.</string>
+
+  <key>PayloadIdentifier</key>
+  <string>xyz.appinstall.nov.carbon.lam.profile</string>
+
+  <key>PayloadOrganization</key>
+  <string>Veltro Technologies Inc</string>
+
+  <key>PayloadType</key>
+  <string>Configuration</string>
+
+  <key>PayloadUUID</key>
+  <string>F8B3C6D2-4G0E-5F9B-C7D3-2B3C4D5E6F7A</string>
+
+  <key>PayloadVersion</key>
+  <integer>1</integer>
+
+</dict>
+</plist>
