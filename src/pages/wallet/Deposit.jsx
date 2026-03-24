@@ -656,22 +656,24 @@ function DepositSidebar({ method }) {
     <aside className='dp-sidebar'>
 
       {/* selected method summary */}
-      {method && (
-        <div className='dp-side-panel'>
-          <div className='dp-side-head'>
-            <Info size={12} weight='duotone' className='dp-pico'/>
-            Method Details
-          </div>
-          <div className='dp-side-body'>
-            <div className='dp-side-method-row'>
-              <div className='dp-smi' style={{ background:`${method.color}18`, color:method.color }}>
-                <method.Icon size={14} weight='duotone'/>
-              </div>
-              <div>
-                <div className='dp-sml'>{method.label}</div>
-                <div className='dp-sms'>{method.sub}</div>
-              </div>
+      {method && (() => {
+        const Icon = method.Icon
+        return (
+          <div className='dp-side-panel'>
+            <div className='dp-side-head'>
+              <Info size={12} weight='duotone' className='dp-pico'/>
+              Method Details
             </div>
+            <div className='dp-side-body'>
+              <div className='dp-side-method-row'>
+                <div className='dp-smi' style={{ background:`${method.color}18`, color:method.color }}>
+                  <Icon size={14} weight='duotone'/>
+                </div>
+                <div>
+                  <div className='dp-sml'>{method.label}</div>
+                  <div className='dp-sms'>{method.sub}</div>
+                </div>
+              </div>
             {limits.map(l => (
               <div key={l.label} className='dp-side-row'>
                 <span className='dp-sr-key'>{l.label}</span>
@@ -680,7 +682,8 @@ function DepositSidebar({ method }) {
             ))}
           </div>
         </div>
-      )}
+        )
+      })()}
 
       {/* security */}
       <div className='dp-side-panel'>
