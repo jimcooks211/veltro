@@ -1,6 +1,6 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+﻿import { useState, useRef, useCallback, useEffect } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
-import { apiGet, apiPost } from '../../utils/api.js'
+import { apiGet, apiPost, apiPut } from '../../utils/api.js'
 import {
   UserCircle, CaretRight, Check, X, Camera, Pencil,
   EnvelopeSimple, Phone, MapPin, Briefcase, Globe,
@@ -11,8 +11,8 @@ import {
 } from '@phosphor-icons/react'
 import './ProfilePage.css'
 
-/* ════════════════════════════════════════════════════════
-   MOCK DATA — mirrors DB schema exactly:
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MOCK DATA â€” mirrors DB schema exactly:
    users   : { id, email, role, plan, risk_profile, is_verified,
                registration_step, login_count, last_login_at,
                last_login_ip, created_at, gender, onboarding_complete }
@@ -22,7 +22,7 @@ import './ProfilePage.css'
                city, state, zip, country, country_code, website,
                kyc_status, occupation, investment_experience,
                investment_goal }
-════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const MOCK_USER = {
   id:                   'a3f2c1d0-8e4b-4f6a-9c2d-1b7e5f3a8c9d',
   email:                'alex.mercer@gmail.com',
@@ -32,7 +32,7 @@ const MOCK_USER = {
   is_verified:          1,
   registration_step:    'complete',
   login_count:          84,
-  last_login_at:        'Mar 10, 2026 · 09:02',
+  last_login_at:        'Mar 10, 2026 Â· 09:02',
   last_login_ip:        '105.112.34.88',
   created_at:           'Jan 8, 2026',
   gender:               'male',
@@ -72,16 +72,16 @@ const MOCK_PROFILE = {
   investment_goal:        'wealth_growth',
 }
 
-/* ────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PLAN_META = {
   starter: { label:'Starter',  color:'rgba(255,255,255,.4)', bg:'rgba(255,255,255,.06)' },
   growth:  { label:'Growth',   color:'#FFB800',              bg:'rgba(255,184,0,.1)'    },
   elite:   { label:'Elite',    color:'#00FFD1',              bg:'rgba(0,255,209,.1)'    },
 }
 const RISK_META = {
-  conservative: { label:'Conservative', color:'#00C076', icon:'🛡️' },
-  balanced:     { label:'Balanced',     color:'#FFB800', icon:'⚖️' },
-  aggressive:   { label:'Aggressive',   color:'#FF3D57', icon:'⚡' },
+  conservative: { label:'Conservative', color:'#00C076', icon:'ðŸ›¡ï¸' },
+  balanced:     { label:'Balanced',     color:'#FFB800', icon:'âš–ï¸' },
+  aggressive:   { label:'Aggressive',   color:'#FF3D57', icon:'âš¡' },
 }
 const KYC_META = {
   none:     { label:'Not Started', color:'rgba(255,255,255,.3)', bg:'rgba(255,255,255,.06)'  },
@@ -108,9 +108,9 @@ const GOAL_OPTS = ['wealth_growth','passive_income','capital_preservation','high
 const RISK_OPTS = ['conservative','balanced','aggressive']
 const PLAN_OPTS = ['starter','growth','elite']
 
-/* ════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    HELPERS
-════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function initials(first, last) {
   return `${first?.[0] ?? ''}${last?.[0] ?? ''}`.toUpperCase()
 }
@@ -122,13 +122,13 @@ function age(dob) {
     (now < new Date(now.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
 }
 function fmtDob(dob) {
-  if (!dob) return '—'
+  if (!dob) return 'â€”'
   return new Date(dob).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })
 }
 
-/* ════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    SUB-COMPONENTS
-════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function SaveBar({ dirty, onSave, onDiscard, saving, saved: wasSaved }) {
   if (!dirty && !wasSaved) return null
   return (
@@ -142,7 +142,7 @@ function SaveBar({ dirty, onSave, onDiscard, saving, saved: wasSaved }) {
           <button className="pp-sb-dis" onClick={onDiscard}><X size={10} weight="bold" />Discard</button>
           <button className="pp-sb-save" onClick={onSave} disabled={saving}>
             {saving
-              ? <><CircleNotch size={10} weight="bold" className="pp-spin" />Saving…</>
+              ? <><CircleNotch size={10} weight="bold" className="pp-spin" />Savingâ€¦</>
               : <><FloppyDisk size={10} weight="bold" />Save changes</>}
           </button>
         </>
@@ -173,9 +173,9 @@ function StatCard({ icon: Icon, color, label, value, sub }) {
   )
 }
 
-/* ════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    SECTION WRAPPERS
-════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function Section({ title, icon: Icon, iconColor = 'var(--cy-neon,#00FFD1)', children }) {
   return (
     <div className="pp-section">
@@ -190,21 +190,29 @@ function Section({ title, icon: Icon, iconColor = 'var(--cy-neon,#00FFD1)', chil
   )
 }
 
-/* ════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    AVATAR
-════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function AvatarBlock({ profile, onAvatarChange }) {
   const fileRef = useRef()
   const [preview, setPreview] = useState(null)
+  const prevUrlRef = useRef(null)    // track blob URL for cleanup
   const pick = e => {
     const f = e.target.files?.[0]
     if (!f) return
 
+    // Revoke the previous blob URL to avoid memory leak
+    if (prevUrlRef.current) {
+      URL.revokeObjectURL(prevUrlRef.current)
+      prevUrlRef.current = null
+    }
+
     // Create preview URL for immediate display
     const previewUrl = URL.createObjectURL(f)
+    prevUrlRef.current = previewUrl
     setPreview(previewUrl)
 
-    // Convert to data URL for storage
+    // Convert to data URL for storage / saving to DB
     const reader = new FileReader()
     reader.onload = () => {
       const dataUrl = reader.result
@@ -256,14 +264,14 @@ function AvatarBlock({ profile, onAvatarChange }) {
   )
 }
 
-/* ════════════════════════════════════════════════════════
-   ROOT — wired to real /api/profile/me
-════════════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   ROOT â€” wired to real /api/profile/me
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function ProfilePage() {
   const { user: ctxUser, refreshUser } = useOutletContext() ?? {}
   const navigate = useNavigate()
 
-  /* ── state ── */
+  /* â”€â”€ state â”€â”€ */
   const [profile, setProfile]   = useState(null)
   const [saved,   setSaved]     = useState(null)
   const [userMeta,setUserMeta]  = useState(null)
@@ -272,7 +280,7 @@ export default function ProfilePage() {
   const [wasSaved,setWasSaved]  = useState(false)
   const [editBio, setEditBio]   = useState(false)
 
-  /* ── fetch from API ── */
+  /* â”€â”€ fetch from API â”€â”€ */
   useEffect(() => {
     apiGet('/api/profile/me')
       .then(data => {
@@ -313,9 +321,9 @@ export default function ProfilePage() {
           is_verified:         p.is_verified ?? 1,
           registration_step:   p.registration_step     || 'complete',
           login_count:         p.login_count           || 0,
-          last_login_at:       p.last_login_at         || '—',
-          last_login_ip:       p.last_login_ip         || '—',
-          created_at:          p.created_at            || '—',
+          last_login_at:       p.last_login_at         || 'â€”',
+          last_login_ip:       p.last_login_ip         || 'â€”',
+          created_at:          p.created_at            || 'â€”',
           onboarding_complete: p.onboarding_complete   || 1,
         }
         setProfile(profileData)
@@ -337,7 +345,7 @@ export default function ProfilePage() {
           id: ctxUser?.id||'', email: ctxUser?.email||'', role:'user',
           plan: ctxUser?.plan||'starter', risk_profile: ctxUser?.riskProfile||'balanced',
           is_verified:1, registration_step:'complete', login_count:0,
-          last_login_at:'—', last_login_ip:'—', created_at:'—', onboarding_complete:1,
+          last_login_at:'â€”', last_login_ip:'â€”', created_at:'â€”', onboarding_complete:1,
         }
         setProfile(fallback); setSaved(fallback); setUserMeta(fallbackMeta)
       })
@@ -351,7 +359,7 @@ export default function ProfilePage() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      await apiPost('/api/profile/update', {
+      await apiPut('/api/profile/update', {
         first_name:            profile.first_name,
         last_name:             profile.last_name,
         username:              profile.username,
@@ -388,13 +396,13 @@ export default function ProfilePage() {
   }
   const handleDiscard = () => { setProfile({ ...saved }) }
 
-  /* ── loading state ── */
+  /* â”€â”€ loading state â”€â”€ */
   if (loading) {
     return (
       <div className="pp-root" style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:400 }}>
         <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12, color:'var(--vlt-text-muted)' }}>
           <CircleNotch size={28} weight="duotone" style={{ animation:'spin 0.8s linear infinite', opacity:0.5 }}/>
-          <span style={{ fontFamily:'Inter,sans-serif', fontSize:13 }}>Loading profile…</span>
+          <span style={{ fontFamily:'Inter,sans-serif', fontSize:13 }}>Loading profileâ€¦</span>
         </div>
       </div>
     )
@@ -407,7 +415,7 @@ export default function ProfilePage() {
   return (
     <div className="pp-root">
 
-      {/* ─── PAGE HEADER ─── */}
+      {/* â”€â”€â”€ PAGE HEADER â”€â”€â”€ */}
       <div className="pp-page-head">
         <div className="pp-head-left">
           <div className="pp-head-ico"><UserCircle size={16} weight="fill" /></div>
@@ -429,23 +437,23 @@ export default function ProfilePage() {
         </nav>
       </div>
 
-      {/* ─── SAVE BAR ─── */}
+      {/* â”€â”€â”€ SAVE BAR â”€â”€â”€ */}
       <SaveBar dirty={dirty} onSave={handleSave} onDiscard={handleDiscard} saving={saving} saved={wasSaved} />
 
-      {/* ─── ACCOUNT STATS ─── */}
+      {/* â”€â”€â”€ ACCOUNT STATS â”€â”€â”€ */}
       <div className="pp-stats-row">
         <StatCard icon={ChartLineUp}  color="#00FFD1" label="Total Logins"   value={userMeta?.login_count ?? 0}  sub="All time" />
-        <StatCard icon={CurrencyDollar}        color="#FFB800" label="Plan"           value={plan.label}        sub={`Active since ${String(userMeta?.created_at||'—').split('T')[0]}`} />
-        <StatCard icon={ShieldCheck}  color={kyc.color} label="KYC Status"  value={kyc.label}         sub={profile.kyc_reviewed_at ? `Verified ${profile.kyc_reviewed_at}` : '—'} />
+        <StatCard icon={CurrencyDollar}        color="#FFB800" label="Plan"           value={plan.label}        sub={`Active since ${String(userMeta?.created_at||'â€”').split('T')[0]}`} />
+        <StatCard icon={ShieldCheck}  color={kyc.color} label="KYC Status"  value={kyc.label}         sub={profile.kyc_reviewed_at ? `Verified ${profile.kyc_reviewed_at}` : 'â€”'} />
         <StatCard icon={TrendUp}      color={risk.color} label="Risk Profile" value={risk.label}       sub="Investment style" />
-        <StatCard icon={Lock}         color="#9945FF" label="Last Login"     value={String(userMeta?.last_login_at||'—').split('T')[0]} sub={userMeta?.last_login_ip||'—'} />
+        <StatCard icon={Lock}         color="#9945FF" label="Last Login"     value={String(userMeta?.last_login_at||'â€”').split('T')[0]} sub={userMeta?.last_login_ip||'â€”'} />
         <StatCard icon={Lightning}      color="#1A56FF" label="Account Role"   value={String(userMeta?.role||'user').charAt(0).toUpperCase()+String(userMeta?.role||'user').slice(1)} sub={`Step: ${userMeta?.registration_step||'complete'}`} />
       </div>
 
-      {/* ─── MAIN GRID ─── */}
+      {/* â”€â”€â”€ MAIN GRID â”€â”€â”€ */}
       <div className="pp-grid">
 
-        {/* ── LEFT COL ── */}
+        {/* â”€â”€ LEFT COL â”€â”€ */}
         <div className="pp-left">
 
           {/* Avatar card */}
@@ -472,7 +480,7 @@ export default function ProfilePage() {
                 </>
               ) : (
                 <div className="pp-bio-static" onClick={() => setEditBio(true)}>
-                  <p>{profile.bio || <span className="pp-bio-empty">Add a bio…</span>}</p>
+                  <p>{profile.bio || <span className="pp-bio-empty">Add a bioâ€¦</span>}</p>
                   <button className="pp-bio-edit"><Pencil size={10} weight="bold" /></button>
                 </div>
               )}
@@ -484,15 +492,15 @@ export default function ProfilePage() {
             <Section title="Account Information" icon={IdentificationCard} iconColor="#1A56FF">
               <div className="pp-info-grid">
                 {[
-                  { l:'User ID',         v: String(userMeta?.id||'—').slice(0,18)+'…'         },
-                  { l:'Email Address',   v: userMeta?.email || '—'                             },
-                  { l:'Email Verified',  v: (userMeta?.is_verified) ? '✓ Verified' : '✗ Not verified',
+                  { l:'User ID',         v: String(userMeta?.id||'â€”').slice(0,18)+'â€¦'         },
+                  { l:'Email Address',   v: userMeta?.email || 'â€”'                             },
+                  { l:'Email Verified',  v: (userMeta?.is_verified) ? 'âœ“ Verified' : 'âœ— Not verified',
                     c: (userMeta?.is_verified) ? '#00C076' : '#FF3D57'                          },
                   { l:'Account Role',    v: userMeta?.role || 'user'                           },
                   { l:'Onboarding',      v: userMeta?.onboarding_complete ? 'Complete' : 'Incomplete' },
-                  { l:'Member Since',    v: String(userMeta?.created_at||'—').split('T')[0]    },
-                  { l:'Last Login',      v: String(userMeta?.last_login_at||'—').split('T')[0] },
-                  { l:'Login IP',        v: userMeta?.last_login_ip || '—'                     },
+                  { l:'Member Since',    v: String(userMeta?.created_at||'â€”').split('T')[0]    },
+                  { l:'Last Login',      v: String(userMeta?.last_login_at||'â€”').split('T')[0] },
+                  { l:'Login IP',        v: userMeta?.last_login_ip || 'â€”'                     },
                 ].map(r => (
                   <div key={r.l} className="pp-info-row">
                     <span className="pp-info-l">{r.l}</span>
@@ -504,7 +512,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* ── RIGHT COL ── */}
+        {/* â”€â”€ RIGHT COL â”€â”€ */}
         <div className="pp-right">
 
           {/* Personal details */}
@@ -594,7 +602,7 @@ export default function ProfilePage() {
                 <Field label="Address Line 2" span>
                   <input className="pp-input" value={profile.address_line2}
                     onChange={e => set('address_line2', e.target.value)}
-                    placeholder="Apt, suite, unit…" />
+                    placeholder="Apt, suite, unitâ€¦" />
                 </Field>
                 <Field label="City">
                   <input className="pp-input" value={profile.city}

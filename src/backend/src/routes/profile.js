@@ -361,10 +361,10 @@ router.put('/update', requireAuth, async (req, res) => {
   try {
     const userId = req.userId
     const {
-      first_name, last_name, username, phone,
-      bio, avatar_url, address_line1, address_line2,
-      city, state, zip, country, occupation,
-      investment_experience, website,
+      first_name, last_name, display_name, username, phone, phone_country,
+      bio, avatar_url, date_of_birth, gender,
+      address_line1, address_line2, city, state, zip, country, country_code,
+      occupation, investment_experience, investment_goal, website,
     } = req.body
 
     const [[existing]] = await db.execute(
@@ -377,20 +377,29 @@ router.put('/update', requireAuth, async (req, res) => {
     const fields = []
     const vals   = []
 
-    if (first_name  !== undefined) { fields.push('first_name = ?');          vals.push(first_name.trim())  }
-    if (last_name   !== undefined) { fields.push('last_name = ?');           vals.push(last_name.trim())   }
-    if (phone       !== undefined) { fields.push('phone = ?');               vals.push(phone || null)      }
-    if (bio         !== undefined) { fields.push('bio = ?');                 vals.push(bio?.trim() || null)}
-    if (avatar_url  !== undefined) { fields.push('avatar_url = ?');          vals.push(avatar_url || null) }
-    if (address_line1 !== undefined){ fields.push('address_line1 = ?');      vals.push(address_line1 || null) }
-    if (address_line2 !== undefined){ fields.push('address_line2 = ?');      vals.push(address_line2 || null) }
-    if (city        !== undefined) { fields.push('city = ?');                vals.push(city || null)       }
-    if (state       !== undefined) { fields.push('state = ?');               vals.push(state || null)      }
-    if (zip         !== undefined) { fields.push('zip = ?');                 vals.push(zip || null)        }
-    if (country     !== undefined) { fields.push('country = ?');             vals.push(country || null)    }
-    if (occupation  !== undefined) { fields.push('occupation = ?');          vals.push(occupation || null) }
-    if (investment_experience !== undefined) { fields.push('investment_experience = ?'); vals.push(investment_experience || null) }
-    if (website     !== undefined) { fields.push('website = ?');             vals.push(website || null)    }
+    if (first_name        !== undefined) { fields.push('first_name = ?');        vals.push(first_name.trim())                             }
+    if (last_name         !== undefined) { fields.push('last_name = ?');         vals.push(last_name.trim())                              }
+    if (display_name      !== undefined) { fields.push('display_name = ?');      vals.push(display_name?.trim() || null)                  }
+    if (phone             !== undefined) { fields.push('phone = ?');             vals.push(phone || null)                                 }
+    if (phone_country     !== undefined) { fields.push('phone_country = ?');     vals.push(phone_country || null)                         }
+    if (bio               !== undefined) { fields.push('bio = ?');               vals.push(bio?.trim() || null)                           }
+    if (avatar_url        !== undefined) {
+      fields.push('avatar_url = ?');  vals.push(avatar_url || null)
+      fields.push('avatar_type = ?'); vals.push(avatar_url && avatar_url.startsWith('data:') ? 'upload' : 'preset')
+    }
+    if (date_of_birth     !== undefined) { fields.push('date_of_birth = ?');     vals.push(date_of_birth ? new Date(date_of_birth) : null) }
+    if (gender            !== undefined) { fields.push('gender = ?');            vals.push(gender ? gender.toLowerCase().trim() : null)   }
+    if (address_line1     !== undefined) { fields.push('address_line1 = ?');     vals.push(address_line1 || null)                         }
+    if (address_line2     !== undefined) { fields.push('address_line2 = ?');     vals.push(address_line2 || null)                         }
+    if (city              !== undefined) { fields.push('city = ?');              vals.push(city || null)                                  }
+    if (state             !== undefined) { fields.push('state = ?');             vals.push(state || null)                                 }
+    if (zip               !== undefined) { fields.push('zip = ?');               vals.push(zip || null)                                   }
+    if (country           !== undefined) { fields.push('country = ?');           vals.push(country || null)                               }
+    if (country_code      !== undefined) { fields.push('country_code = ?');      vals.push(country_code || null)                          }
+    if (occupation        !== undefined) { fields.push('occupation = ?');        vals.push(occupation || null)                            }
+    if (investment_experience !== undefined) { fields.push('investment_experience = ?'); vals.push(investment_experience || null)          }
+    if (investment_goal   !== undefined) { fields.push('investment_goal = ?');   vals.push(investment_goal || null)                       }
+    if (website           !== undefined) { fields.push('website = ?');           vals.push(website || null)                               }
 
     if (username !== undefined) {
       const [[taken]] = await db.execute(

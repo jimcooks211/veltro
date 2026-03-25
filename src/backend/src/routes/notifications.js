@@ -1,10 +1,10 @@
-import express        from 'express'
+﻿import express        from 'express'
 import { db }         from '../config.js'
-import authMiddleware from '../middleware/auth.js'
+import { requireAuth } from '../middleware/auth.js'
 
 const router = express.Router()
 
-/* ── sensible defaults every new user inherits ─────────────────── */
+/* â”€â”€ sensible defaults every new user inherits â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const DEFAULT_PREFS = {
   security_email:     true,  security_push:     true,  security_sms:     true,
   deposits_email:     true,  deposits_push:     true,  deposits_sms:     false,
@@ -30,8 +30,8 @@ async function ensureRow(userId) {
   )
 }
 
-/* ── GET /api/notifications/preferences ────────────────────────── */
-router.get('/preferences', authMiddleware, async (req, res) => {
+/* â”€â”€ GET /api/notifications/preferences â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+router.get('/preferences', requireAuth, async (req, res) => {
   try {
     await ensureRow(req.userId)
     const [rows] = await db.execute(
@@ -46,8 +46,8 @@ router.get('/preferences', authMiddleware, async (req, res) => {
   }
 })
 
-/* ── PATCH /api/notifications/preferences ──────────────────────── */
-router.patch('/preferences', authMiddleware, async (req, res) => {
+/* â”€â”€ PATCH /api/notifications/preferences â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+router.patch('/preferences', requireAuth, async (req, res) => {
   const allowed = new Set(Object.keys(DEFAULT_PREFS))
   const updates = {}
   for (const [k, v] of Object.entries(req.body)) {
@@ -69,8 +69,8 @@ router.patch('/preferences', authMiddleware, async (req, res) => {
   }
 })
 
-/* ── GET /api/notifications ─────────────────────────────────────── */
-router.get('/', authMiddleware, async (req, res) => {
+/* â”€â”€ GET /api/notifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+router.get('/', requireAuth, async (req, res) => {
   try {
     const limit  = Math.min(Number(req.query.limit) || 30, 100)
     const offset = Number(req.query.offset) || 0
@@ -93,8 +93,8 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 })
 
-/* ── GET /api/notifications/unread-count ───────────────────────── */
-router.get('/unread-count', authMiddleware, async (req, res) => {
+/* â”€â”€ GET /api/notifications/unread-count â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+router.get('/unread-count', requireAuth, async (req, res) => {
   try {
     const [[{ unread }]] = await db.execute(
       `SELECT COUNT(*) AS unread FROM notifications WHERE user_id = ? AND is_read = 0`, [req.userId]
@@ -105,8 +105,8 @@ router.get('/unread-count', authMiddleware, async (req, res) => {
   }
 })
 
-/* ── PATCH /api/notifications/read ─────────────────────────────── */
-router.patch('/read', authMiddleware, async (req, res) => {
+/* â”€â”€ PATCH /api/notifications/read â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+router.patch('/read', requireAuth, async (req, res) => {
   try {
     const { ids } = req.body // array of ids, or omit to mark all
     if (ids?.length) {
@@ -127,8 +127,8 @@ router.patch('/read', authMiddleware, async (req, res) => {
   }
 })
 
-/* ── DELETE /api/notifications/:id ─────────────────────────────── */
-router.delete('/:id', authMiddleware, async (req, res) => {
+/* â”€â”€ DELETE /api/notifications/:id â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+router.delete('/:id', requireAuth, async (req, res) => {
   try {
     await db.execute(
       `DELETE FROM notifications WHERE id = ? AND user_id = ?`, [req.params.id, req.userId]
@@ -140,3 +140,4 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 })
 
 export default router
+
