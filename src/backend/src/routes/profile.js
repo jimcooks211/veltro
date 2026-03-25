@@ -359,7 +359,7 @@ router.get('/me', requireAuth, async (req, res) => {
 ──────────────────────────────────────────────────────────────── */
 router.put('/update', requireAuth, async (req, res) => {
   try {
-    const userId = req.user.sub
+    const userId = req.userId
     const {
       first_name, last_name, username, phone,
       bio, avatar_url, address_line1, address_line2,

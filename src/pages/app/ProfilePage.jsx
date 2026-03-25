@@ -357,6 +357,7 @@ export default function ProfilePage() {
         username:              profile.username,
         display_name:          profile.display_name,
         bio:                   profile.bio,
+        avatar_url:            profile.avatar_url,
         date_of_birth:         profile.date_of_birth || null,
         gender:                profile.gender,
         phone:                 profile.phone,
