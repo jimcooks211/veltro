@@ -1,4 +1,4 @@
-﻿// src/routes/auth.js
+// src/routes/auth.js
 import { Router }        from 'express'
 import bcrypt            from 'bcryptjs'
 import jwt               from 'jsonwebtoken'
@@ -184,7 +184,7 @@ function buildVerificationEmail(code) {
 async function sendVerificationEmail(to, code) {
   await sendEmail({
     to,
-    subject: `${code} â€” Your Veltro verification code`,
+    subject: `${code} - Your Veltro verification code`,
     html:    buildVerificationEmail(code),
     text:    `Your Veltro verification code is: ${code}\n\nIt expires in 15 minutes.\n\nIf you didn't create a Veltro account, ignore this email.`,
   })
@@ -245,7 +245,7 @@ router.post('/register', async (req, res) => {
     )
     await db.execute(`INSERT INTO wallets (user_id) VALUES (?)`, [userId])
 
-    // signup notification — non-blocking, errors logged
+    // signup notification -- non-blocking, errors logged
     createNotification({
       userId,
       type: 'signup',
@@ -329,7 +329,7 @@ router.post('/verify-email', async (req, res) => {
       [user.id, ip]
     )
 
-    // login notification — non-blocking, errors logged
+    // login notification -- non-blocking, errors logged
     const location = [geo.city, geo.country].filter(Boolean).join(', ') || ip
     createNotification({
       userId: user.id,
@@ -520,9 +520,9 @@ router.post('/checkpoint', async (req, res) => {
   } catch { /* silent */ }
 })
 
-/* â”€â”€ POST /api/auth/change-password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-   Authenticated password change â€” requires current password.
-â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* â"€â"€ POST /api/auth/change-password â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+   Authenticated password change â€" requires current password.
+â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 router.post('/change-password', requireAuth, async (req, res) => {
   try {
     const userId = req.user?.sub || req.userId
@@ -555,10 +555,10 @@ router.post('/change-password', requireAuth, async (req, res) => {
   }
 })
 
-/* â”€â”€ GET /api/auth/sessions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/* â"€â"€ GET /api/auth/sessions â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
    Returns all active (non-revoked, non-expired) sessions for the
    authenticated user so the Security page can display real devices.
-â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 router.get('/sessions', requireAuth, async (req, res) => {
   try {
     const userId = req.user?.sub || req.userId
@@ -578,9 +578,9 @@ router.get('/sessions', requireAuth, async (req, res) => {
   }
 })
 
-/* â”€â”€ DELETE /api/auth/sessions/:id â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/* â"€â"€ DELETE /api/auth/sessions/:id â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
    Revoke a specific session (sign out that device).
-â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 router.delete('/sessions/:id', requireAuth, async (req, res) => {
   try {
     const userId    = req.user?.sub || req.userId
@@ -598,9 +598,9 @@ router.delete('/sessions/:id', requireAuth, async (req, res) => {
   }
 })
 
-/* â”€â”€ DELETE /api/auth/sessions (all others) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/* â"€â"€ DELETE /api/auth/sessions (all others) â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
    Revoke all sessions; optionally keep the current refresh token.
-â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 router.delete('/sessions', requireAuth, async (req, res) => {
   try {
     const userId       = req.user?.sub || req.userId

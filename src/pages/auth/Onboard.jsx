@@ -48,9 +48,9 @@ const FEATURES = [
 ]
 
 const RISK_PROFILES = [
-  { id: 'conservative', name: 'Conservative', desc: 'Capital preservation first. Low volatility, steady returns.',      return: '~4–8% / yr',    icon: Shield,    risk: 'conservative' },
-  { id: 'balanced',     name: 'Balanced',     desc: 'Mix of growth and stability. Diversified across asset classes.',   return: '~8–15% / yr',   icon: TrendUp,   risk: 'balanced'     },
-  { id: 'aggressive',   name: 'Aggressive',   desc: 'Maximum growth potential. High risk, high reward approach.',       return: '~15–30%+ / yr', icon: Lightning, risk: 'aggressive'   },
+  { id: 'conservative', name: 'Conservative', desc: 'Capital preservation first. Low volatility, steady returns.',      return: '~4-8% / yr',    icon: Shield,    risk: 'conservative' },
+  { id: 'balanced',     name: 'Balanced',     desc: 'Mix of growth and stability. Diversified across asset classes.',   return: '~8-15% / yr',   icon: TrendUp,   risk: 'balanced'     },
+  { id: 'aggressive',   name: 'Aggressive',   desc: 'Maximum growth potential. High risk, high reward approach.',       return: '~15-30%+ / yr', icon: Lightning, risk: 'aggressive'   },
 ]
 
 const PLANS = [
@@ -102,7 +102,7 @@ const PLAN_COLORS = {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   HELPER — userId
+   HELPER -- userId
    Priority order matches handleVerified in Onboarding.jsx:
      1. sessionStorage newUser.userId  (set by register / VerifyEmail)
      2. JWT sub claim decoded from the stored accessToken
@@ -120,7 +120,7 @@ const getUserId = () => {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   HELPER — authenticated fetch
+   HELPER -- authenticated fetch
    - Attaches the current accessToken as a Bearer header.
    - On 401 (token expired / revoked):
        • clearTokens() wipes accessToken, refreshToken, userId
@@ -131,7 +131,7 @@ const getUserId = () => {
    - Network failures re-throw so the caller can show a
      connectivity error.
    Note: there is no /api/auth/refresh endpoint in the backend,
-   so silent refresh is not possible — the correct UX on 401 is
+   so silent refresh is not possible -- the correct UX on 401 is
    to send the user back to the login screen.
 ══════════════════════════════════════════════════════════════════ */
 const authFetch = async (url, options = {}) => {
@@ -175,9 +175,9 @@ function reducer(state, action) {
 /* ══════════════════════════════════════════════════════════════════
    ONBOARD
    Props:
-     user       — { firstName, avatar, email }
-     onComplete — optional callback after successful save
-     onSkip     — optional callback before skip navigation
+     user       -- { firstName, avatar, email }
+     onComplete -- optional callback after successful save
+     onSkip     -- optional callback before skip navigation
 ══════════════════════════════════════════════════════════════════ */
 export default function Onboard({ user = {}, onComplete, onSkip }) {
   const navigate = useNavigate()
@@ -230,7 +230,7 @@ export default function Onboard({ user = {}, onComplete, onSkip }) {
       })
 
       if (res === null) {
-        /* 401 — clearTokens() already called inside authFetch */
+        /* 401 -- clearTokens() already called inside authFetch */
         handleSessionExpired()
         return
       }
@@ -261,11 +261,11 @@ export default function Onboard({ user = {}, onComplete, onSkip }) {
         body:   JSON.stringify({ riskProfile: 'balanced', plan: 'starter' }),
       })
       if (res === null) {
-        /* 401 — session expired even during skip */
+        /* 401 -- session expired even during skip */
         handleSessionExpired()
         return
       }
-    } catch { /* network error — skip navigation anyway */ }
+    } catch { /* network error -- skip navigation anyway */ }
 
     onSkip?.()
     goToDashboard()
@@ -295,7 +295,7 @@ export default function Onboard({ user = {}, onComplete, onSkip }) {
   }, [handleNext, handleBack])
 
   const isLastStep = step === N - 1
-  const ctaLabel   = submitting ? 'Saving…' : isLastStep ? 'Enter Veltro' : 'Continue'
+  const ctaLabel   = submitting ? 'Saving...' : isLastStep ? 'Enter Veltro' : 'Continue'
   const ctaIcon    = submitting
     ? <SpinnerGap size={15} weight='bold' className='ob-spin' />
     : isLastStep
@@ -434,7 +434,7 @@ export default function Onboard({ user = {}, onComplete, onSkip }) {
       <p className='ob-step-eyebrow'>You're all set</p>
       <h2 className='ob-step-title'>Ready for lift-off</h2>
       <p className='ob-step-sub'>
-        Here's a snapshot of your setup. Head into the platform —
+        Here's a snapshot of your setup. Head into the platform --
         your dashboard is already personalised and waiting.
       </p>
       <div className='ob-launch-summary'>

@@ -13,7 +13,7 @@ import {
 import './DashboardHome.css'
 
 /* ═══════════════════════════════════════════════════════════════
-   PRNG CANDLE GENERATOR — xorshift32, deterministic, no API
+   PRNG CANDLE GENERATOR -- xorshift32, deterministic, no API
 ═══════════════════════════════════════════════════════════════ */
 function rng(seed) {
   let s = (seed >>> 0) || 1
@@ -72,7 +72,7 @@ const WATCH_BASE = [
   { tk:'MSFT', name:'Microsoft',    basePrice:432.10, sp:[435,434,436,433,432,431,433,432.10] },
 ]
 
-/* ─ Portfolio holdings — quantities, fixed ─ */
+/* ─ Portfolio holdings -- quantities, fixed ─ */
 const HOLDINGS = [
   { tk:'AAPL', name:'Apple Inc.',   qty:28,    color:'#1A56FF' },
   { tk:'BTC',  name:'Bitcoin',      qty:0.18,  color:'#F7931A' },
@@ -92,7 +92,7 @@ const TC = { AAPL:'#1A56FF', BTC:'#F7931A', NVDA:'#00C076', ETH:'#00D4FF', MSFT:
 /* ─ Base prices ─ */
 const BASE_PRICES = { AAPL:189.42, NVDA:124.80, BTC:67420, ETH:3210, MSFT:432.10, SPY:548.20, VIX:14.32 }
 
-/* ─ Formatters — Inter tabular-nums only, never Syne ─ */
+/* ─ Formatters -- Inter tabular-nums only, never Syne ─ */
 const $   = (n, d = 2) => `$${Number(n).toLocaleString('en-US', { minimumFractionDigits:d, maximumFractionDigits:d })}`
 const $K  = (n) => n >= 1000 ? `$${(n / 1000).toFixed(2)}K` : $(n)
 const $M  = (n) => n >= 1e6  ? `${(n / 1e6).toFixed(2)}M`  : `${(n / 1e3).toFixed(0)}K`
@@ -312,7 +312,7 @@ function PerfBars({ data, isDark }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CANDLESTICK — pure SVG, ResizeObserver, forming candle pulses
+   CANDLESTICK -- pure SVG, ResizeObserver, forming candle pulses
 ═══════════════════════════════════════════════════════════════ */
 function Candlestick({ candles, isDark }) {
   const wRef      = useRef(null)
@@ -445,7 +445,7 @@ function Spark({ d, up }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   PORTFOLIO BREAKDOWN — SVG donut + live holding values
+   PORTFOLIO BREAKDOWN -- SVG donut + live holding values
 ═══════════════════════════════════════════════════════════════ */
 function PortfolioBreakdown({ prices, flash }) {
   const [hovered, setHovered] = useState(null)
@@ -569,7 +569,7 @@ function PortfolioBreakdown({ prices, flash }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ORDER BOOK — simulated bid/ask depth, ticks with prices
+   ORDER BOOK -- simulated bid/ask depth, ticks with prices
 ═══════════════════════════════════════════════════════════════ */
 function OrderBook({ prices, flash }) {
   const [sym, setSym]   = useState('AAPL')
@@ -610,7 +610,7 @@ function OrderBook({ prices, flash }) {
           <span>Depth</span>
         </div>
 
-        {/* Asks — reversed so highest ask is top */}
+        {/* Asks -- reversed so highest ask is top */}
         <div className='dh-ob-asks'>
           {[...book.asks].reverse().map((row, i) => (
             <div key={i} className='dh-ob-row ask'>
@@ -700,7 +700,7 @@ function WatchlistPanel({ prices, flash }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   DASHBOARD HOME — orchestrator
+   DASHBOARD HOME -- orchestrator
 ═══════════════════════════════════════════════════════════════ */
 export default function DashboardHome() {
   const { user, isDark } = useOutletContext() ?? {}
@@ -715,7 +715,7 @@ export default function DashboardHome() {
   const [perfTab, setPerfTab]     = useState('All')
   const [liveSummary, setLiveSummary] = useState(null)
 
-  // All figures come from DB — zero for new users
+  // All figures come from DB -- zero for new users
   useEffect(() => {
     apiGet('/api/portfolio/summary')
       .then(data => {
@@ -731,7 +731,7 @@ export default function DashboardHome() {
   const card0Ref  = useRef(null)
   const { spawn } = useParticles(canvasRef)
 
-  /* ─ Poll simulation — every 2.8s ─ */
+  /* ─ Poll simulation -- every 2.8s ─ */
   useEffect(() => {
     const poll = () => {
       setPrices(prev => {
@@ -749,7 +749,7 @@ export default function DashboardHome() {
           last.c = next.AAPL; last.h = Math.max(last.h, next.AAPL); last.l = Math.min(last.l, next.AAPL)
           arr[arr.length - 1] = last; return arr
         })
-        /* Update portfolio value — only if user has holdings */
+        /* Update portfolio value -- only if user has holdings */
         const aaplDelta = (next.AAPL - prev.AAPL) / prev.AAPL
         setPortVal(v => {
           if (v === 0) return 0  // new user, no holdings
@@ -790,7 +790,7 @@ export default function DashboardHome() {
       <div className='dh-top'>
         <div>
           <h1 className='dh-title'>Portfolio Overview</h1>
-          <p className='dh-sub'>Good {tod()}, {fn} — here's your market snapshot.</p>
+          <p className='dh-sub'>Good {tod()}, {fn} -- here's your market snapshot.</p>
         </div>
         <nav className='dh-bc'>
           <span>Veltro</span><CaretRight size={9}/>
@@ -807,13 +807,13 @@ export default function DashboardHome() {
           Icon={Briefcase} up={liveOpenPos > 0} delay={55}/>
         <StatCard label="Today's P&L" value={`${liveRealisedPnl >= 0 ? '+' : ''}${$K(Math.abs(liveRealisedPnl))}`} pct={Math.abs(dayPct)} sub='Realised P&L'
           Icon={ChartLineUp} up={liveRealisedPnl >= 0} delay={110} flashDir={portFlash}/>
-        <StatCard label='Win Rate' value={liveOpenPos > 0 ? '—' : '—'} pct={0} sub='no trades yet'
+        <StatCard label='Win Rate' value={liveOpenPos > 0 ? '--' : '--'} pct={0} sub='no trades yet'
           Icon={Target} up delay={165}/>
       </div>
 
       {/* Charts row */}
       <div className='dh-charts'>
-        {/* LEFT — portfolio performance bars */}
+        {/* LEFT -- portfolio performance bars */}
         <div className='dh-p dh-cpanel'>
           <div className='dh-chead'>
             <div>
@@ -837,12 +837,12 @@ export default function DashboardHome() {
           <div className='dh-cbody'><PerfBars data={BARS[perfTab]} isDark={isDark}/></div>
         </div>
 
-        {/* RIGHT — live candlestick */}
+        {/* RIGHT -- live candlestick */}
         <div className='dh-p dh-cpanel dh-cspanel'>
           <div className='dh-chead'>
             <div className='dh-ptw'>
               <Lightning size={13} weight='duotone' className='dh-pico'/>
-              <span className='dh-ptitle'>Live Market — AAPL</span>
+              <span className='dh-ptitle'>Live Market -- AAPL</span>
             </div>
             <div className='dh-forming-badge'>
               <span style={{ display:'inline-block', width:5, height:5, borderRadius:'50%',
@@ -875,7 +875,7 @@ export default function DashboardHome() {
         </div>
       </div>
 
-      {/* Bottom row — Portfolio Breakdown · Watchlist · Order Book */}
+      {/* Bottom row -- Portfolio Breakdown · Watchlist · Order Book */}
       <div className='dh-bottom'>
         <PortfolioBreakdown prices={prices} flash={flash}/>
         <WatchlistPanel prices={prices} flash={flash}/>

@@ -1,4 +1,4 @@
-// routes/wallet.js — full wallet management with proper transaction recording
+// routes/wallet.js - full wallet management with proper transaction recording
 import { Router } from 'express'
 import { db }     from '../config.js'
 import authMiddleware from '../middleware/auth.js'

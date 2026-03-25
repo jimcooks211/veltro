@@ -29,7 +29,7 @@ function nukeAllStorage() {
 /* ════════════════════════════════════════════════════════════════════
    DASHBOARD SHELL
    Routes nested under /dashboard/:userId render via <Outlet />
-   inside vlt-dash-content — no page navigations away from the shell.
+   inside vlt-dash-content -- no page navigations away from the shell.
 ════════════════════════════════════════════════════════════════════ */
 export default function Dashboard() {
   const { userId: routeUserId } = useParams()
@@ -132,7 +132,7 @@ export default function Dashboard() {
         const payload     = JSON.parse(atob(token.split('.')[1]))
         const tokenUserId = payload.sub
 
-        /* wrong userId in URL — redirect to the correct one */
+        /* wrong userId in URL -- redirect to the correct one */
         if (routeUserId && tokenUserId !== routeUserId) {
           window.location.replace(`/dashboard/${tokenUserId}`)
           return
@@ -173,7 +173,7 @@ export default function Dashboard() {
   const handleLogout = () => { nukeAllStorage(); window.location.replace('/auth') }
 
   /* ── guard gate ── */
-  if (guardStatus === 'checking') return <LoadingScreen message='Loading your dashboard…' />
+  if (guardStatus === 'checking') return <LoadingScreen message='Loading your dashboard...' />
 
   /* ── shell ── */
   return (
@@ -201,7 +201,7 @@ export default function Dashboard() {
           onLogout={handleLogout}
         />
 
-        {/* nested route content renders here — no full page navigation */}
+        {/* nested route content renders here -- no full page navigation */}
         <main className='vlt-dash-content'>
           <Outlet context={{ user, isDark, toggleTheme, refreshUser: fetchUserData }} />
         </main>

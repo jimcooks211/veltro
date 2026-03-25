@@ -33,7 +33,7 @@ const METHODS = [
     color: '#1A56FF',
     fee: 'Free',
     feeAmt: 0,
-    time: '1–3 business days',
+    time: '1-3 business days',
     min: 50,
     max: 10_000,
     daily: 10_000,
@@ -48,7 +48,7 @@ const METHODS = [
     color: '#F7931A',
     fee: 'Network fee',
     feeAmt: null,
-    time: '10–60 min',
+    time: '10-60 min',
     min: null,
     max: null,
     daily: null,
@@ -63,7 +63,7 @@ const METHODS = [
     color: '#2775CA',
     fee: 'Network fee',
     feeAmt: null,
-    time: '2–15 min',
+    time: '2-15 min',
     min: 10,
     max: 50_000,
     daily: 25_000,
@@ -82,7 +82,7 @@ const SAVED_ADDRESSES = [
 ]
 
 const USDC_NETWORKS = [
-  { id:'eth', label:'Ethereum', sub:'ERC-20', color:'#627EEA', fee:'~$2–8',    feeAmt: 4   },
+  { id:'eth', label:'Ethereum', sub:'ERC-20', color:'#627EEA', fee:'~$2-8',    feeAmt: 4   },
   { id:'sol', label:'Solana',   sub:'SPL',    color:'#9945FF', fee:'~$0.01',   feeAmt: 0.01},
 ]
 
@@ -206,7 +206,7 @@ function AssetPicker({ assets, value, onChange }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   STEP 1 — METHOD
+   STEP 1 -- METHOD
 ═══════════════════════════════════════════════════════════════ */
 function Step1({ selected, setSelected, onNext }) {
   return (
@@ -245,7 +245,7 @@ function Step1({ selected, setSelected, onNext }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   STEP 2 — DETAILS
+   STEP 2 -- DETAILS
 ═══════════════════════════════════════════════════════════════ */
 function Step2Bank({ assetId, setAssetId, amount, setAmount, destination, setDestination, onBack, onNext }) {
   const m      = METHODS.find(x => x.id==='bank')
@@ -320,7 +320,7 @@ function Step2Bank({ assetId, setAssetId, amount, setAmount, destination, setDes
 
       <div className='wd-info-row-sm'>
         <Info size={11} weight='duotone' style={{color:'#1A56FF'}}/>
-        Free ACH transfer · Arrives within 1–3 business days
+        Free ACH transfer · Arrives within 1-3 business days
       </div>
 
       <div className='wd-foot'>
@@ -419,7 +419,7 @@ function Step2Crypto({ assetId, setAssetId, amount, setAmount, destination, setD
                 <asset.Icon size={13} weight='duotone' style={{color: asset.color}}/>
                 <div className='wd-sa-info'>
                   <span className='wd-sa-label'>{s.label}</span>
-                  <span className='wd-sa-addr'>{s.addr.slice(0,18)}…</span>
+                  <span className='wd-sa-addr'>{s.addr.slice(0,18)}...</span>
                 </div>
                 {s.verified && <ShieldCheck size={13} weight='fill' style={{color:'#00C076', flexShrink:0}}/>}
               </button>
@@ -429,7 +429,7 @@ function Step2Crypto({ assetId, setAssetId, amount, setAmount, destination, setD
         <div className='wd-addr-input-wrap'>
           <input
             className='wd-input wd-addr-input'
-            placeholder={`Enter ${asset.sym} wallet address…`}
+            placeholder={`Enter ${asset.sym} wallet address...`}
             value={destination}
             onChange={e => setDestination(e.target.value)}
           />
@@ -525,7 +525,7 @@ function Step2USDC({ usdcNet, setUsdcNet, amount, setAmount, destination, setDes
         <label className='wd-label'>Destination Wallet Address</label>
         <input
           className='wd-input'
-          placeholder={usdcNet==='sol' ? 'Solana wallet address…' : 'Ethereum wallet address (0x…)'}
+          placeholder={usdcNet==='sol' ? 'Solana wallet address...' : 'Ethereum wallet address (0x...)'}
           value={destination}
           onChange={e=>setDestination(e.target.value)}
         />
@@ -552,7 +552,7 @@ function Step2USDC({ usdcNet, setUsdcNet, amount, setAmount, destination, setDes
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   STEP 3 — 2FA CONFIRM
+   STEP 3 -- 2FA CONFIRM
 ═══════════════════════════════════════════════════════════════ */
 function Step3({ method, assetId, amount, destination, usdcNet, onBack, onConfirm, loading }) {
   const [code,     setCode]     = useState('')
@@ -585,7 +585,7 @@ function Step3({ method, assetId, amount, destination, usdcNet, onBack, onConfir
     { label:'Network fee',val:fmtCrypto(fee, assetId, asset.decimals) },
     { label:'You receive',val:fmtCrypto(receive, assetId, asset.decimals), bold:true },
     { label:'≈ USD value',val:fmt$(usdOf(receive, assetId)) },
-    { label:'To address', val:`${destination.slice(0,14)}…${destination.slice(-6)}`, mono:true },
+    { label:'To address', val:`${destination.slice(0,14)}...${destination.slice(-6)}`, mono:true },
     { label:'Est. time',  val:method.time },
   ] : [
     { label:'Method',    val:'USDC Withdrawal' },
@@ -593,7 +593,7 @@ function Step3({ method, assetId, amount, destination, usdcNet, onBack, onConfir
     { label:'Amount',    val:`${fmt$(numAmt)} USDC` },
     { label:'Network fee',val:`≈ ${fmt$(fee)}` },
     { label:'You receive',val:`${fmt$(receive)} USDC`, bold:true },
-    { label:'To address', val:`${destination.slice(0,14)}…${destination.slice(-6)}`, mono:true },
+    { label:'To address', val:`${destination.slice(0,14)}...${destination.slice(-6)}`, mono:true },
     { label:'Est. time',  val:method.time },
   ]
 
@@ -694,7 +694,7 @@ function Step3({ method, assetId, amount, destination, usdcNet, onBack, onConfir
         </button>
         <button className='wd-btn-danger' onClick={onConfirm} disabled={!codeValid || loading}>
           {loading
-            ? <><Spinner size={14} className='wd-spin'/>Processing…</>
+            ? <><Spinner size={14} className='wd-spin'/>Processing...</>
             : <><ArrowCircleUp size={14} weight='bold'/>Confirm Withdrawal</>
           }
         </button>
@@ -704,7 +704,7 @@ function Step3({ method, assetId, amount, destination, usdcNet, onBack, onConfir
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   STEP 4 — SUCCESS
+   STEP 4 -- SUCCESS
 ═══════════════════════════════════════════════════════════════ */
 function Step4({ method, assetId, amount, onDone, onAnother }) {
   const asset  = ASSETS.find(a=>a.id===assetId) || ASSETS.find(a=>a.id==='USD')
@@ -721,7 +721,7 @@ function Step4({ method, assetId, amount, onDone, onAnother }) {
       <h2 className='wd-success-title'>Withdrawal Submitted</h2>
       <p className='wd-success-sub'>
         {method.id==='bank'
-          ? `Your ${fmt$(numAmt)} withdrawal has been submitted. Funds arrive in 1–3 business days.`
+          ? `Your ${fmt$(numAmt)} withdrawal has been submitted. Funds arrive in 1-3 business days.`
           : isCrypto
           ? `Your withdrawal is being broadcast to the network. It will arrive after confirmation.`
           : `Your USDC withdrawal has been submitted and is pending network confirmation.`

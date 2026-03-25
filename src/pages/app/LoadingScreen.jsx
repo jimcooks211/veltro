@@ -3,9 +3,9 @@ import Veltrolog from '../../components/VeltroIcon'
 
 /* ══════════════════════════════════════════════════════════════════
    VELTRO LOADING SCREEN
-   — theme-aware (respects system preference + veltro-theme localStorage)
-   — uses VeltroIcon for branding consistency
-   — matches the dashboard CSS token system
+   -- theme-aware (respects system preference + veltro-theme localStorage)
+   -- uses VeltroIcon for branding consistency
+   -- matches the dashboard CSS token system
 ══════════════════════════════════════════════════════════════════ */
 export default function LoadingScreen({ message = '' }) {
   const [isDark, setIsDark] = useState(() => {

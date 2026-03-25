@@ -39,10 +39,10 @@ oauth2Client.setCredentials({
   try {
     const res = await fetch('https://www.google.com')
     if (res.ok) {
-      console.log('\x1b[32m[railway]\x1b[0m ✅ outbound HTTPS:443 — reachable')
+      console.log('\x1b[32m[railway]\x1b[0m ✅ outbound HTTPS:443 - reachable')
     }
   } catch (err) {
-    console.error('\x1b[31m[railway]\x1b[0m ❌ outbound HTTPS:443 — blocked:', err.message)
+    console.error('\x1b[31m[railway]\x1b[0m ❌ outbound HTTPS:443 - blocked:', err.message)
   }
 })()
 
@@ -62,17 +62,17 @@ oauth2Client.setCredentials({
   try {
     const token = await oauth2Client.getAccessToken()
     if (token?.token) {
-      console.log('\x1b[32m[email]\x1b[0m ✅ Gmail OAuth2 connected — credentials valid')
+      console.log('\x1b[32m[email]\x1b[0m ✅ Gmail OAuth2 connected - credentials valid')
       console.log('\x1b[32m[email]\x1b[0m 📡 transport: Gmail REST API (HTTPS:443)')
     } else {
-      console.warn('\x1b[33m[email]\x1b[0m ⚠️  Gmail OAuth2 — no access token returned, check credentials')
+      console.warn('\x1b[33m[email]\x1b[0m ⚠️  Gmail OAuth2 - no access token returned, check credentials')
     }
   } catch (err) {
-    console.error('\x1b[31m[email]\x1b[0m ❌ Gmail OAuth2 failed —', err.message)
+    console.error('\x1b[31m[email]\x1b[0m ❌ Gmail OAuth2 failed -', err.message)
   }
 })()
 
-/* ── RFC 2047 subject encoder — fixes garbled special chars (—, é, etc.) ── */
+/* ── RFC 2047 subject encoder - fixes garbled special chars (-, é, etc.) ── */
 const encodeSubject = (str) =>
   `=?UTF-8?B?${Buffer.from(str).toString('base64')}?=`
 

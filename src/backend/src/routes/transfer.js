@@ -1,4 +1,4 @@
-// routes/transfer.js — internal currency/asset transfers
+// routes/transfer.js - internal currency/asset transfers
 import { Router } from 'express'
 import { db }     from '../config.js'
 import authMiddleware from '../middleware/auth.js'
@@ -7,7 +7,7 @@ import crypto from 'crypto'
 const router = Router()
 router.use(authMiddleware)
 
-// Live exchange rates (mock — in production use a real rates API)
+// Live exchange rates (mock - in production use a real rates API)
 const RATES_TO_USD = { USD:1, USDC:1, BTC:67420, ETH:3210, SOL:142.4 }
 
 function getRate(from, to) {

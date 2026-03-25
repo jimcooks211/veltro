@@ -1,4 +1,4 @@
-// routes/transactions.js — unified transaction history across all activity
+// routes/transactions.js - unified transaction history across all activity
 import { Router } from 'express'
 import { db }     from '../config.js'
 import authMiddleware from '../middleware/auth.js'

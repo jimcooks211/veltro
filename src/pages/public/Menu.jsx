@@ -92,7 +92,7 @@ export default function Menu({ close }) {
                     <X size={24} style={{ color, cursor: "pointer" }} onClick={handleClose} />
                 </div>
 
-                {/* nav items — stagger in from right */}
+                {/* nav items -- stagger in from right */}
                 <div style={{
                     display: "grid", gap: "1rem", fontSize: "15px",
                     fontFamily: "'Inter', sans-serif", color, margin: "2rem 10px"
@@ -114,7 +114,7 @@ export default function Menu({ close }) {
                     ))}
                 </div>
 
-                {/* button — animates in last */}
+                {/* button -- animates in last */}
                 <div style={{
                     opacity: isOpen ? 1 : 0,
                     transform: isOpen ? "translateX(0)" : "translateX(40px)",

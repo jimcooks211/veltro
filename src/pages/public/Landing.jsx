@@ -54,7 +54,7 @@ export default function Landing() {
   }, [menuactive])
 
   useEffect(() => {
-    // ~2rem = 32px — header goes frosted only after this threshold
+    // ~2rem = 32px -- header goes frosted only after this threshold
     const handleScroll = () => setScrolled(window.scrollY > 32)
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)

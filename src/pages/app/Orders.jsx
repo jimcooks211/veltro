@@ -13,7 +13,7 @@ import {
 import './Orders.css'
 
 /* ════════════════════════════════════════════════════════
-   MOCK DATA — 40 orders across different states
+   MOCK DATA -- 40 orders across different states
 ════════════════════════════════════════════════════════ */
 let _oid = 1000
 function mkOrder(sym, side, type, status, qty, price, filled, ts, pnl) {
@@ -89,7 +89,7 @@ function StatusBadge({ status }) {
 }
 
 function FillBar({ pct }) {
-  if (pct === 0) return <span className="od-fill-zero">—</span>
+  if (pct === 0) return <span className="od-fill-zero">--</span>
   return (
     <div className="od-fill-bar-wrap">
       <div className="od-fill-track">
@@ -272,7 +272,7 @@ function OrderHistoryTab({ orders }) {
         {[
           { label:'Realized PnL', val: (stats.totalPnl >= 0 ? '+' : '') + stats.totalPnl.toFixed(2) + ' USDT',
             color: stats.totalPnl >= 0 ? '#00C076' : '#FF3D57', Icon: stats.totalPnl >= 0 ? TrendUp : TrendDown },
-          { label:'Win Rate',     val: stats.filledCount > 0 ? stats.winRate.toFixed(1) + '%' : '—',
+          { label:'Win Rate',     val: stats.filledCount > 0 ? stats.winRate.toFixed(1) + '%' : '--',
             color: stats.winRate >= 50 ? '#00C076' : '#FF3D57', Icon: ChartLine },
           { label:'Total Volume', val: stats.totalVol >= 1000 ? `$${(stats.totalVol/1000).toFixed(1)}K` : `$${stats.totalVol.toFixed(0)}`,
             color: 'var(--cy-neon,#00FFD1)', Icon: ArrowRight },
@@ -297,7 +297,7 @@ function OrderHistoryTab({ orders }) {
       <div className="od-filter-bar">
         <div className="od-search-wrap">
           <MagnifyingGlass size={12} className="od-search-ico" />
-          <input className="od-search-input" placeholder="Search symbol or ID…"
+          <input className="od-search-input" placeholder="Search symbol or ID..."
             value={search} onChange={e => setSearch(e.target.value)} />
           {search && <button className="od-search-clear" onClick={() => setSearch('')}><X size={9} weight="bold" /></button>}
         </div>
@@ -369,7 +369,7 @@ function OrderHistoryTab({ orders }) {
                       ? <span className={`od-pnl ${o.pnl >= 0 ? 'pos' : 'neg'}`}>
                           {o.pnl >= 0 ? '+' : ''}{o.pnl.toFixed(2)}
                         </span>
-                      : <span className="od-fill-zero">—</span>
+                      : <span className="od-fill-zero">--</span>
                     }
                   </td>
                   <td><span className="od-fee">{o.fee.toFixed(4)}</span></td>
@@ -392,10 +392,10 @@ export default function Orders() {
   useOutletContext?.()
   const navigate = useNavigate()
   const [tab,    setTab]    = useState('open')
-  const [orders, setOrders] = useState([])        // start empty — no mock fallback
+  const [orders, setOrders] = useState([])        // start empty -- no mock fallback
   const [loading, setLoading] = useState(true)
 
-  // Fetch live orders — new users see clean empty state
+  // Fetch live orders -- new users see clean empty state
   useEffect(() => {
     apiGet('/api/orders?limit=100')
       .then(data => {
@@ -425,7 +425,7 @@ export default function Orders() {
       <div className="od-root" style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:400 }}>
         <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12, color:'var(--vlt-text-muted)' }}>
           <ArrowClockwise size={28} weight='duotone' style={{ animation:'spin 0.8s linear infinite', opacity:0.5 }}/>
-          <span style={{ fontFamily:'Inter,sans-serif', fontSize:13 }}>Loading orders…</span>
+          <span style={{ fontFamily:'Inter,sans-serif', fontSize:13 }}>Loading orders...</span>
         </div>
       </div>
     )
@@ -492,7 +492,7 @@ export default function Orders() {
             <ChartLine size={13} weight="duotone" style={{ color: stats.winRate >= 50 ? '#00C076' : '#FF3D57' }} />
           </div>
           <div className="od-sum-val" style={{ color: stats.winRate >= 50 ? '#00C076' : '#FF3D57' }}>
-            {stats.filledCount > 0 ? stats.winRate.toFixed(1) : '—'}
+            {stats.filledCount > 0 ? stats.winRate.toFixed(1) : '--'}
             <span className="od-sum-unit">{stats.filledCount > 0 ? '%' : ''}</span>
           </div>
           <div className="od-sum-bar">

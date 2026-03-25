@@ -55,7 +55,7 @@ function SaveBar({ dirty, onSave, onDiscard }) {
       <button className="sc-sb-dis" onClick={onDiscard}><X size={10} weight="bold"/>Discard</button>
       <button className="sc-sb-save" onClick={go} disabled={busy}>
         {done ? <><Check size={10} weight="bold"/>Saved!</> :
-         busy ? <><span className="sc-sb-spin"/>Saving…</> :
+         busy ? <><span className="sc-sb-spin"/>Saving...</> :
                 <><Check size={10} weight="bold"/>Save changes</>}
       </button>
     </div>
@@ -152,7 +152,7 @@ export default function Security() {
           else if (s.device_type === 'tablet') DeviceIcon = Phone
           const loc = [s.city, s.country].filter(Boolean).join(', ') || s.ip_address || 'Unknown'
           const when = formatRelative(s.created_at)
-          return { id: s.id, device: browser, os, ip: s.ip_address || '—', loc, Icon: DeviceIcon, last: when, cur: false }
+          return { id: s.id, device: browser, os, ip: s.ip_address || '--', loc, Icon: DeviceIcon, last: when, cur: false }
         })
         // Mark the newest session as "current" (first in list, ordered by created_at DESC)
         if (parsed.length) parsed[0].cur = true
@@ -201,7 +201,7 @@ export default function Security() {
     setCopied(true); setTimeout(() => setCopied(false), 2000)
   }
   const save    = async () => {
-    // Save security toggles — extend when 2FA backend is ready
+    // Save security toggles -- extend when 2FA backend is ready
     setSaved(sec)
   }
   const changePassword = async () => {
@@ -300,7 +300,7 @@ export default function Security() {
       {/* Sessions */}
       <Section title="Active sessions">
         <div className="sc-sessions">
-          {sessLoading && <div className="sc-sess-loading">Loading sessions…</div>}
+          {sessLoading && <div className="sc-sess-loading">Loading sessions...</div>}
           {!sessLoading && sessions.length === 0 && (
             <div className="sc-sess-loading">No active sessions found.</div>
           )}
@@ -352,7 +352,7 @@ export default function Security() {
           <div className="sc-reveal-key">
             <Warning size={12} weight="fill" style={{color:'#FFB800',flexShrink:0}}/>
             <div className="sc-rk-inner">
-              <span className="sc-rk-warn">Copy now — shown only once</span>
+              <span className="sc-rk-warn">Copy now -- shown only once</span>
               <code className="sc-rk-val">{revKey}</code>
             </div>
             <button className="sc-chip" onClick={copyKey}>

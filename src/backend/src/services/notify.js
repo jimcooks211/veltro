@@ -1,9 +1,9 @@
-// src/services/notify.js — central helper to create notification records
+// src/services/notify.js - central helper to create notification records
 import { db } from '../config.js'
 
 /**
  * createNotification({ userId, type, title, message, meta? })
- * Inserts a row into the notifications table. Non-blocking — errors are logged, not thrown.
+ * Inserts a row into the notifications table. Non-blocking - errors are logged, not thrown.
  */
 export async function createNotification({ userId, type, title, message, meta = null }) {
   try {
@@ -18,7 +18,7 @@ export async function createNotification({ userId, type, title, message, meta = 
 }
 
 /**
- * parseUA(uaString) — minimal browser/OS/device detection, no extra package needed.
+ * parseUA(uaString) - minimal browser/OS/device detection, no extra package needed.
  */
 export function parseUA(ua = '') {
   // Handle empty or invalid user agents
@@ -58,7 +58,7 @@ export function parseUA(ua = '') {
 }
 
 /**
- * geoLookup(ip) — resolves IP → { city, country, country_code }.
+ * geoLookup(ip) - resolves IP → { city, country, country_code }.
  * Uses ip-api.com (free, no key, 45 req/min).
  * Falls back to nulls on timeout or private IP.
  */

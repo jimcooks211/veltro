@@ -30,7 +30,7 @@ function genSpark(base, n = 30) {
 const WATCHLIST_ROWS = [
   {
     id:'wl1', stock_id:'st1',
-    notes:'Watching for breakout above $275 — earnings catalyst expected Q2',
+    notes:'Watching for breakout above $275 -- earnings catalyst expected Q2',
     alert_above:275, alert_below:240, added_at:'Jan 22, 2024',
     symbol:'TSLA', name:'Tesla Inc.',          exchange:'NASDAQ', sector:'Consumer',
     industry:'Electric Vehicles',
@@ -40,7 +40,7 @@ const WATCHLIST_ROWS = [
   },
   {
     id:'wl2', stock_id:'st2',
-    notes:'AWS growth + AI infrastructure spend — long term hold candidate',
+    notes:'AWS growth + AI infrastructure spend -- long term hold candidate',
     alert_above:250, alert_below:210, added_at:'Feb 5, 2024',
     symbol:'AMZN', name:'Amazon.com Inc.',      exchange:'NASDAQ', sector:'Consumer',
     industry:'Internet & Catalog Retail',
@@ -50,7 +50,7 @@ const WATCHLIST_ROWS = [
   },
   {
     id:'wl3', stock_id:'st3',
-    notes:'AI integration across Search, Cloud — watching for multiple expansion',
+    notes:'AI integration across Search, Cloud -- watching for multiple expansion',
     alert_above:185, alert_below:165, added_at:'Feb 14, 2024',
     symbol:'GOOGL', name:'Alphabet Inc.',       exchange:'NASDAQ', sector:'Technology',
     industry:'Internet Content & Services',
@@ -70,7 +70,7 @@ const WATCHLIST_ROWS = [
   },
   {
     id:'wl5', stock_id:'st5',
-    notes:'GLP-1 / Zepbound revenue; strong pipeline — watching for dip entry',
+    notes:'GLP-1 / Zepbound revenue; strong pipeline -- watching for dip entry',
     alert_above:820, alert_below:750, added_at:'Mar 9, 2024',
     symbol:'LLY',   name:'Eli Lilly & Co.',     exchange:'NYSE',   sector:'Healthcare',
     industry:'Drug Manufacturers',
@@ -80,7 +80,7 @@ const WATCHLIST_ROWS = [
   },
   {
     id:'wl6', stock_id:'st6',
-    notes:'AI platform momentum — AIP + Foundry enterprise deals accelerating',
+    notes:'AI platform momentum -- AIP + Foundry enterprise deals accelerating',
     alert_above:28, alert_below:20, added_at:'Mar 9, 2024',
     symbol:'PLTR',  name:'Palantir Tech.',       exchange:'NYSE',   sector:'Technology',
     industry:'Software',
@@ -119,8 +119,8 @@ const ADD_CANDIDATES = [
 
 const SECTOR_ICONS  = { Technology:Cpu, Financials:Buildings, Healthcare:Heartbeat, Energy:Leaf, Consumer:Globe }
 const fmtVol  = n => n>=1e9?`${(n/1e9).toFixed(1)}B`:n>=1e6?`${(n/1e6).toFixed(1)}M`:`${n}`
-const fmtCap  = n => n>=1e12?`$${(n/1e12).toFixed(1)}T`:n>=1e9?`$${(n/1e9).toFixed(0)}B`:'—'
-const fmtPx   = (n,base) => n?.toLocaleString('en-US',{minimumFractionDigits:base>100?2:base>1?2:4,maximumFractionDigits:base>100?2:base>1?2:4})||'—'
+const fmtCap  = n => n>=1e12?`$${(n/1e12).toFixed(1)}T`:n>=1e9?`$${(n/1e9).toFixed(0)}B`:'--'
+const fmtPx   = (n,base) => n?.toLocaleString('en-US',{minimumFractionDigits:base>100?2:base>1?2:4,maximumFractionDigits:base>100?2:base>1?2:4})||'--'
 
 /* ════════════════════════════════════════════════════════
    ALERT MODAL
@@ -160,7 +160,7 @@ function AlertModal({item, onClose, onSave}) {
           </div>
           <div className="wt-modal-row">
             <label className="wt-modal-lbl notes">Notes (optional)</label>
-            <textarea className="wt-textarea" rows={2} maxLength={300} placeholder="Your thesis or reason for watching…"
+            <textarea className="wt-textarea" rows={2} maxLength={300} placeholder="Your thesis or reason for watching..."
               value={notes} onChange={e=>setNotes(e.target.value)}/>
           </div>
         </div>
@@ -192,7 +192,7 @@ function AddDrawer({onAdd, onClose, existingIds}) {
       </div>
       <div className="wt-drawer-search">
         <MagnifyingGlass size={11} className="wt-ds-ico"/>
-        <input className="wt-ds-inp" placeholder="Symbol or company name…" value={q} onChange={e=>setQ(e.target.value)} autoFocus/>
+        <input className="wt-ds-inp" placeholder="Symbol or company name..." value={q} onChange={e=>setQ(e.target.value)} autoFocus/>
       </div>
       <div className="wt-drawer-list">
         {results.length===0
@@ -293,7 +293,7 @@ export default function Watchlist() {
       <div className="wt-ctrl">
         <div className="wt-srch">
           <MagnifyingGlass size={11} className="wt-srch-ico"/>
-          <input className="wt-srch-inp" placeholder="Search symbol or name…" value={search} onChange={e=>setSearch(e.target.value)}/>
+          <input className="wt-srch-inp" placeholder="Search symbol or name..." value={search} onChange={e=>setSearch(e.target.value)}/>
           {search&&<button className="wt-srch-x" onClick={()=>setSearch('')}><X size={8} weight="bold"/></button>}
         </div>
         <div className="wt-pills">

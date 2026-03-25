@@ -36,7 +36,7 @@ export default function Onboarding() {
     /* Priority order for userId:
        1. Passed directly from VerifyEmail (data.userId top-level field)
        2. sessionStorage newUser.userId  (set during register or VerifyEmail)
-       3. Decode sub claim from the JWT we just stored — guaranteed present
+       3. Decode sub claim from the JWT we just stored -- guaranteed present
           for both register AND login flows since tokens were just written    */
     const uid = userId
       || (() => { try { return JSON.parse(sessionStorage.getItem('newUser') || '{}').userId } catch { return null } })()
@@ -59,7 +59,7 @@ export default function Onboarding() {
         window.location.href = uid ? `/dashboard/${uid}` : '/dashboard'
         break
       default:
-        /* safe fallback — CreateProfile guard will re-route if already done */
+        /* safe fallback -- CreateProfile guard will re-route if already done */
         window.location.href = uid ? `/createprofile/${uid}` : '/veltrotour'
     }
   }

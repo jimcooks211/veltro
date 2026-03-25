@@ -6,8 +6,8 @@ import crypto     from 'crypto'
 const router = Router()
 
 /* ══════════════════════════════════════════════════════════════════
-   HELPER — derive a session fingerprint from request headers
-   No cookies needed — deterministic per browser session.
+   HELPER - derive a session fingerprint from request headers
+   No cookies needed - deterministic per browser session.
    Hashed so raw IP is never stored in the session_id column.
 ══════════════════════════════════════════════════════════════════ */
 function buildSessionId(req) {
@@ -20,7 +20,7 @@ function buildSessionId(req) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   HELPER — coarse device type from user-agent string
+   HELPER - coarse device type from user-agent string
 ══════════════════════════════════════════════════════════════════ */
 function getDeviceType(ua = '') {
   if (/tablet|ipad|playbook|silk/i.test(ua))               return 'tablet'
@@ -31,11 +31,13 @@ function getDeviceType(ua = '') {
 /* ══════════════════════════════════════════════════════════════════
    POST /api/analytics/visit
    Body: { page?, referrer? }
-   Called on every public page mount — fire-and-forget from frontend.
+   Called on every public page mount - fire-and-forget from frontend.
    Always returns 200 so a DB hiccup never breaks the landing page.
 ══════════════════════════════════════════════════════════════════ */
 router.post('/visit', async (req, res) => {
-  // respond immediately — don't make the client wait
+  // Ensure CORS headers present then respond immediately
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
   res.status(200).json({ ok: true })
 
   try {
@@ -56,7 +58,7 @@ router.post('/visit', async (req, res) => {
       [sessionId, ip, ua, referrer || null, page.slice(0, 200), deviceType]
     )
   } catch (err) {
-    // silent — never surface analytics errors to the user
+    // silent - never surface analytics errors to the user
     console.error('Analytics write failed:', err.message)
   }
 })

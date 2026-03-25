@@ -27,7 +27,7 @@ export default function RiskDisclosure() {
             <h2>General Market Risk</h2>
           </div>
           <p>All investments in financial markets involve risk. The value of your investments can go down as well as up, and you may get back less than you originally invested. Past performance is not a guarantee of future results.</p>
-          <p>Market prices can be volatile and can move rapidly in response to news, economic data, geopolitical events, or market sentiment — sometimes with little or no warning.</p>
+          <p>Market prices can be volatile and can move rapidly in response to news, economic data, geopolitical events, or market sentiment -- sometimes with little or no warning.</p>
         </div>
 
         <div className="legal-section">

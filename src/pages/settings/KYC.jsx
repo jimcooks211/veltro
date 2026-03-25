@@ -108,7 +108,7 @@ export default function KYC() {
       <div className="ky-success">
         <div className="ky-suc-ring"><SealCheck size={44} weight="fill" style={{color:'#00FFD1'}}/></div>
         <h3>Verification Submitted</h3>
-        <p>Our compliance team reviews documents within 1–5 business days. You'll receive an email when your status updates.</p>
+        <p>Our compliance team reviews documents within 1-5 business days. You'll receive an email when your status updates.</p>
         <div className="ky-suc-ref">REF · KYC-{Date.now().toString().slice(-8).toUpperCase()}</div>
         <button className="ky-primary-btn" onClick={() => { setPhase('view'); setDocs({}) }}>
           <ArrowCounterClockwise size={13} weight="bold"/>Back to overview
@@ -197,7 +197,7 @@ export default function KYC() {
       {/* Tier 3 upload zone */}
       {active === 3 && (
         <div className="ky-section">
-          <div className="ky-sec-title">Tier 3 — Document submission</div>
+          <div className="ky-sec-title">Tier 3 -- Document submission</div>
           <div className="ky-sec-body">
             {phase === 'upload' ? (
               <>
@@ -213,7 +213,7 @@ export default function KYC() {
                 <div className="ky-submit-row">
                   <button className="ky-primary-btn" disabled={!allDocs || busy} onClick={submit}>
                     {busy
-                      ? <><span className="ky-spin"/>Submitting…</>
+                      ? <><span className="ky-spin"/>Submitting...</>
                       : <><SealCheck size={13} weight="bold"/>Submit for verification</>
                     }
                   </button>
@@ -242,7 +242,7 @@ export default function KYC() {
       {/* Verified tier status */}
       {active <= 2 && (
         <div className="ky-section">
-          <div className="ky-sec-title">Tier {active} — Status</div>
+          <div className="ky-sec-title">Tier {active} -- Status</div>
           <div className="ky-sec-body">
             <div className="ky-verified-banner">
               <CheckCircle size={20} weight="fill" style={{color:'#00C076',flexShrink:0}}/>

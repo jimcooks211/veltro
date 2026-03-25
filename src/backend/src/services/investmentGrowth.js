@@ -55,7 +55,7 @@ export async function applyInvestmentGrowth() {
            VALUES (?, 'credit', 'USD', ?, 0, 'completed', 'internal', ?, ?, 'internal')`,
           [inv.user_id, growthAmount,
            `Investment growth: ${inv.symbol}`,
-           `+10% daily growth on ${inv.symbol} — $${valueBefore.toFixed(2)} → $${valueAfter.toFixed(2)}`]
+           `+10% daily growth on ${inv.symbol} - $${valueBefore.toFixed(2)} → $${valueAfter.toFixed(2)}`]
         )
         applied++
       }

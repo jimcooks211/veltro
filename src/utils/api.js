@@ -1,4 +1,4 @@
-// src/utils/api.js — Central API helper with auth headers + token refresh
+// src/utils/api.js -- Central API helper with auth headers + token refresh
 const BASE = import.meta.env.VITE_API_URL || 'https://veltroinvestment.up.railway.app'
 
 function getToken() {
@@ -36,7 +36,7 @@ export async function apiFetch(path, options = {}) {
       token = await refreshAccessToken()
       headers.Authorization = `Bearer ${token}`
       res = await fetch(`${BASE}${path}`, { ...options, headers })
-    } catch { /* Refresh failed — caller handles */ }
+    } catch { /* Refresh failed -- caller handles */ }
   }
   return res
 }

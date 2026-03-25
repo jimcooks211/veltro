@@ -10,7 +10,7 @@ export function useCheckpoint() {
     const token = localStorage.getItem('accessToken')
     if (!token) return
 
-    // fire-and-forget — never block the UI
+    // fire-and-forget -- never block the UI
     fetch(`${import.meta.env.VITE_API_URL}/api/auth/checkpoint`, {
       method:  'POST',
       headers: {

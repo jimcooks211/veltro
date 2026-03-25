@@ -199,7 +199,7 @@ function AddressField({ id, label, value, onChange, bias, onSelect, success, err
 
   const dropdown = showDrop && createPortal(
     <div className='addr-suggest-panel' style={{ position: 'absolute', top: dropPos.top, left: dropPos.left, width: dropPos.width, zIndex: 9999 }}>
-      {loading && <div className='addr-suggest-loading'>Searching…</div>}
+      {loading && <div className='addr-suggest-loading'>Searching...</div>}
       {results.map((r, i) => (
         <button key={i} type='button' className='addr-suggest-item' onMouseDown={() => handleSelect(r)}>
           <MapPin size={12} weight='fill' className='addr-suggest-pin' />
@@ -297,7 +297,7 @@ function CountryPickerContent({ onSelect, selectedIso }) {
     <div className='cp-country-picker'>
       <div className='cp-country-search-wrap'>
         <MagnifyingGlass size={14} className='cp-country-search-icon' />
-        <input type='text' placeholder='Search country or code…' value={query}
+        <input type='text' placeholder='Search country or code...' value={query}
           onChange={e => setQuery(e.target.value)} autoFocus className='cp-country-search'
           autoComplete='off' spellCheck='false' />
       </div>
@@ -359,7 +359,7 @@ function UsernameField({ value, onChange, status, statusEl, error }) {
   const lifted = focused || value.length > 0
   const hintColor = status === 'available' ? 'var(--auth-success)' : 'var(--auth-error)'
   const hintMsg   = status === 'available' ? '✓ Available'
-                  : status === 'taken'     ? 'Already taken — try another'
+                  : status === 'taken'     ? 'Already taken -- try another'
                   : null
   return (
     <div className='float-input-wrapper'>
@@ -402,7 +402,7 @@ function GuardScreen({ message }) {
       color: 'rgba(138,150,180,0.6)', fontSize: 14,
       fontFamily: "'Segoe UI',Arial,sans-serif",
     }}>
-      {message || 'Checking your session…'}
+      {message || 'Checking your session...'}
     </div>
   )
 }
@@ -411,7 +411,7 @@ function GuardScreen({ message }) {
    CREATE PROFILE
 ══════════════════════════════════════════════════════════════════ */
 export default function CreateProfile({ onSave }) {
-  /* /createprofile/:userId — read the userId from the URL */
+  /* /createprofile/:userId -- read the userId from the URL */
   const { userId: routeUserId } = useParams()
 
   /* guard: 'checking' | 'ok' | 'denied' */
@@ -431,7 +431,7 @@ export default function CreateProfile({ onSave }) {
   }, [isDark])
 
   /* ══════════════════════════════════════════════════════════════
-     AUTH GUARD — runs on every mount, including back-button visits
+     AUTH GUARD -- runs on every mount, including back-button visits
   ══════════════════════════════════════════════════════════════ */
   useEffect(() => {
     const check = async () => {
@@ -537,7 +537,7 @@ export default function CreateProfile({ onSave }) {
             }
           }
         } catch {
-          /* pre-fill fetch failed — non-fatal */
+          /* pre-fill fetch failed -- non-fatal */
         }
 
         setGuardStatus('ok')
@@ -722,7 +722,7 @@ export default function CreateProfile({ onSave }) {
       if (!form.username.trim())                  e.username  = 'Username is required'
       else if (usernameStatus === 'taken')         e.username  = 'This username is already taken'
       else if (usernameStatus === 'checking')      e.username  = 'Please wait while we check availability'
-      else if (!/^[a-zA-Z0-9_.]{3,20}$/.test(form.username)) e.username = 'Only letters, numbers, _ and . (3–20 chars)'
+      else if (!/^[a-zA-Z0-9_.]{3,20}$/.test(form.username)) e.username = 'Only letters, numbers, _ and . (3-20 chars)'
     }
     if (step === 1) {
       if (!dob)    e.dob    = 'Date of birth is required'
@@ -852,7 +852,7 @@ export default function CreateProfile({ onSave }) {
 
   /* ── DOB calendar custom header ────────────────────────────────────
      react-datepicker's built-in month dropdown does not restrict options
-     to the maxDate for the boundary year (2013 still shows Apr–Dec).
+     to the maxDate for the boundary year (2013 still shows Apr-Dec).
      This custom header:
        • limits the month <select> to only valid months for the viewed year
        • limits the year  <select> to 1900 → maxDobDate year
@@ -938,11 +938,11 @@ export default function CreateProfile({ onSave }) {
 
   /* ── guard gate ── */
   if (guardStatus === 'checking') return <GuardScreen />
-  if (guardStatus === 'denied')   return <GuardScreen message='Redirecting…' />
+  if (guardStatus === 'denied')   return <GuardScreen message='Redirecting...' />
 
   /* ── panels ── */
   const panels = [
-    /* 0 — identity */
+    /* 0 -- identity */
     <div className='ps-fields' key='identity'>
       <AvatarPicker seed={avatarSeed} onSeedChange={setAvatarSeed}
         customImg={customImg} onCustom={handleCustomAvatar}
@@ -965,7 +965,7 @@ export default function CreateProfile({ onSave }) {
         onChange={set('bio')} maxLength={160} />
     </div>,
 
-    /* 1 — contact */
+    /* 1 -- contact */
     <div className='ps-fields' key='contact'>
       <FloatingInput id='email' label='Email address' type='email'
         value={signupEmail} onChange={() => {}} disabled
@@ -1011,14 +1011,14 @@ export default function CreateProfile({ onSave }) {
       <div className='ps-select-section'>
         <p className='ps-select-label'>
           Gender
-          {errors.gender && <span style={{ color: 'var(--auth-error)', marginLeft: 8, fontSize: 11 }}>— {errors.gender}</span>}
+          {errors.gender && <span style={{ color: 'var(--auth-error)', marginLeft: 8, fontSize: 11 }}>-- {errors.gender}</span>}
         </p>
         <SelectCard options={GENDER_OPTIONS} value={gender}
           onChange={val => { setGender(val); setErrors(p => ({ ...p, gender: '' })) }} columns={2} />
       </div>
     </div>,
 
-    /* 2 — address */
+    /* 2 -- address */
     <div className='ps-fields' key='address'>
       <AddressField id='address' label='Street address' value={form.address}
         onChange={set('address')} bias={null} onSelect={fillAddress}
@@ -1037,7 +1037,7 @@ export default function CreateProfile({ onSave }) {
       </div>
     </div>,
 
-    /* 3 — investor profile */
+    /* 3 -- investor profile */
     <div className='ps-fields' key='investor'>
       <FloatingInput id='occupation' label='Occupation / Job title / Business position'
         value={form.occupation} onChange={set('occupation')} success={success.occupation} error={errors.occupation} />
@@ -1045,7 +1045,7 @@ export default function CreateProfile({ onSave }) {
         <p className='ps-select-label'>
           Investment experience
           {errors.investmentExperience && (
-            <span style={{ color: 'var(--auth-error)', marginLeft: 8, fontSize: 11 }}>— {errors.investmentExperience}</span>
+            <span style={{ color: 'var(--auth-error)', marginLeft: 8, fontSize: 11 }}>-- {errors.investmentExperience}</span>
           )}
         </p>
         <SelectCard options={EXPERIENCE_OPTIONS} value={form.investmentExperience}
@@ -1062,7 +1062,7 @@ export default function CreateProfile({ onSave }) {
   return (
     <div className={`cp-page ${isDark ? 'dark' : 'light'}`}>
 
-      {/* LEFT — form */}
+      {/* LEFT -- form */}
       <div className='cp-form-side'>
         <div className='ps-dots'>
           {SEGMENTS.map((s, i) => (
@@ -1102,7 +1102,7 @@ export default function CreateProfile({ onSave }) {
           )}
           <button type='button' className='ps-btn-next' onClick={handleNext} disabled={loading || flipping}>
             <span className='ps-btn-next-label'>
-              {loading ? 'Saving…' : currentStep === N - 1 ? 'Save profile' : 'Continue'}
+              {loading ? 'Saving...' : currentStep === N - 1 ? 'Save profile' : 'Continue'}
             </span>
             <span className='ps-btn-next-icon'>
               {loading
@@ -1116,7 +1116,7 @@ export default function CreateProfile({ onSave }) {
         </div>
       </div>
 
-      {/* RIGHT — image flip */}
+      {/* RIGHT -- image flip */}
       <div className='cp-image-side'>
         <div className='cp-flip-scene'>
           <div className={`cp-flip-card ${flipped ? 'cp-flipped' : ''}`}>

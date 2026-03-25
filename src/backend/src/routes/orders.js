@@ -84,7 +84,7 @@ router.post('/', async (req, res) => {
         ]
       )
 
-      // If market order filled — update portfolio
+      // If market order filled - update portfolio
       if (isMarket && price) {
         const [existing] = await conn.execute(
           `SELECT id, quantity, avg_cost, total_invested

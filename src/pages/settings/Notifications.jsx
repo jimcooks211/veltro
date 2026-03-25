@@ -10,7 +10,7 @@ import {
 } from '@phosphor-icons/react'
 import './Notifications.css'
 
-/* ── constants ──────────────────────────────────────────── */
+/* â"€â"€ constants â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 const CATS = [
   { id:'security',    label:'Security',        Icon:ShieldCheck,       color:'#00C076', desc:'Login alerts, 2FA changes, suspicious activity' },
   { id:'deposits',    label:'Deposits',         Icon:ArrowCircleDown,   color:'#1A56FF', desc:'Incoming funds and deposit confirmations' },
@@ -36,7 +36,7 @@ const initMatrix = () => {
   return m
 }
 
-/* ── atoms ─────────────────────────────────────────────── */
+/* â"€â"€ atoms â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 function Toggle({ on, onChange, accent = '#00FFD1', size = 'md' }) {
   return (
     <button className={`nt-toggle ${size} ${on?'on':''}`} style={{'--ta':accent}}
@@ -82,14 +82,14 @@ function SaveBar({ dirty, onSave, onDiscard }) {
       <button className="nt-sb-dis" onClick={onDiscard}><X size={10} weight="bold"/>Discard</button>
       <button className="nt-sb-save" onClick={go} disabled={busy}>
         {done ? <><Check size={10} weight="bold"/>Saved!</> :
-         busy ? <><span className="nt-sb-spin"/>Saving…</> :
+         busy ? <><span className="nt-sb-spin"/>Savingâ€¦</> :
                 <><Check size={10} weight="bold"/>Save changes</>}
       </button>
     </div>
   )
 }
 
-/* ── category row (expandable) ──────────────────────────── */
+/* â"€â"€ category row (expandable) â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 function CatRow({ cat, matrix, onChange, open, onToggle }) {
   return (
     <div className={`nt-cat-row ${open?'open':''}`}>
@@ -130,7 +130,7 @@ function CatRow({ cat, matrix, onChange, open, onToggle }) {
   )
 }
 
-/* ── main ───────────────────────────────────────────────── */
+/* â"€â"€ main â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 export default function Notifications() {
   useOutletContext?.()
   const [matrix, setMatrix]   = useState(initMatrix())
@@ -144,7 +144,7 @@ export default function Notifications() {
   const [volume,  setVolume]  = useState(65)
   const [loading, setLoading] = useState(true)
 
-  /* ── load from API on mount ── */
+  /* â"€â"€ load from API on mount â"€â"€ */
   useEffect(() => {
     apiGet('/api/notifications/preferences')
       .then(({ preferences: p }) => {
@@ -180,7 +180,7 @@ export default function Notifications() {
     setMatrix(m)
   }
 
-  /* ── flatten matrix + delivery prefs into API payload ── */
+  /* â"€â"€ flatten matrix + delivery prefs into API payload â"€â"€ */
   const buildPayload = () => {
     const flat = {}
     CATS.forEach(c => CHANNELS.forEach(ch => { flat[`${c.id}_${ch.id}`] = matrix[c.id][ch.id] }))
@@ -195,7 +195,7 @@ export default function Notifications() {
 
   return (
     <div className="nt-root">
-      {loading && <div className="nt-loading">Loading preferences…</div>}
+      {loading && <div className="nt-loading">Loading preferencesâ€¦</div>}
 
       {/* header */}
       <div className="nt-page-head">

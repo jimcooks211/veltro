@@ -10,7 +10,7 @@ import {
 import './Markets.css'
 
 /* ═══════════════════════════════════════════════════════════════
-   ASSET DATABASE — 40 instruments
+   ASSET DATABASE -- 40 instruments
 ═══════════════════════════════════════════════════════════════ */
 const ASSETS_RAW = [
   { sym:'AAPL',    name:'Apple Inc.',          cat:'stock',  sector:'Technology',  mktCap:2940, baseP:189.42, avgVol:68.2,  color:'#1A56FF', vol:0.0006 },
@@ -87,7 +87,7 @@ function makeSpark(base, sym) {
 }
 const SPARKS = Object.fromEntries(ASSETS_RAW.map(a=>[a.sym, makeSpark(a.baseP, a.sym)]))
 
-/* ─ Tick price — drift back to base ─ */
+/* ─ Tick price -- drift back to base ─ */
 function tickPrice(cur, base, vol) {
   const drift = (base - cur) * 0.0015
   const noise = (Math.random() - 0.499) * cur * vol
@@ -96,20 +96,20 @@ function tickPrice(cur, base, vol) {
 
 /* ─ Formatters ─ */
 const fmtPrice = (p, sym) => {
-  if (!p) return '—'
+  if (!p) return '--'
   if (sym?.includes('/')) return p.toFixed(4)
   if (p >= 10000) return `$${p.toLocaleString('en-US',{maximumFractionDigits:0})}`
   if (p >= 100)   return `$${p.toFixed(2)}`
   if (p >= 1)     return `$${p.toFixed(2)}`
   return `$${p.toFixed(4)}`
 }
-const fmtCap = b => !b ? '—' : b>=1000 ? `$${(b/1000).toFixed(2)}T` : `$${b.toFixed(0)}B`
-const fmtVol = (v,cat) => !v ? '—' : cat==='crypto' ? `$${(v/1000).toFixed(1)}B` : `${v.toFixed(1)}M`
+const fmtCap = b => !b ? '--' : b>=1000 ? `$${(b/1000).toFixed(2)}T` : `$${b.toFixed(0)}B`
+const fmtVol = (v,cat) => !v ? '--' : cat==='crypto' ? `$${(v/1000).toFixed(1)}B` : `${v.toFixed(1)}M`
 
 /* ═══════════════════════════════════════════════════════════════
    TIERED FLASH LOGIC
    move < 0.04%  → colour transition only (CSS var swap)
-   move 0.04–0.1% → subtle glow pulse
+   move 0.04-0.1% → subtle glow pulse
    move > 0.1%  → full keyframe flash
 ═══════════════════════════════════════════════════════════════ */
 function flashTier(delta, price) {
@@ -145,7 +145,7 @@ function Spark({ d, up, w=62, h=26 }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   INDEX BAR — live ticking major indices
+   INDEX BAR -- live ticking major indices
 ═══════════════════════════════════════════════════════════════ */
 function IndexBar({ indices, flash }) {
   return (
@@ -320,7 +320,7 @@ export default function Markets() {
   useEffect(()=>{ const t=setInterval(()=>setTime(new Date()),1000); return ()=>clearInterval(t) },[])
 
   /* ─────────────────────────────────────────────────────────
-     TIERED POLLING — staggered by asset class
+     TIERED POLLING -- staggered by asset class
      crypto: 1.6s  |  stocks: 2.8s  |  etfs: 3.4s  |  forex: 4.8s
      indices: 2.2s
   ───────────────────────────────────────────────────────── */
@@ -341,7 +341,7 @@ export default function Markets() {
             if (tier) newFlash[sym] = tier
             next[sym] = np
           })
-          /* apply flash — clear each sym independently after 750ms */
+          /* apply flash -- clear each sym independently after 750ms */
           Object.entries(newFlash).forEach(([sym, tier])=>{
             clearTimeout(flashTimers.current[sym])
             setFlash(f=>({...f,[sym]:tier}))
@@ -533,7 +533,7 @@ export default function Markets() {
           <div className='mk-controls'>
             <div className='mk-search-wrap'>
               <MagnifyingGlass size={13} className='mk-search-ico' weight='bold'/>
-              <input ref={searchRef} className='mk-search' placeholder='Search symbol or name…'
+              <input ref={searchRef} className='mk-search' placeholder='Search symbol or name...'
                 value={search} onChange={e=>setSearch(e.target.value)}/>
               {search && (
                 <button className='mk-search-clear' onClick={()=>{setSearch('');searchRef.current?.focus()}}>

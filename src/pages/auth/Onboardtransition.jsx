@@ -1,7 +1,7 @@
 /**
  * OnboardTransition.jsx
  * Full-screen animated overlay shown while onboarding data is saving.
- * Drop-in — renders when `visible` prop is true, unmounts cleanly after exit.
+ * Drop-in -- renders when `visible` prop is true, unmounts cleanly after exit.
  *
  * Usage in Onboard.jsx:
  *   import OnboardTransition from './OnboardTransition'
@@ -14,9 +14,9 @@ import Veltrolog from '../../components/VeltroIcon'
 import './Onboardtransition.css'
 
 const MESSAGES = [
-  'Setting up your profile…',
-  'Calibrating your dashboard…',
-  'Almost there…',
+  'Setting up your profile...',
+  'Calibrating your dashboard...',
+  'Almost there...',
 ]
 
 export default function OnboardTransition({ visible = true }) {
@@ -24,7 +24,7 @@ export default function OnboardTransition({ visible = true }) {
   const [fade, setFade]           = useState(true)   // true = visible, false = fading out
   const [mounted, setMounted]     = useState(false)  // triggers enter animation
 
-  /* ── mount trigger — tiny delay lets CSS transition fire ── */
+  /* ── mount trigger -- tiny delay lets CSS transition fire ── */
   useEffect(() => {
     const t = requestAnimationFrame(() => setMounted(true))
     return () => cancelAnimationFrame(t)

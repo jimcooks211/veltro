@@ -31,7 +31,7 @@ router.post('/mailersend', express.raw({ type: 'application/json' }), (req, res)
     const digest = hmac.digest('hex')
 
     if (digest !== signature) {
-      log.warn('signature mismatch — possible spoofed request')
+      log.warn('signature mismatch - possible spoofed request')
       log.warn(`expected: ${digest}`)
       log.warn(`received: ${signature}`)
       return res.status(401).json({ error: 'Unauthorized' })
@@ -42,8 +42,8 @@ router.post('/mailersend', express.raw({ type: 'application/json' }), (req, res)
     const event     = JSON.parse(rawBody.toString())
     const eventType = event?.type
     const recipient = event?.data?.email?.recipient?.email ?? 'unknown'
-    const subject   = event?.data?.email?.subject         ?? '—'
-    const createdAt = event?.created_at                   ?? '—'
+    const subject   = event?.data?.email?.subject         ?? '-'
+    const createdAt = event?.created_at                   ?? '-'
 
     log.ok(`event type : ${eventType}`)
     log.info(`recipient  : ${recipient}`)
@@ -66,10 +66,10 @@ router.post('/mailersend', express.raw({ type: 'application/json' }), (req, res)
         log.ok('recipient clicked a link')
         break
       case 'activity.soft_bounced':
-        log.warn('soft bounce — temporary delivery failure')
+        log.warn('soft bounce - temporary delivery failure')
         break
       case 'activity.hard_bounced':
-        log.error('hard bounce — address invalid or blocked')
+        log.error('hard bounce - address invalid or blocked')
         break
       case 'activity.spam_complaint':
         log.error('spam complaint received')

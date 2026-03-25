@@ -448,7 +448,7 @@ export default function News() {
         <div className='nw-controls-row2'>
           <div className='nw-search-wrap'>
             <MagnifyingGlass size={13} className='nw-search-ico' weight='bold'/>
-            <input className='nw-search' placeholder='Search news, tickers, topics…' value={search} onChange={e=>setSearch(e.target.value)}/>
+            <input className='nw-search' placeholder='Search news, tickers, topics...' value={search} onChange={e=>setSearch(e.target.value)}/>
             {search && <button className='nw-search-clear' onClick={()=>setSearch('')}><X size={11} weight='bold'/></button>}
           </div>
           <button className={`nw-bm-filter${showBmOnly?' on':''}`} onClick={()=>setShowBmOnly(p=>!p)}>

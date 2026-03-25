@@ -29,7 +29,7 @@ function fmtPx(n, price) {
   return n?.toLocaleString('en-US', {
     minimumFractionDigits: price > 10 ? 2 : 5,
     maximumFractionDigits: price > 10 ? 2 : 5,
-  }) ?? '—'
+  }) ?? '--'
 }
 
 function genChartData(base, pts = 90) {
@@ -99,7 +99,7 @@ function OrderBook({ asks, bids, mid, pair }) {
 
   const spread = asks[asks.length - 1]?.px && bids[0]?.px
     ? (asks[asks.length - 1].px - bids[0].px).toFixed(pair.price > 10 ? 2 : 5)
-    : '—'
+    : '--'
 
   return (
     <div className="tr-book">
@@ -320,11 +320,11 @@ function OrderForm({ pair, livePrice }) {
       <div className="tr-summary">
         <div className="tr-sum-row">
           <span>Total</span>
-          <span>{total > 0 ? total.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '—'} USDT</span>
+          <span>{total > 0 ? total.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '--'} USDT</span>
         </div>
         <div className="tr-sum-row">
           <span>Fee (0.10%)</span>
-          <span>{fee > 0 ? fee.toFixed(4) : '—'} USDT</span>
+          <span>{fee > 0 ? fee.toFixed(4) : '--'} USDT</span>
         </div>
       </div>
 
@@ -367,7 +367,7 @@ function OrderForm({ pair, livePrice }) {
         disabled={!canSubmit}
         onClick={handleSubmit}>
         {submitting
-          ? <><ArrowClockwise size={14} weight="bold" className="tr-spin" />Placing…</>
+          ? <><ArrowClockwise size={14} weight="bold" className="tr-spin" />Placing...</>
           : side === 'buy'
             ? <><TrendUp size={14} weight="bold" />Buy {pair.base}</>
             : <><TrendDown size={14} weight="bold" />Sell {pair.base}</>}
@@ -382,7 +382,7 @@ function OrderForm({ pair, livePrice }) {
 }
 
 /* ════════════════════════════════════════════════════════
-   BOTTOM PANEL — Positions + Open Orders
+   BOTTOM PANEL -- Positions + Open Orders
 ════════════════════════════════════════════════════════ */
 function BottomPanel() {
   const [tab, setTab] = useState('positions')
@@ -604,7 +604,7 @@ export default function Trade() {
       {/* ─── MAIN LAYOUT ─── */}
       <div className="tr-main">
 
-        {/* LEFT column — Chart + Book/Trades */}
+        {/* LEFT column -- Chart + Book/Trades */}
         <div className="tr-col-left">
 
           {/* Chart */}
@@ -677,7 +677,7 @@ export default function Trade() {
           </div>
         </div>
 
-        {/* RIGHT column — Order Form */}
+        {/* RIGHT column -- Order Form */}
         <div className="tr-col-right">
           <OrderForm pair={activePair} livePrice={livePrice} />
         </div>

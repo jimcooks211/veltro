@@ -55,7 +55,7 @@ function SaveBar({ dirty, onSave, onDiscard }) {
       <button className="gs-sb-dis" onClick={onDiscard}><X size={10} weight="bold"/>Discard</button>
       <button className="gs-sb-save" onClick={go} disabled={busy}>
         {done ? <><Check size={10} weight="bold"/>Saved!</> :
-         busy ? <><span className="gs-sb-spin"/>Saving…</> :
+         busy ? <><span className="gs-sb-spin"/>Saving...</> :
                 <><Check size={10} weight="bold"/>Save changes</>}
       </button>
     </div>
@@ -96,7 +96,7 @@ export default function Settings() {
         phone:      form.phone,
         bio:        form.bio,
       })
-    } catch { /* fail silently — settings saved locally */ }
+    } catch { /* fail silently -- settings saved locally */ }
     setSaved({ form, app, reg })
   }
 
@@ -138,7 +138,7 @@ export default function Settings() {
             <Field label="Email">
               {emailFlow ? (
                 <div className="gs-email-edit">
-                  <input className="gs-input" placeholder="New email…" autoFocus value={newEmail} onChange={e => setNewEmail(e.target.value)}/>
+                  <input className="gs-input" placeholder="New email..." autoFocus value={newEmail} onChange={e => setNewEmail(e.target.value)}/>
                   <button className="gs-ico-btn ok" onClick={() => { if(newEmail) f('email',newEmail); setEmailFlow(false); setNewEmail('') }}><Check size={11} weight="bold"/></button>
                   <button className="gs-ico-btn"    onClick={() => setEmailFlow(false)}><X size={11} weight="bold"/></button>
                 </div>

@@ -96,7 +96,7 @@ router.post('/', async (req, res) => {
     try {
       await conn.beginTransaction()
 
-      // Check if user already has this investment — update existing
+      // Check if user already has this investment - update existing
       const [existing] = await conn.execute(
         `SELECT id, quantity, total_invested, current_value FROM investments
          WHERE user_id = ? AND symbol = ? AND status = 'active' FOR UPDATE`,
@@ -230,7 +230,7 @@ router.post('/:id/sell', async (req, res) => {
       await conn.execute(
         `INSERT INTO transactions (user_id, type, currency, amount, fee, status, method, reference, note, description, payment_method)
          VALUES (?, 'trade_credit', 'USD', ?, 0, 'completed', 'internal', ?, ?, ?, 'internal')`,
-        [userId, sellValue, txRef, `Sold ${inv.symbol} × ${sellQty}`, `Sold ${sellQty} ${inv.symbol} @ $${livePrice.toFixed(2)} — P&L: ${realised >= 0 ? '+' : ''}$${Math.abs(realised).toFixed(2)}`]
+        [userId, sellValue, txRef, `Sold ${inv.symbol} × ${sellQty}`, `Sold ${sellQty} ${inv.symbol} @ $${livePrice.toFixed(2)} - P&L: ${realised >= 0 ? '+' : ''}$${Math.abs(realised).toFixed(2)}`]
       )
 
       await conn.commit()

@@ -184,7 +184,7 @@ export default function Register({ onSwitch, onRegistered }) {
 
       if (!res.ok) {
         if (res.status === 409 && data.nextStep === 'login') {
-          /* account exists — show message with a switch-to-login link */
+          /* account exists -- show message with a switch-to-login link */
           setFormError(data.message)
           setShowLoginLink(true)
         } else {

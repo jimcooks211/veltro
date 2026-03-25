@@ -12,7 +12,7 @@ import {
 import './Support.css'
 
 /* ═══════════════════════════════════════════════════════════════
-   VERA — LOCAL KNOWLEDGE ENGINE (no API required)
+   VERA -- LOCAL KNOWLEDGE ENGINE (no API required)
    Pattern matching → ranked response lookup → follow-up chips
 ═══════════════════════════════════════════════════════════════ */
 
@@ -24,9 +24,9 @@ const KB = [
     followUps: ['What are deposit limits?','How do I deposit with crypto?','Contact human agent'],
     reply: `Your deposit may be pending for a few reasons:
 
-- **Bank Transfer (ACH):** Takes **1–3 business days** to settle. Initiated transfers show as "Pending" until the bank clears them.
-- **Card deposit:** Usually instant, but some banks flag first-time crypto purchases — check with your card issuer.
-- **Crypto deposit:** Requires network confirmations (3 for BTC, 12 for ETH). This can take 10–60 minutes.
+- **Bank Transfer (ACH):** Takes **1-3 business days** to settle. Initiated transfers show as "Pending" until the bank clears them.
+- **Card deposit:** Usually instant, but some banks flag first-time crypto purchases -- check with your card issuer.
+- **Crypto deposit:** Requires network confirmations (3 for BTC, 12 for ETH). This can take 10-60 minutes.
 
 To check status, go to **Wallet → Transaction History** and find your reference ID. If it's been over 3 business days, please contact a human agent with your reference code.`,
   },
@@ -38,7 +38,7 @@ To check status, go to **Wallet → Transaction History** and find your referenc
 
 - **Bank Transfer (ACH):** Min $50 · Max $50,000/txn · $25,000/day · Free
 - **Debit/Credit Card:** Min $10 · Max $5,000/txn · $5,000/day · 1.5% fee
-- **Crypto & USDC:** No USD minimum — network fee applies
+- **Crypto & USDC:** No USD minimum -- network fee applies
 
 To increase your limits, upgrade your **KYC verification tier**. Tier 2 unlocks higher daily limits and Tier 3 (Institutional) removes most caps.`,
   },
@@ -51,10 +51,10 @@ To increase your limits, upgrade your **KYC verification tier**. Tier 2 unlocks 
 1. Go to **Wallet → Deposit**
 2. Choose your method: Bank Transfer, Card, Crypto, or USDC
 3. Enter the amount (or select your asset for crypto)
-4. Follow the on-screen steps — bank transfers show routing details, crypto shows your wallet address
+4. Follow the on-screen steps -- bank transfers show routing details, crypto shows your wallet address
 5. Confirm and you're done
 
-**Fastest:** Card (instant) · **Cheapest:** Bank ACH (free) · **Crypto:** 10–60 min after network confirmation.`,
+**Fastest:** Card (instant) · **Cheapest:** Bank ACH (free) · **Crypto:** 10-60 min after network confirmation.`,
   },
   {
     id: 'deposit_crypto',
@@ -67,7 +67,7 @@ To increase your limits, upgrade your **KYC verification tier**. Tier 2 unlocks 
 3. Copy your unique **Veltro deposit address**
 4. Send from your external wallet to that address
 
-**Important:** Always send the correct asset to the matching address. Sending BTC to an ETH address results in **permanent loss** — Veltro cannot recover cross-chain deposits.
+**Important:** Always send the correct asset to the matching address. Sending BTC to an ETH address results in **permanent loss** -- Veltro cannot recover cross-chain deposits.
 
 Deposits credit after **3 confirmations** for BTC (~30 min) and **12 confirmations** for ETH (~3 min).`,
   },
@@ -79,9 +79,9 @@ Deposits credit after **3 confirmations** for BTC (~30 min) and **12 confirmatio
     followUps: ['What are withdrawal limits?','How do I withdraw crypto?','Enable 2FA for withdrawals'],
     reply: `Withdrawal processing times by method:
 
-- **Bank Transfer (ACH):** 1–3 business days after approval
-- **Crypto (BTC/ETH/SOL):** 10–60 minutes — depends on network congestion
-- **USDC on Solana:** ~2 minutes · **USDC on Ethereum:** 5–15 minutes
+- **Bank Transfer (ACH):** 1-3 business days after approval
+- **Crypto (BTC/ETH/SOL):** 10-60 minutes -- depends on network congestion
+- **USDC on Solana:** ~2 minutes · **USDC on Ethereum:** 5-15 minutes
 
 All withdrawals require **2FA verification**. New destination addresses are held for **24 hours** as a security measure before the first withdrawal is processed.`,
   },
@@ -93,7 +93,7 @@ All withdrawals require **2FA verification**. New destination addresses are held
 
 - **Bank Transfer:** Min $50 · Max $10,000/txn · $10,000/day · Free
 - **USDC:** Min $10 · Max $50,000/txn · $25,000/day · network fee
-- **Crypto:** No fixed USD cap — network fee deducted from amount
+- **Crypto:** No fixed USD cap -- network fee deducted from amount
 
 Limits increase with your **KYC tier**. Tier 2 doubles daily limits; Tier 3 (Institutional) is negotiated individually. To upgrade, visit **Profile → Verification**.`,
   },
@@ -108,7 +108,7 @@ Limits increase with your **KYC tier**. Tier 2 doubles daily limits; Tier 3 (Ins
 3. Select your asset and enter the amount
 4. Choose a saved destination or enter a new address/account
 5. Enter your **6-digit 2FA code** to confirm
-6. Done — you'll receive an email confirmation with a reference number
+6. Done -- you'll receive an email confirmation with a reference number
 
 New addresses have a **24-hour security hold** on first use. Saved/whitelisted addresses process immediately.`,
   },
@@ -118,12 +118,12 @@ New addresses have a **24-hour security hold** on first use. Saved/whitelisted a
     followUps: ['Check my 2FA setup','What are withdrawal limits?','Contact human agent'],
     reply: `Common reasons a withdrawal fails:
 
-- **Insufficient balance** — check available vs. locked amounts in your wallet
-- **2FA code expired** — codes are only valid for 30 seconds; try again with a fresh code
-- **Daily limit exceeded** — you've hit your tier's daily withdrawal cap
-- **New address hold** — first withdrawal to a new address waits 24 hours
-- **KYC not verified** — some withdrawal methods require Tier 2 verification
-- **Account flag** — unusual activity may trigger a manual review
+- **Insufficient balance** -- check available vs. locked amounts in your wallet
+- **2FA code expired** -- codes are only valid for 30 seconds; try again with a fresh code
+- **Daily limit exceeded** -- you've hit your tier's daily withdrawal cap
+- **New address hold** -- first withdrawal to a new address waits 24 hours
+- **KYC not verified** -- some withdrawal methods require Tier 2 verification
+- **Account flag** -- unusual activity may trigger a manual review
 
 If none of these apply, contact a human agent with your reference ID.`,
   },
@@ -140,7 +140,7 @@ If none of these apply, contact a human agent with your reference ID.`,
 3. Scan the QR code shown in your settings
 4. Enter the 6-digit code to confirm and save
 
-**Store your backup codes** in a safe place — you'll need them if you lose your device. 2FA is **required** for all withdrawals on Veltro.`,
+**Store your backup codes** in a safe place -- you'll need them if you lose your device. 2FA is **required** for all withdrawals on Veltro.`,
   },
   {
     id: 'lost_2fa',
@@ -151,7 +151,7 @@ If none of these apply, contact a human agent with your reference ID.`,
 1. Use your **backup recovery codes** (provided when you set up 2FA) to log in
 2. Once in, go to **Profile → Security** and reset your 2FA with a new device
 
-If you don't have backup codes, this requires **identity verification with a human agent** — we cannot bypass 2FA automatically for security reasons.
+If you don't have backup codes, this requires **identity verification with a human agent** -- we cannot bypass 2FA automatically for security reasons.
 
 Please **submit a support ticket** or request a human agent. You'll need to verify your identity with government-issued ID.`,
   },
@@ -161,12 +161,12 @@ Please **submit a support ticket** or request a human agent. You'll need to veri
     followUps: ['How to freeze my account','Change my password','Contact human agent immediately'],
     reply: `⚠️ **Act immediately if you suspect unauthorized access:**
 
-1. **Change your password** right now — go to Profile → Security
-2. **Revoke all sessions** — Profile → Security → Active Sessions → Sign Out All
+1. **Change your password** right now -- go to Profile → Security
+2. **Revoke all sessions** -- Profile → Security → Active Sessions → Sign Out All
 3. **Disable and reset 2FA** if your authenticator may be compromised
-4. **Contact a human agent** — select "Human Agent" in this support center for priority handling
+4. **Contact a human agent** -- select "Human Agent" in this support center for priority handling
 
-Do **not** share your password, seed phrases, or recovery codes with anyone — including anyone claiming to be Veltro support. Veltro will never ask for these.`,
+Do **not** share your password, seed phrases, or recovery codes with anyone -- including anyone claiming to be Veltro support. Veltro will never ask for these.`,
   },
   {
     id: 'whitelist',
@@ -180,7 +180,7 @@ Do **not** share your password, seed phrases, or recovery codes with anyone — 
 
 To manage your whitelist: **Profile → Security → Withdrawal Addresses → Add Address**
 
-This is one of the strongest protections against unauthorized withdrawals — we strongly recommend enabling it.`,
+This is one of the strongest protections against unauthorized withdrawals -- we strongly recommend enabling it.`,
   },
 
   /* ── TRADING ───────────────────────────────────────────────── */
@@ -190,8 +190,8 @@ This is one of the strongest protections against unauthorized withdrawals — we
     followUps: ['What order types are available?','How does portfolio tracking work?','Upgrade KYC for fee discounts'],
     reply: `Veltro spot trading fees:
 
-- **Maker fee:** 0.10% — orders that add liquidity (limit orders that don't fill immediately)
-- **Taker fee:** 0.15% — orders that remove liquidity (market orders, or limit orders that fill immediately)
+- **Maker fee:** 0.10% -- orders that add liquidity (limit orders that don't fill immediately)
+- **Taker fee:** 0.15% -- orders that remove liquidity (market orders, or limit orders that fill immediately)
 
 Fees are calculated on the trade value and deducted from the received asset.
 
@@ -213,7 +213,7 @@ Higher KYC tiers and larger trading volumes unlock fee discounts.`,
 **Limit Order**
 - You set the exact price you want to buy or sell at
 - Only fills when the market reaches your price (or better)
-- Maker fee: 0.10% — cheaper than market orders
+- Maker fee: 0.10% -- cheaper than market orders
 
 To place an order: go to **Markets**, select your pair, choose order type, and enter amount.`,
   },
@@ -225,13 +225,13 @@ To place an order: go to **Markets**, select your pair, choose order type, and e
     followUps: ['What documents are needed for KYC?','What limits does each tier unlock?','How long does KYC take?'],
     reply: `Veltro has three KYC tiers:
 
-- **Tier 1 (Basic):** Email verified — limited deposits/withdrawals
-- **Tier 2 (Verified):** Government ID + selfie — standard limits unlocked
-- **Tier 3 (Institutional):** Business documents — negotiated limits, lowest fees
+- **Tier 1 (Basic):** Email verified -- limited deposits/withdrawals
+- **Tier 2 (Verified):** Government ID + selfie -- standard limits unlocked
+- **Tier 3 (Institutional):** Business documents -- negotiated limits, lowest fees
 
 To upgrade: **Profile → Verification → Start Verification**
 
-**Documents accepted for Tier 2:** Passport, Driver's License, or National ID. Have a clear photo/scan ready. Most verifications are approved within **1–24 hours**.`,
+**Documents accepted for Tier 2:** Passport, Driver's License, or National ID. Have a clear photo/scan ready. Most verifications are approved within **1-24 hours**.`,
   },
   {
     id: 'kyc_rejected',
@@ -239,11 +239,11 @@ To upgrade: **Profile → Verification → Start Verification**
     followUps: ['Resubmit KYC documents','What documents are accepted?','Contact human agent'],
     reply: `Common reasons KYC verification is rejected:
 
-- **Blurry or cropped photo** — the full document must be visible with all four corners
-- **Expired document** — use a valid, in-date ID
-- **Name mismatch** — your account name must match your ID exactly
-- **Wrong document type** — screenshots or photocopies are not accepted; use the original
-- **Selfie quality** — must be well-lit, face fully visible, no glasses or hat
+- **Blurry or cropped photo** -- the full document must be visible with all four corners
+- **Expired document** -- use a valid, in-date ID
+- **Name mismatch** -- your account name must match your ID exactly
+- **Wrong document type** -- screenshots or photocopies are not accepted; use the original
+- **Selfie quality** -- must be well-lit, face fully visible, no glasses or hat
 
 You can **resubmit** immediately after a rejection. Go to **Profile → Verification** and upload new documents.`,
   },
@@ -253,8 +253,8 @@ You can **resubmit** immediately after a rejection. Go to **Profile → Verifica
     followUps: ['What documents do I need?','KYC was rejected'],
     reply: `KYC verification timelines:
 
-- **Tier 2 (standard):** Usually **1–4 hours**, up to 24 hours during peak periods
-- **Tier 3 (institutional):** **2–5 business days** — requires manual review of business documents
+- **Tier 2 (standard):** Usually **1-4 hours**, up to 24 hours during peak periods
+- **Tier 3 (institutional):** **2-5 business days** -- requires manual review of business documents
 
 You'll receive an email when your verification is approved or if additional information is needed. You can also check the status any time at **Profile → Verification**.`,
   },
@@ -270,7 +270,7 @@ You'll receive an email when your verification is approved or if additional info
 2. Enter your current password and your new password (twice)
 3. Confirm with your **2FA code**
 
-If you've forgotten your password, use the **"Forgot Password"** link on the login page — a reset link will be sent to your registered email within a few minutes.
+If you've forgotten your password, use the **"Forgot Password"** link on the login page -- a reset link will be sent to your registered email within a few minutes.
 
 For security, Veltro logs all password changes and sends a notification email.`,
   },
@@ -280,7 +280,7 @@ For security, Veltro logs all password changes and sends a notification email.`,
     followUps: ['Withdraw all funds first','Contact human agent'],
     reply: `To close your Veltro account:
 
-1. **Withdraw all funds** first — accounts with balances cannot be closed
+1. **Withdraw all funds** first -- accounts with balances cannot be closed
 2. Contact a **human agent** via this support center to initiate the closure
 3. You'll need to verify your identity
 
@@ -293,10 +293,10 @@ Note: Per regulatory requirements, transaction records are retained for **7 year
     reply: `Your portfolio analytics are available at **Dashboard → Portfolio**:
 
 - **Total value** across all assets in USD equivalent
-- **P&L** (profit and loss) — daily, weekly, and all-time
-- **Allocation breakdown** — percentage per asset with a visual chart
-- **Performance chart** — historical value over time
-- **Transaction history** — all deposits, withdrawals, and trades
+- **P&L** (profit and loss) -- daily, weekly, and all-time
+- **Allocation breakdown** -- percentage per asset with a visual chart
+- **Performance chart** -- historical value over time
+- **Transaction history** -- all deposits, withdrawals, and trades
 
 Prices are updated in real-time during market hours using live exchange data.`,
   },
@@ -316,7 +316,7 @@ What can I help you with today?`,
     id: 'thanks',
     tags: ['thank you','thanks','ty','cheers','appreciate','helpful','great','awesome','perfect'],
     followUps: ['Ask another question','Contact human agent'],
-    reply: `Happy to help! If anything else comes up — whether it's a transaction issue, security question, or anything platform-related — just ask.
+    reply: `Happy to help! If anything else comes up -- whether it's a transaction issue, security question, or anything platform-related -- just ask.
 
 You can also reach a human agent or browse the Help Center using the sidebar.`,
   },
@@ -328,7 +328,7 @@ You can also reach a human agent or browse the Help Center using the sidebar.`,
 
 - Click **"Talk to Agent"** in the sidebar on the left
 - Fill out the contact form with your issue category and details
-- Average response time: **4 minutes** during business hours (Mon–Fri, 9am–6pm EST)
+- Average response time: **4 minutes** during business hours (Mon-Fri, 9am-6pm EST)
 
 For **urgent security issues** (unauthorized access, suspected fraud), select category "Account Security" for priority routing.
 
@@ -346,7 +346,7 @@ const scoreEntry = (query, entry) => {
   }, 0)
 }
 
-/* main local bot function — returns { reply, followUps } */
+/* main local bot function -- returns { reply, followUps } */
 const veraReply = (userText, history = []) => {
   const scores = KB.map(entry => ({ entry, score: scoreEntry(userText, entry) }))
   scores.sort((a, b) => b.score - a.score)
@@ -361,7 +361,7 @@ const veraReply = (userText, history = []) => {
   if (lastBot) {
     const prev = KB.find(e => e.id === lastBot.entryId)
     if (prev) return {
-      reply: `I'm not sure I understood that fully. Based on what we were discussing — **${prev.id.replace(/_/g,' ')}** — here are a few related options:`,
+      reply: `I'm not sure I understood that fully. Based on what we were discussing -- **${prev.id.replace(/_/g,' ')}** -- here are a few related options:`,
       followUps: prev.followUps,
     }
   }
@@ -565,7 +565,7 @@ function TypingIndicator() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   SIDEBAR — tickets + quick links
+   SIDEBAR -- tickets + quick links
 ═══════════════════════════════════════════════════════════════ */
 function SupportSidebar({ activeView, setActiveView }) {
   return (
@@ -645,7 +645,7 @@ function SupportSidebar({ activeView, setActiveView }) {
         <div className='sp-side-body'>
           {[
             { day:'AI Support', time:'24 / 7', accent:true },
-            { day:'Live Agents', time:'Mon–Fri 9–6 EST' },
+            { day:'Live Agents', time:'Mon-Fri 9-6 EST' },
             { day:'Emergency',   time:'+1 (800) VLT-0001' },
           ].map(r => (
             <div key={r.day} className='sp-side-row'>
@@ -750,7 +750,7 @@ function ChatView() {
             </div>
             <h3 className='sp-empty-title'>Hi, I'm Vera</h3>
             <p className='sp-empty-sub'>
-              Your Veltro AI assistant — I can help with deposits, withdrawals,
+              Your Veltro AI assistant -- I can help with deposits, withdrawals,
               security, trading, and anything else on the platform.
             </p>
             <div className='sp-suggestions'>
@@ -806,7 +806,7 @@ function ChatView() {
             <textarea
               ref={inputRef}
               className='sp-textarea'
-              placeholder='Ask Vera anything about your Veltro account…'
+              placeholder='Ask Vera anything about your Veltro account...'
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKey}
@@ -900,7 +900,7 @@ function DocsView() {
     <div className='sp-docs-view'>
       <div className='sp-docs-search-wrap'>
         <MagnifyingGlass size={14} className='sp-docs-ico'/>
-        <input className='sp-docs-search' placeholder='Search help articles…'
+        <input className='sp-docs-search' placeholder='Search help articles...'
           value={search} onChange={e=>setSearch(e.target.value)}/>
       </div>
       <div className='sp-docs-list'>
@@ -956,7 +956,7 @@ function HumanView() {
               <div className='sp-hf-select-wrap'>
                 <select className='sp-hf-select' value={form.category}
                   onChange={e=>setForm(f=>({...f,category:e.target.value}))}>
-                  <option value=''>Select a category…</option>
+                  <option value=''>Select a category...</option>
                   {['Deposit issue','Withdrawal issue','Account security','KYC / Verification','Trading problem','Other'].map(c=>(
                     <option key={c} value={c}>{c}</option>
                   ))}
@@ -965,7 +965,7 @@ function HumanView() {
             </div>
             <div className='sp-hf-group'>
               <label className='sp-hf-label'>Subject</label>
-              <input className='sp-hf-input' placeholder='Briefly describe your issue…'
+              <input className='sp-hf-input' placeholder='Briefly describe your issue...'
                 value={form.subject} onChange={e=>setForm(f=>({...f,subject:e.target.value}))}/>
             </div>
             <div className='sp-hf-group'>

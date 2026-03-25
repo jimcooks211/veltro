@@ -106,7 +106,7 @@ const handleSubmit = async (e) => {
       return
     }
 
-    // login always returns nextStep: 'verify' now — go to verify screen
+    // login always returns nextStep: 'verify' now -- go to verify screen
     // pass remember so VerifyEmail can forward it to /verify-email for correct session length
     onNeedsVerify?.({ email: data.email, remember })
 

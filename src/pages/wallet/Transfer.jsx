@@ -128,7 +128,7 @@ export default function Transfer() {
       <div className="tf-body">
         <div className="tf-card">
 
-          {/* Step 1 — Build transfer */}
+          {/* Step 1 -- Build transfer */}
           {step === 1 && (
             <div className="tf-step">
               <div className="tf-step-head">
@@ -168,7 +168,7 @@ export default function Transfer() {
                 <label className="tf-label">You receive</label>
                 <div className="tf-row">
                   <AssetDropdown value={to} onChange={v => { setTo(v); if (v === from) setFrom(to) }} exclude={from}/>
-                  <div className="tf-receive-val">{numAmt > 0 ? fmt(toAmount, to) : '—'}</div>
+                  <div className="tf-receive-val">{numAmt > 0 ? fmt(toAmount, to) : '--'}</div>
                 </div>
               </div>
 
@@ -183,7 +183,7 @@ export default function Transfer() {
             </div>
           )}
 
-          {/* Step 2 — Review */}
+          {/* Step 2 -- Review */}
           {step === 2 && (
             <div className="tf-step">
               <div className="tf-step-head">
@@ -215,14 +215,14 @@ export default function Transfer() {
                 <button className="tf-btn-ghost" onClick={() => setStep(1)}>Back</button>
                 <button className="tf-btn-primary" onClick={handleConfirm} disabled={loading}>
                   {loading
-                    ? <><Spinner size={13} className="tf-spin"/> Processing…</>
+                    ? <><Spinner size={13} className="tf-spin"/> Processing...</>
                     : <><CheckCircle size={13} weight="bold"/> Confirm Transfer</>}
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 3 — Success */}
+          {/* Step 3 -- Success */}
           {step === 3 && (
             <div className="tf-step tf-success">
               <div className="tf-success-ring">

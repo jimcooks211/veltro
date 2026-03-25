@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   Countries.js  —  full world country list with ISO2, name, dial code & flag
+   Countries.js  --  full world country list with ISO2, name, dial code & flag
    Usage:
      import { COUNTRIES, getCountryByIso, toFlag } from './Countries'
 ──────────────────────────────────────────────────────────────────────── */
@@ -36,7 +36,7 @@ const DIGITS = {
   ZW:9,
 }
 
-/** Full country list — sorted alphabetically by name */
+/** Full country list -- sorted alphabetically by name */
 const RAW = [
   { iso: 'AF', name: 'Afghanistan',              dial: '+93'   },
   { iso: 'AL', name: 'Albania',                  dial: '+355'  },
@@ -238,5 +238,5 @@ export const COUNTRIES = RAW.map(c => ({ ...c, flag: toFlag(c.iso), digits: DIGI
 export const getCountryByIso = (iso) =>
   COUNTRIES.find(c => c.iso === iso?.toUpperCase()) ?? null
 
-/** Default country — Nigeria */
+/** Default country -- Nigeria */
 export const DEFAULT_COUNTRY = getCountryByIso('US')

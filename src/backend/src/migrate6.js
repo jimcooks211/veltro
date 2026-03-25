@@ -1,4 +1,4 @@
-﻿// migrate6.js — ensure all notification + session schema is complete
+// migrate6.js - ensure all notification + session schema is complete
 import mysql from 'mysql2/promise'
 
 const db = await mysql.createConnection({

@@ -14,7 +14,7 @@ import {
 import './Portfolio.css'
 
 /* ══════════════════════════════════════════════════════════════
-   MOCK DATA — aligned to DB schema
+   MOCK DATA -- aligned to DB schema
    wallets: balance, reserved, currency
    portfolio: quantity, avg_cost, total_invested, realised_pnl
    stocks: symbol, name, exchange, sector, last_price, etc.
@@ -182,7 +182,7 @@ export default function Portfolio() {
   const [tab, setTab]       = useState('holdings')
   const [loading, setLoading] = useState(true)
 
-  /* All figures from DB — zero for new users */
+  /* All figures from DB -- zero for new users */
   const [liveSummary,  setLiveSummary]  = useState(null)
   const [liveHoldings, setLiveHoldings] = useState([])
   const [liveWallet,   setLiveWallet]   = useState({ balance: 0, reserved: 0 })
@@ -212,11 +212,11 @@ export default function Portfolio() {
         ? +((unrealised_pnl / Number(h.total_invested)) * 100).toFixed(2) : 0
       return {
         stock_id: h.id, symbol: h.symbol, name: h.name || h.symbol,
-        exchange: h.exchange || '—', sector: h.sector || '—',
+        exchange: h.exchange || '--', sector: h.sector || '--',
         quantity: Number(h.quantity), avg_cost: Number(h.avg_cost || 0),
         total_invested: Number(h.total_invested || 0),
         realised_pnl: Number(h.realised_pnl || 0),
-        first_bought_at: h.first_bought_at || '—',
+        first_bought_at: h.first_bought_at || '--',
         last_price, market_value, unrealised_pnl, unrealised_pct,
         day_pnl: 0, day_pct: 0,
         prev_close: last_price, day_high: last_price, day_low: last_price,
@@ -236,7 +236,7 @@ export default function Portfolio() {
     setSd(s => k === sk ? (s === 'desc' ? 'asc' : 'desc') : 'desc')
   }, [sk])
 
-  /* Aggregate figures — all from DB, zero for new users */
+  /* Aggregate figures -- all from DB, zero for new users */
   const TOTAL_VALUE    = sorted.reduce((s, p) => s + p.market_value,   0)
   const TOTAL_INVESTED = sorted.reduce((s, p) => s + p.total_invested, 0)
   const UNREAL_PNL     = +(TOTAL_VALUE - TOTAL_INVESTED).toFixed(2)
@@ -247,7 +247,7 @@ export default function Portfolio() {
   const NET_WORTH      = +(TOTAL_VALUE + liveWallet.balance).toFixed(2)
 
   /* Hide values */
-  const H   = v => hidden ? '——' : v
+  const H   = v => hidden ? '----' : v
   const navUp  = UNREAL_PNL >= 0
 
   const displayNetWorth    = NET_WORTH
@@ -280,7 +280,7 @@ export default function Portfolio() {
     <div className="pf-root">
     {loading && (
       <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:200, color:'var(--vlt-text-muted)', fontSize:14 }}>
-        Loading portfolio…
+        Loading portfolio...
       </div>
     )}
 
@@ -318,7 +318,7 @@ export default function Portfolio() {
         <div className="pf-hero-nw">
           <span className="pf-hero-label">Total Net Worth</span>
           <div className="pf-hero-big">
-            {hidden ? '$ ———' : (
+            {hidden ? '$ ------' : (
               <><span className="pf-hero-curr">$</span>
               {displayNetWorth.toLocaleString('en-US', { minimumFractionDigits:2 })}</>
             )}
@@ -459,7 +459,7 @@ export default function Portfolio() {
         {tab === 'holdings' && (
           <div className="pf-tbl-wrap">
 
-            {/* Table head — 12 columns matching CSS grid */}
+            {/* Table head -- 12 columns matching CSS grid */}
             <div className="pf-thead">
               <SortBtn label="Asset"          field="symbol"         sk={sk} sd={sd} onSort={sort}/>
               <SortBtn label="Last Price"     field="last_price"     sk={sk} sd={sd} onSort={sort}/>

@@ -41,7 +41,7 @@ export default function VeltroModal({
     startHeight: 0,
   })
 
-  // Reset ALL transient drag/snap state — call on every open
+  // Reset ALL transient drag/snap state -- call on every open
   const resetDragState = () => {
     d.current.active       = false
     d.current.phase        = 'idle'

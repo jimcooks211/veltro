@@ -15,7 +15,7 @@ import {
 import './Transactions.css'
 
 /* ════════════════════════════════════════════════════════
-   MOCK DATA — mirrors DB transactions schema exactly:
+   MOCK DATA -- mirrors DB transactions schema exactly:
    { id, user_id, wallet_id, type, status, amount, fee,
      net_amount, currency, balance_before, balance_after,
      payment_method, payment_ref, bank_name, account_last4,
@@ -41,25 +41,25 @@ const mkTx = (type, status, amount, fee, bal_before, method, bank, last4, desc, 
 
 const TRANSACTIONS = [
   mkTx('deposit',      'completed',  5000.00, 0,       7450.38, 'bank_transfer', 'First Bank Nigeria',  '4821', 'Deposit via First Bank',              'Mar 10 · 09:14', 'FBN-8812443'),
-  mkTx('trade_debit',  'completed',  2382.60, 2.38,   12450.38, 'internal',      null,                  null,  'NVDA × 22 — Market Buy',              'Mar 9 · 10:14',  null),
-  mkTx('trade_credit', 'completed',  1180.40, 1.18,   10069.96, 'internal',      null,                  null,  'ETH/USDT × 0.34 — Partial Fill',      'Mar 9 · 09:44',  null),
+  mkTx('trade_debit',  'completed',  2382.60, 2.38,   12450.38, 'internal',      null,                  null,  'NVDA × 22 -- Market Buy',              'Mar 9 · 10:14',  null),
+  mkTx('trade_credit', 'completed',  1180.40, 1.18,   10069.96, 'internal',      null,                  null,  'ETH/USDT × 0.34 -- Partial Fill',      'Mar 9 · 09:44',  null),
   mkTx('withdrawal',   'completed',  2000.00, 15.00,  11250.36, 'bank_transfer', 'GTBank',              '7734', 'Withdrawal to GTBank ••7734',          'Mar 8 · 16:30',  'GTB-9921004'),
-  mkTx('trade_debit',  'completed',  2040.00, 2.04,   13252.36, 'internal',      null,                  null,  'META × 4 — Limit Buy',                'Mar 7 · 14:22',  null),
+  mkTx('trade_debit',  'completed',  2040.00, 2.04,   13252.36, 'internal',      null,                  null,  'META × 4 -- Limit Buy',                'Mar 7 · 14:22',  null),
   mkTx('fee',          'completed',    12.50, 0,      11210.36, 'internal',      null,                  null,  'Monthly platform fee',                'Mar 7 · 00:00',  null),
   mkTx('deposit',      'completed', 10000.00, 0,       1210.36, 'bank_transfer', 'Zenith Bank',         '2290', 'Deposit via Zenith Bank',             'Mar 5 · 11:03',  'ZEN-5541209'),
-  mkTx('trade_debit',  'completed',  1843.20, 1.84,   11210.36, 'internal',      null,                  null,  'XOM × 16 — Market Buy',               'Mar 5 · 10:55',  null),
-  mkTx('trade_credit', 'completed',  1081.80, 1.08,    9368.00, 'internal',      null,                  null,  'SOL/USDT × 6 — Limit Sell',           'Mar 4 · 15:30',  null),
+  mkTx('trade_debit',  'completed',  1843.20, 1.84,   11210.36, 'internal',      null,                  null,  'XOM × 16 -- Market Buy',               'Mar 5 · 10:55',  null),
+  mkTx('trade_credit', 'completed',  1081.80, 1.08,    9368.00, 'internal',      null,                  null,  'SOL/USDT × 6 -- Limit Sell',           'Mar 4 · 15:30',  null),
   mkTx('withdrawal',   'pending',    1500.00, 10.00,  10449.72, 'bank_transfer', 'Access Bank',         '3318', 'Withdrawal to Access ••3318',          'Mar 4 · 12:00',  'ACC-7730012'),
   mkTx('deposit',      'completed',  3000.00, 0,       7449.72, 'card',          null,                  '4444', 'Card deposit ••4444',                 'Mar 3 · 08:20',  'CRD-1182903'),
-  mkTx('trade_debit',  'completed',   912.00, 0.91,   10449.72, 'internal',      null,                  null,  'BNB/USDT × 1.8 — Limit Buy',          'Mar 2 · 17:44',  null),
-  mkTx('refund',       'completed',    50.00, 0,       9537.63, 'internal',      null,                  null,  'Trade fee refund — promo credit',     'Mar 2 · 09:00',  null),
+  mkTx('trade_debit',  'completed',   912.00, 0.91,   10449.72, 'internal',      null,                  null,  'BNB/USDT × 1.8 -- Limit Buy',          'Mar 2 · 17:44',  null),
+  mkTx('refund',       'completed',    50.00, 0,       9537.63, 'internal',      null,                  null,  'Trade fee refund -- promo credit',     'Mar 2 · 09:00',  null),
   mkTx('deposit',      'completed',  2000.00, 0,       9487.63, 'bank_transfer', 'UBA',                 '6612', 'Deposit via UBA',                     'Mar 1 · 10:45',  'UBA-4490218'),
-  mkTx('trade_debit',  'completed',  2887.50, 2.89,  11487.63, 'internal',      null,                  null,  'MSFT × 7.5 — Limit Buy',              'Feb 28 · 14:55', null),
-  mkTx('trade_credit', 'completed',   807.00, 0.81,   8599.02, 'internal',      null,                  null,  'OP/USDT × 200 — Limit Sell',          'Feb 27 · 12:18', null),
-  mkTx('withdrawal',   'failed',     1000.00, 8.00,   9406.83, 'bank_transfer', 'Fidelity Bank',       '8891', 'Withdrawal failed — insufficient KYC', 'Feb 26 · 16:00', 'FID-0041823'),
+  mkTx('trade_debit',  'completed',  2887.50, 2.89,  11487.63, 'internal',      null,                  null,  'MSFT × 7.5 -- Limit Buy',              'Feb 28 · 14:55', null),
+  mkTx('trade_credit', 'completed',   807.00, 0.81,   8599.02, 'internal',      null,                  null,  'OP/USDT × 200 -- Limit Sell',          'Feb 27 · 12:18', null),
+  mkTx('withdrawal',   'failed',     1000.00, 8.00,   9406.83, 'bank_transfer', 'Fidelity Bank',       '8891', 'Withdrawal failed -- insufficient KYC', 'Feb 26 · 16:00', 'FID-0041823'),
   mkTx('credit',       'completed',   100.00, 0,       9406.83, 'internal',      null,                  null,  'Referral bonus credit',               'Feb 25 · 09:00',  null),
   mkTx('deposit',      'completed',  5000.00, 0,       9306.83, 'bank_transfer', 'Sterling Bank',       '1103', 'Deposit via Sterling Bank',           'Feb 22 · 11:30',  'STL-2210044'),
-  mkTx('trade_debit',  'completed',  1980.90, 1.98,  14306.83, 'internal',      null,                  null,  'JPM × 9 — Market Buy',                'Feb 20 · 09:20',  null),
+  mkTx('trade_debit',  'completed',  1980.90, 1.98,  14306.83, 'internal',      null,                  null,  'JPM × 9 -- Market Buy',                'Feb 20 · 09:20',  null),
 ]
 
 /* ─── META ─── */
@@ -196,12 +196,12 @@ export default function Transactions() {
   const [sort,     setSort]     = useState({ field:'created_at', dir:'desc' })
   const [selected, setSelected] = useState(null)
   const [page,     setPage]     = useState(1)
-  const [txRows,   setTxRows]   = useState([])     // start empty — no mock fallback
+  const [txRows,   setTxRows]   = useState([])     // start empty -- no mock fallback
   const [loading,  setLoading]  = useState(true)
   const [chartData,setChartData]= useState(MONTHLY) // keep static 6-month chart as visual fixture
   const PER_PAGE = 10
 
-  // Fetch live transactions — new users see clean empty state
+  // Fetch live transactions -- new users see clean empty state
   useEffect(() => {
     apiGet('/api/wallet/transactions?limit=200')
       .then(data => {
@@ -258,7 +258,7 @@ export default function Transactions() {
     }
   }, [txRows])
 
-  /* Sort header button — renders a <div> (never <th>) */
+  /* Sort header button -- renders a <div> (never <th>) */
   function SortTh({ field, label }) {
     const active = sort.field === field
     return (
@@ -353,7 +353,7 @@ export default function Transactions() {
         <div className="tx-filter-bar">
           <div className="tx-search-wrap">
             <MagnifyingGlass size={12} className="tx-search-ico" />
-            <input className="tx-search-input" placeholder="Search ID, description, reference…"
+            <input className="tx-search-input" placeholder="Search ID, description, reference..."
               value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} />
             {search && <button className="tx-search-clear" onClick={() => setSearch('')}><X size={9} weight="bold" /></button>}
           </div>
@@ -376,7 +376,7 @@ export default function Transactions() {
           <span className="tx-result-count">{filtered.length} result{filtered.length !== 1 ? 's' : ''}</span>
         </div>
 
-        {/* Table header — all divs, no th */}
+        {/* Table header -- all divs, no th */}
         <div className="tx-table-head">
           <SortTh field="id"            label="Transaction ID" />
           <div className="tx-th-btn">Type</div>
@@ -393,12 +393,12 @@ export default function Transactions() {
         {loading ? (
           <div className="tx-empty" style={{ gap:10 }}>
             <CircleNotch size={28} weight="duotone" style={{ animation:'spin 0.8s linear infinite', opacity:0.4 }}/>
-            <span>Loading transactions…</span>
+            <span>Loading transactions...</span>
           </div>
         ) : paginated.length === 0 ? (
           <div className="tx-empty">
             <Receipt size={28} weight="duotone" />
-            <span>{txRows.length === 0 ? 'No transactions yet — make your first deposit to get started.' : 'No transactions match your filters'}</span>
+            <span>{txRows.length === 0 ? 'No transactions yet -- make your first deposit to get started.' : 'No transactions match your filters'}</span>
           </div>
         ) : (
           <div className="tx-list">
@@ -408,7 +408,7 @@ export default function Transactions() {
               const credit = isCredit(txType)
               const dateStr = t.created_at
                 ? new Date(t.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
-                : '—'
+                : '--'
               return (
                 <div key={t.id||idx}
                   className={`tx-row ${t.status === 'failed' ? 'row-failed' : ''}`}
@@ -420,15 +420,15 @@ export default function Transactions() {
                     </div>
                     <div>
                       <div className="tx-row-id">{String(t.id||'').slice(0,16)}</div>
-                      <div className="tx-row-desc">{t.description||t.note||'—'}</div>
+                      <div className="tx-row-desc">{t.description||t.note||'--'}</div>
                     </div>
                   </div>
                   <span className="tx-type-chip" style={{ color:tm.color, background:tm.bg }}>{tm.label}</span>
                   <span className={`tx-amount ${credit ? 'credit' : 'debit'}`}>{credit ? '+' : '−'}${fmt(Number(t.amount||0))}</span>
-                  <span className="tx-fee">{Number(t.fee||0) > 0 ? `$${fmt(Number(t.fee))}` : <span className="tx-no-fee">—</span>}</span>
+                  <span className="tx-fee">{Number(t.fee||0) > 0 ? `$${fmt(Number(t.fee))}` : <span className="tx-no-fee">--</span>}</span>
                   <span className={`tx-net ${credit ? 'credit' : 'debit'}`}>{credit ? '+' : '−'}${fmt(Math.abs(Number(t.net_amount||t.amount||0)))}</span>
-                  <span className="tx-balance">{Number(t.balance_after||0)>0 ? `$${fmt(Number(t.balance_after))}` : '—'}</span>
-                  <span className="tx-method">{METHOD_LABELS[t.payment_method||t.method] ?? (t.payment_method||'—')}</span>
+                  <span className="tx-balance">{Number(t.balance_after||0)>0 ? `$${fmt(Number(t.balance_after))}` : '--'}</span>
+                  <span className="tx-method">{METHOD_LABELS[t.payment_method||t.method] ?? (t.payment_method||'--')}</span>
                   <StatusBadge status={t.status||'completed'} />
                   <span className="tx-date">{dateStr}</span>
                 </div>
@@ -450,7 +450,7 @@ export default function Transactions() {
               <CaretRight size={11} weight="bold" />
             </button>
             <span className="tx-page-info">
-              {(page-1)*PER_PAGE+1}–{Math.min(page*PER_PAGE, filtered.length)} of {filtered.length}
+              {(page-1)*PER_PAGE+1}-{Math.min(page*PER_PAGE, filtered.length)} of {filtered.length}
             </span>
           </div>
         )}

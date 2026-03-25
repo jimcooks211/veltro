@@ -1,4 +1,4 @@
-﻿import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
 import { apiGet, apiPost, apiPut } from '../../utils/api.js'
 import {
@@ -12,7 +12,7 @@ import {
 import './ProfilePage.css'
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   MOCK DATA â€” mirrors DB schema exactly:
+   MOCK DATA â€" mirrors DB schema exactly:
    users   : { id, email, role, plan, risk_profile, is_verified,
                registration_step, login_count, last_login_at,
                last_login_ip, created_at, gender, onboarding_complete }
@@ -72,7 +72,7 @@ const MOCK_PROFILE = {
   investment_goal:        'wealth_growth',
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 const PLAN_META = {
   starter: { label:'Starter',  color:'rgba(255,255,255,.4)', bg:'rgba(255,255,255,.06)' },
   growth:  { label:'Growth',   color:'#FFB800',              bg:'rgba(255,184,0,.1)'    },
@@ -80,7 +80,7 @@ const PLAN_META = {
 }
 const RISK_META = {
   conservative: { label:'Conservative', color:'#00C076', icon:'ðŸ›¡ï¸' },
-  balanced:     { label:'Balanced',     color:'#FFB800', icon:'âš–ï¸' },
+  balanced:     { label:'Balanced',     color:'#FFB800', icon:'âš-ï¸' },
   aggressive:   { label:'Aggressive',   color:'#FF3D57', icon:'âš¡' },
 }
 const KYC_META = {
@@ -122,7 +122,7 @@ function age(dob) {
     (now < new Date(now.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
 }
 function fmtDob(dob) {
-  if (!dob) return 'â€”'
+  if (!dob) return 'â€"'
   return new Date(dob).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })
 }
 
@@ -265,13 +265,13 @@ function AvatarBlock({ profile, onAvatarChange }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   ROOT â€” wired to real /api/profile/me
+   ROOT â€" wired to real /api/profile/me
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function ProfilePage() {
   const { user: ctxUser, refreshUser } = useOutletContext() ?? {}
   const navigate = useNavigate()
 
-  /* â”€â”€ state â”€â”€ */
+  /* â"€â"€ state â"€â"€ */
   const [profile, setProfile]   = useState(null)
   const [saved,   setSaved]     = useState(null)
   const [userMeta,setUserMeta]  = useState(null)
@@ -280,7 +280,7 @@ export default function ProfilePage() {
   const [wasSaved,setWasSaved]  = useState(false)
   const [editBio, setEditBio]   = useState(false)
 
-  /* â”€â”€ fetch from API â”€â”€ */
+  /* â"€â"€ fetch from API â"€â"€ */
   useEffect(() => {
     apiGet('/api/profile/me')
       .then(data => {
@@ -321,9 +321,9 @@ export default function ProfilePage() {
           is_verified:         p.is_verified ?? 1,
           registration_step:   p.registration_step     || 'complete',
           login_count:         p.login_count           || 0,
-          last_login_at:       p.last_login_at         || 'â€”',
-          last_login_ip:       p.last_login_ip         || 'â€”',
-          created_at:          p.created_at            || 'â€”',
+          last_login_at:       p.last_login_at         || 'â€"',
+          last_login_ip:       p.last_login_ip         || 'â€"',
+          created_at:          p.created_at            || 'â€"',
           onboarding_complete: p.onboarding_complete   || 1,
         }
         setProfile(profileData)
@@ -345,7 +345,7 @@ export default function ProfilePage() {
           id: ctxUser?.id||'', email: ctxUser?.email||'', role:'user',
           plan: ctxUser?.plan||'starter', risk_profile: ctxUser?.riskProfile||'balanced',
           is_verified:1, registration_step:'complete', login_count:0,
-          last_login_at:'â€”', last_login_ip:'â€”', created_at:'â€”', onboarding_complete:1,
+          last_login_at:'â€"', last_login_ip:'â€"', created_at:'â€"', onboarding_complete:1,
         }
         setProfile(fallback); setSaved(fallback); setUserMeta(fallbackMeta)
       })
@@ -396,7 +396,7 @@ export default function ProfilePage() {
   }
   const handleDiscard = () => { setProfile({ ...saved }) }
 
-  /* â”€â”€ loading state â”€â”€ */
+  /* â"€â"€ loading state â"€â"€ */
   if (loading) {
     return (
       <div className="pp-root" style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:400 }}>
@@ -415,7 +415,7 @@ export default function ProfilePage() {
   return (
     <div className="pp-root">
 
-      {/* â”€â”€â”€ PAGE HEADER â”€â”€â”€ */}
+      {/* â"€â"€â"€ PAGE HEADER â"€â"€â"€ */}
       <div className="pp-page-head">
         <div className="pp-head-left">
           <div className="pp-head-ico"><UserCircle size={16} weight="fill" /></div>
@@ -437,23 +437,23 @@ export default function ProfilePage() {
         </nav>
       </div>
 
-      {/* â”€â”€â”€ SAVE BAR â”€â”€â”€ */}
+      {/* â"€â"€â"€ SAVE BAR â"€â"€â"€ */}
       <SaveBar dirty={dirty} onSave={handleSave} onDiscard={handleDiscard} saving={saving} saved={wasSaved} />
 
-      {/* â”€â”€â”€ ACCOUNT STATS â”€â”€â”€ */}
+      {/* â"€â"€â"€ ACCOUNT STATS â"€â"€â"€ */}
       <div className="pp-stats-row">
         <StatCard icon={ChartLineUp}  color="#00FFD1" label="Total Logins"   value={userMeta?.login_count ?? 0}  sub="All time" />
-        <StatCard icon={CurrencyDollar}        color="#FFB800" label="Plan"           value={plan.label}        sub={`Active since ${String(userMeta?.created_at||'â€”').split('T')[0]}`} />
-        <StatCard icon={ShieldCheck}  color={kyc.color} label="KYC Status"  value={kyc.label}         sub={profile.kyc_reviewed_at ? `Verified ${profile.kyc_reviewed_at}` : 'â€”'} />
+        <StatCard icon={CurrencyDollar}        color="#FFB800" label="Plan"           value={plan.label}        sub={`Active since ${String(userMeta?.created_at||'â€"').split('T')[0]}`} />
+        <StatCard icon={ShieldCheck}  color={kyc.color} label="KYC Status"  value={kyc.label}         sub={profile.kyc_reviewed_at ? `Verified ${profile.kyc_reviewed_at}` : 'â€"'} />
         <StatCard icon={TrendUp}      color={risk.color} label="Risk Profile" value={risk.label}       sub="Investment style" />
-        <StatCard icon={Lock}         color="#9945FF" label="Last Login"     value={String(userMeta?.last_login_at||'â€”').split('T')[0]} sub={userMeta?.last_login_ip||'â€”'} />
+        <StatCard icon={Lock}         color="#9945FF" label="Last Login"     value={String(userMeta?.last_login_at||'â€"').split('T')[0]} sub={userMeta?.last_login_ip||'â€"'} />
         <StatCard icon={Lightning}      color="#1A56FF" label="Account Role"   value={String(userMeta?.role||'user').charAt(0).toUpperCase()+String(userMeta?.role||'user').slice(1)} sub={`Step: ${userMeta?.registration_step||'complete'}`} />
       </div>
 
-      {/* â”€â”€â”€ MAIN GRID â”€â”€â”€ */}
+      {/* â"€â"€â"€ MAIN GRID â"€â"€â"€ */}
       <div className="pp-grid">
 
-        {/* â”€â”€ LEFT COL â”€â”€ */}
+        {/* â"€â"€ LEFT COL â"€â"€ */}
         <div className="pp-left">
 
           {/* Avatar card */}
@@ -492,15 +492,15 @@ export default function ProfilePage() {
             <Section title="Account Information" icon={IdentificationCard} iconColor="#1A56FF">
               <div className="pp-info-grid">
                 {[
-                  { l:'User ID',         v: String(userMeta?.id||'â€”').slice(0,18)+'â€¦'         },
-                  { l:'Email Address',   v: userMeta?.email || 'â€”'                             },
-                  { l:'Email Verified',  v: (userMeta?.is_verified) ? 'âœ“ Verified' : 'âœ— Not verified',
+                  { l:'User ID',         v: String(userMeta?.id||'â€"').slice(0,18)+'â€¦'         },
+                  { l:'Email Address',   v: userMeta?.email || 'â€"'                             },
+                  { l:'Email Verified',  v: (userMeta?.is_verified) ? 'âœ" Verified' : 'âœ-- Not verified',
                     c: (userMeta?.is_verified) ? '#00C076' : '#FF3D57'                          },
                   { l:'Account Role',    v: userMeta?.role || 'user'                           },
                   { l:'Onboarding',      v: userMeta?.onboarding_complete ? 'Complete' : 'Incomplete' },
-                  { l:'Member Since',    v: String(userMeta?.created_at||'â€”').split('T')[0]    },
-                  { l:'Last Login',      v: String(userMeta?.last_login_at||'â€”').split('T')[0] },
-                  { l:'Login IP',        v: userMeta?.last_login_ip || 'â€”'                     },
+                  { l:'Member Since',    v: String(userMeta?.created_at||'â€"').split('T')[0]    },
+                  { l:'Last Login',      v: String(userMeta?.last_login_at||'â€"').split('T')[0] },
+                  { l:'Login IP',        v: userMeta?.last_login_ip || 'â€"'                     },
                 ].map(r => (
                   <div key={r.l} className="pp-info-row">
                     <span className="pp-info-l">{r.l}</span>
@@ -512,7 +512,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* â”€â”€ RIGHT COL â”€â”€ */}
+        {/* â"€â"€ RIGHT COL â"€â"€ */}
         <div className="pp-right">
 
           {/* Personal details */}

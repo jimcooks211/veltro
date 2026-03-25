@@ -160,7 +160,7 @@ function buildWelcomeEmail({ firstName, plan, riskProfile }) {
 async function sendWelcomeEmail({ to, firstName, plan, riskProfile }) {
   await sendEmail({
     to,
-    subject: `Welcome to Veltro, ${firstName || 'Investor'} — you're all set 🎉`,
+    subject: `Welcome to Veltro, ${firstName || 'Investor'} - you're all set 🎉`,
     html:    buildWelcomeEmail({ firstName, plan, riskProfile }),
     text: [
       `Welcome to Veltro${firstName ? `, ${firstName}` : ''}!`,

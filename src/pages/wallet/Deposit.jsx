@@ -22,7 +22,7 @@ const METHODS = [
     Icon: Bank,
     color: '#1A56FF',
     fee: 'Free',
-    time: '1–3 business days',
+    time: '1-3 business days',
     min: 50,
     max: 50_000,
     daily: 25_000,
@@ -48,7 +48,7 @@ const METHODS = [
     Icon: CurrencyBtc,
     color: '#F7931A',
     fee: 'Network fee',
-    time: '10–30 min',
+    time: '10-30 min',
     min: null,
     max: null,
     daily: null,
@@ -61,7 +61,7 @@ const METHODS = [
     Icon: CurrencyDollar,
     color: '#2775CA',
     fee: 'Network fee',
-    time: '2–10 min',
+    time: '2-10 min',
     min: null,
     max: null,
     daily: null,
@@ -172,7 +172,7 @@ function AddressBox({ addr, network, color }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   STEP 1 — CHOOSE METHOD
+   STEP 1 -- CHOOSE METHOD
 ═══════════════════════════════════════════════════════════════ */
 function Step1({ selected, setSelected, onNext }) {
   return (
@@ -214,7 +214,7 @@ function Step1({ selected, setSelected, onNext }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   STEP 2 — DETAILS (varies by method)
+   STEP 2 -- DETAILS (varies by method)
 ═══════════════════════════════════════════════════════════════ */
 function Step2Bank({ amount, setAmount, onBack, onNext }) {
   const m       = METHODS.find(x => x.id === 'bank')
@@ -225,7 +225,7 @@ function Step2Bank({ amount, setAmount, onBack, onNext }) {
     <div className='dp-step-body'>
       <div className='dp-section-head'>
         <h2 className='dp-section-title'>Bank Transfer</h2>
-        <p className='dp-section-sub'>ACH · Free · 1–3 business days</p>
+        <p className='dp-section-sub'>ACH · Free · 1-3 business days</p>
       </div>
 
       {/* amount */}
@@ -508,7 +508,7 @@ function Step2USDC({ network, setNetwork, onBack, onNext, usdcNetworks, addresse
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   STEP 3 — REVIEW & CONFIRM
+   STEP 3 -- REVIEW & CONFIRM
 ═══════════════════════════════════════════════════════════════ */
 function Step3({ method, amount, card, cryptoAsset, usdcNetwork, onBack, onConfirm, loading }) {
   const isFiat   = method.id === 'bank' || method.id === 'card'
@@ -527,13 +527,13 @@ function Step3({ method, amount, card, cryptoAsset, usdcNetwork, onBack, onConfi
   ] : method.id === 'crypto' ? [
     { label: 'Asset',    val: cryptoAsset?.id },
     { label: 'Network',  val: cryptoAsset?.network },
-    { label: 'Address',  val: `${cryptoAsset?.addr?.slice(0,12)}…`, mono: true },
+    { label: 'Address',  val: `${cryptoAsset?.addr?.slice(0,12)}...`, mono: true },
     { label: 'Fee',      val: 'Network fee (paid by you)' },
     { label: 'Est. time', val: method.time },
   ] : [
     { label: 'Asset',    val: 'USDC' },
     { label: 'Network',  val: `${usdcNetwork?.label} (${usdcNetwork?.sub})` },
-    { label: 'Address',  val: `${usdcNetwork?.addr?.slice(0,12)}…`, mono: true },
+    { label: 'Address',  val: `${usdcNetwork?.addr?.slice(0,12)}...`, mono: true },
     { label: 'Fee',      val: usdcNetwork?.fee },
     { label: 'Est. time', val: method.time },
   ]
@@ -576,7 +576,7 @@ function Step3({ method, amount, card, cryptoAsset, usdcNetwork, onBack, onConfi
         </button>
         <button className='dp-btn-primary' onClick={onConfirm} disabled={loading}>
           {loading
-            ? <><Spinner size={14} className='dp-spin'/>Processing…</>
+            ? <><Spinner size={14} className='dp-spin'/>Processing...</>
             : <><CheckCircle size={14} weight='bold'/>Confirm Deposit</>
           }
         </button>
@@ -586,7 +586,7 @@ function Step3({ method, amount, card, cryptoAsset, usdcNetwork, onBack, onConfi
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   STEP 4 — SUCCESS
+   STEP 4 -- SUCCESS
 ═══════════════════════════════════════════════════════════════ */
 function Step4({ method, amount, onDone, onAnother }) {
   const isFiat = method.id === 'bank' || method.id === 'card'
@@ -604,7 +604,7 @@ function Step4({ method, amount, onDone, onAnother }) {
       </h2>
       <p className='dp-success-sub'>
         {method.id === 'bank'
-          ? `Your $${numAmt.toLocaleString()} bank transfer has been initiated. Funds arrive in 1–3 business days.`
+          ? `Your $${numAmt.toLocaleString()} bank transfer has been initiated. Funds arrive in 1-3 business days.`
           : method.id === 'card'
           ? `$${numAmt.toLocaleString()} is being processed. Your balance will update shortly.`
           : `Send funds to the address shown. We'll credit your account after network confirmation.`
@@ -641,7 +641,7 @@ function Step4({ method, amount, onDone, onAnother }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   RIGHT SIDEBAR — Info + Limits
+   RIGHT SIDEBAR -- Info + Limits
 ═══════════════════════════════════════════════════════════════ */
 function DepositSidebar({ method }) {
   const limits = method ? [
@@ -780,7 +780,7 @@ export default function Deposit() {
             sub: a.network === 'ERC-20' ? 'ERC-20' : 'SPL',
             color: a.network === 'ERC-20' ? '#627EEA' : '#9945FF',
             addr: a.address,
-            fee: a.network === 'ERC-20' ? '~$2–8' : '~$0.01'
+            fee: a.network === 'ERC-20' ? '~$2-8' : '~$0.01'
           }))
         
         setCryptoAssets(crypto)

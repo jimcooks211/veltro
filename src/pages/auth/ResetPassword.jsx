@@ -126,7 +126,7 @@ export default function ResetPassword() {
     if (!password)                e.password = "You'll need a password to continue"
     else if (password.length < 8) e.password = 'Password should be at least 8 characters'
     if (!confirm)                 e.confirm  = 'Just confirm your password below'
-    else if (confirm !== password) e.confirm = "These don't match — give it another go"
+    else if (confirm !== password) e.confirm = "These don't match -- give it another go"
     return e
   }
 

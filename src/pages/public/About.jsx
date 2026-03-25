@@ -81,7 +81,7 @@ export default function About() {
         </div>
       </div>
 
-      {/* core statement — phase controls initial load, inView controls scroll */}
+      {/* core statement -- phase controls initial load, inView controls scroll */}
       <p
         ref={textRef}
         className={`crafting-exceptional-p reveal ${isVisible(textInView) ? 'visible' : ''}`}

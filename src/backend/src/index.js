@@ -29,38 +29,30 @@ const testConnection = async () => {
 
 app.set('trust proxy', 1)
 
+// ── Hard CORS headers on every response (Railway-safe) ──
+app.use((req, res, next) => {
+  const origin = req.headers.origin || '*'
+  res.setHeader('Access-Control-Allow-Origin',      origin)
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
+  res.setHeader('Access-Control-Allow-Methods',     'GET,POST,PUT,PATCH,DELETE,OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers',     'Content-Type,Authorization,X-Requested-With')
+  res.setHeader('Access-Control-Expose-Headers',    'Set-Cookie')
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Max-Age', '86400')
+    return res.sendStatus(204)
+  }
+  next()
+})
+
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:5175',
-    'http://localhost:5176',
-    'http://localhost:5177',
-    'https://veltro-seven.vercel.app',
-    'https://veltroinvestment.vercel.app',
-    /\.vercel\.app$/,
-    /\.railway\.app$/
-  ],
+  origin: (origin, callback) => callback(null, origin || '*'),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   exposedHeaders: ['Set-Cookie'],
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 }))
-
-// Additional CORS headers for preflight requests
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*')
-  res.header('Access-Control-Allow-Credentials', 'true')
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
-
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(200)
-  } else {
-    next()
-  }
-})
+app.options('*', cors())
 
 app.use((req, res, next) => {
   const start = Date.now()
@@ -92,7 +84,7 @@ function buildResetEmail(resetUrl) {
 <body style="margin:0;padding:0;background:#060A18;font-family:'Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
 
   <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
-    Reset your Veltro password — link expires in 15 minutes.
+    Reset your Veltro password - link expires in 15 minutes.
   </div>
 
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
@@ -302,7 +294,7 @@ app.use('/api/notifications',    notificationsRoutes)
 app.use('/api/deposit-addresses', depositAddressRoutes)
 
 // ── OTA distribution routes ───────────────────────────────────────────────
-// manifest.plist — iOS reads this to find the IPA URL
+// manifest.plist - iOS reads this to find the IPA URL
 app.get('/ota/manifest.plist', (req, res) => {
   res.setHeader('Content-Type', 'application/xml')
   res.sendFile(join(__dirname, 'ota', 'manifest.plist'))

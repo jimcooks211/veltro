@@ -12,7 +12,7 @@ const router = Router()
 const VALID_GENDERS = ['male', 'female', 'non-binary', 'prefer-not-to-say']
 
 /* ══════════════════════════════════════════════════════════════════
-   HELPER — generate ordered username candidates from name parts
+   HELPER - generate ordered username candidates from name parts
    Priority mirrors how companies like GitHub / Linear generate slugs:
      1. firstnamelastname          → johndoe
      2. firstname_lastname         → john_doe
@@ -26,7 +26,7 @@ function buildCandidates(firstName, lastName) {
   const clean = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 15)
   const f = clean(firstName)
   const l = clean(lastName)
-  const n = Math.floor(Math.random() * 90 + 10)   // 10–99
+  const n = Math.floor(Math.random() * 90 + 10)   // 10-99
 
   const candidates = []
   if (f && l) {
@@ -47,7 +47,7 @@ function buildCandidates(firstName, lastName) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   HELPER — validate and normalize form input
+   HELPER - validate and normalize form input
 ══════════════════════════════════════════════════════════════════ */
 function validateProfileInput(data) {
   const errors = {}
@@ -73,7 +73,7 @@ function validateProfileInput(data) {
     errors.username = 'Username must be 3-20 characters with only letters, numbers, _ and .'
   }
 
-  /* Gender validation — REQUIRED */
+  /* Gender validation - REQUIRED */
   if (!data.gender?.trim()) {
     errors.gender = 'Gender is required'
   } else if (!VALID_GENDERS.includes(data.gender.toLowerCase())) {
@@ -138,7 +138,7 @@ function validateProfileInput(data) {
 
 /* ══════════════════════════════════════════════════════════════════
    GET /api/profile/check-username?u=johndoe
-   Public — used by frontend while user is typing / on mount.
+   Public - used by frontend while user is typing / on mount.
    Returns { available: bool, suggestion?: string }
 ══════════════════════════════════════════════════════════════════ */
 router.get('/check-username', async (req, res) => {
@@ -147,7 +147,7 @@ router.get('/check-username', async (req, res) => {
   if (!username || username.length < 3)
     return res.status(400).json({ available: false, message: 'Username must be at least 3 characters.' })
   if (!/^[a-zA-Z0-9_.]{3,20}$/.test(username))
-    return res.status(400).json({ available: false, message: 'Only letters, numbers, _ and . allowed (3–20 chars).' })
+    return res.status(400).json({ available: false, message: 'Only letters, numbers, _ and . allowed (3-20 chars).' })
 
   try {
     const [[row]] = await db.execute(
@@ -162,7 +162,7 @@ router.get('/check-username', async (req, res) => {
 
 /* ══════════════════════════════════════════════════════════════════
    GET /api/profile/suggest-username?first=John&last=Doe
-   Public — called on mount to pre-fill username field.
+   Public - called on mount to pre-fill username field.
    Walks the candidate list until it finds one not in the DB.
 ══════════════════════════════════════════════════════════════════ */
 router.get('/suggest-username', async (req, res) => {
@@ -182,7 +182,7 @@ router.get('/suggest-username', async (req, res) => {
       if (!row) return res.json({ username: candidate })
     }
 
-    /* all candidates taken — append timestamp suffix as last resort */
+    /* all candidates taken - append timestamp suffix as last resort */
     const fallback = `${candidates[0]}${Date.now().toString().slice(-4)}`
     return res.json({ username: fallback.slice(0, 20) })
 
@@ -194,7 +194,7 @@ router.get('/suggest-username', async (req, res) => {
 
 /* ══════════════════════════════════════════════════════════════════
    POST /api/profile/create
-   Protected — requires Bearer token.
+   Protected - requires Bearer token.
    Body: all CreateProfile form fields including gender.
    Saves to profiles table, updates users table with plan/risk.
 ══════════════════════════════════════════════════════════════════ */
@@ -326,7 +326,7 @@ router.post('/create', requireAuth, async (req, res) => {
 
 /* ══════════════════════════════════════════════════════════════════
    GET /api/profile/me
-   Protected — returns current user's profile including gender.
+   Protected - returns current user's profile including gender.
 ══════════════════════════════════════════════════════════════════ */
 router.get('/me', requireAuth, async (req, res) => {
   try {
@@ -354,7 +354,7 @@ router.get('/me', requireAuth, async (req, res) => {
   }
 })
 /* ── PUT /api/profile/update ─────────────────────────────────────
-   Partial profile update — only supplied fields are changed.
+   Partial profile update - only supplied fields are changed.
    Used by Settings page.
 ──────────────────────────────────────────────────────────────── */
 router.put('/update', requireAuth, async (req, res) => {

@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, WarningCircle, CheckCircle } from '@phosphor-ico
 import Veltrolog from '../../components/VeltroIcon'
 import './auth.css'
 
-/* ── tiny auth util — stores tokens in sessionStorage (or localStorage if remember) ── */
+/* ── tiny auth util -- stores tokens in sessionStorage (or localStorage if remember) ── */
 function storeTokens({ accessToken, refreshToken, remember }) {
   const store = remember ? localStorage : sessionStorage
   store.setItem('accessToken',  accessToken)
@@ -12,7 +12,7 @@ function storeTokens({ accessToken, refreshToken, remember }) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   DIGIT INPUT — single character box (fully inline-styled)
+   DIGIT INPUT -- single character box (fully inline-styled)
 ══════════════════════════════════════════════════════════════════ */
 function DigitBox({ value, inputRef, onChange, onKeyDown, onPaste, hasError, isSuccess }) {
   const [focused, setFocused] = useState(false)
@@ -173,7 +173,7 @@ export default function VerifyEmail({ email, remember = false, onVerified, onBac
         remember,
       })
 
-      /* ── cache userId — top-level field is the reliable source,
+      /* ── cache userId -- top-level field is the reliable source,
          data.user.id is kept as a fallback for backwards compat ── */
       const verifiedUserId = data.userId || data.user?.id || null
 
@@ -309,7 +309,7 @@ export default function VerifyEmail({ email, remember = false, onVerified, onBac
           )}
           {success && !error && (
             <p style={{ margin: 0, fontSize: 13, color: 'var(--auth-success, #22C55E)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-              <CheckCircle size={14} weight='fill' /> Verified! Taking you in…
+              <CheckCircle size={14} weight='fill' /> Verified! Taking you in...
             </p>
           )}
           {resendMsg && !error && !success && (
@@ -328,7 +328,7 @@ export default function VerifyEmail({ email, remember = false, onVerified, onBac
           onClick={() => submitCode(code)}
         >
           <span className='signin-btn-text'>
-            {loading ? 'Verifying…' : success ? 'Verified ✓' : 'Verify code'}
+            {loading ? 'Verifying...' : success ? 'Verified ✓' : 'Verify code'}
           </span>
           <span className='sign-arrow-icon'>
             {loading
@@ -349,7 +349,7 @@ export default function VerifyEmail({ email, remember = false, onVerified, onBac
               onClick={handleResend}
               style={{ opacity: resending ? 0.5 : 1, pointerEvents: resending ? 'none' : 'auto' }}
             >
-              {resending ? 'Sending…' : 'Resend code'}
+              {resending ? 'Sending...' : 'Resend code'}
             </span>
           )}
         </p>

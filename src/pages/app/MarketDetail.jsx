@@ -81,16 +81,16 @@ const TF_CONFIG = {
    PRICE FORMATTER
 ════════════════════════════════════════════════════════ */
 function fmtP(p, sym) {
-  if (!p) return '—'
+  if (!p) return '--'
   if (sym?.includes('/')) return p.toFixed(4)
   if (p >= 10000) return `$${p.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
   if (p >= 1)     return `$${p.toFixed(2)}`
   return `$${p.toFixed(4)}`
 }
 
-// FIX #3 — fmtAxis now accepts sym so forex pairs get correct decimal places
+// FIX #3 -- fmtAxis now accepts sym so forex pairs get correct decimal places
 function fmtAxis(p, sym) {
-  if (!p) return '—'
+  if (!p) return '--'
   if (sym?.includes('/')) return p.toFixed(4)
   if (p >= 10000) return `${(p / 1000).toFixed(1)}k`
   if (p >= 1000)  return p.toFixed(0)
@@ -98,7 +98,7 @@ function fmtAxis(p, sym) {
   return p.toFixed(4)
 }
 
-function fmtCap(b) { return !b ? '—' : b >= 1000 ? `$${(b / 1000).toFixed(2)}T` : `$${b.toFixed(0)}B` }
+function fmtCap(b) { return !b ? '--' : b >= 1000 ? `$${(b / 1000).toFixed(2)}T` : `$${b.toFixed(0)}B` }
 
 /* ════════════════════════════════════════════════════════
    CANDLESTICK SVG COMPONENT
@@ -305,7 +305,7 @@ function CandleSVG({ candles, livePrice, color, sym }) {
         </svg>
       )}
 
-      {/* OHLCV overlay — FIX #3: fmtAxis now receives sym */}
+      {/* OHLCV overlay -- FIX #3: fmtAxis now receives sym */}
       {hc && (
         <div className="mdt-ohlcv">
           {[
@@ -339,9 +339,9 @@ function OrderBook({ asks, bids, mid, asset }) {
 
   const spread = asks[0] && bids[0]
     ? Math.abs(asks[0].px - bids[0].px).toFixed(asset.baseP > 10 ? 2 : 5)
-    : '—'
+    : '--'
 
-  // FIX #4 — compare mid against baseP to determine direction, not just baseP >= 0
+  // FIX #4 -- compare mid against baseP to determine direction, not just baseP >= 0
   const isPos = mid >= asset.baseP
 
   return (
@@ -395,7 +395,7 @@ function OrderBook({ asks, bids, mid, asset }) {
 function OrderForm({ asset, livePrice }) {
   const [side,   setSide]   = useState('buy')
   const [otype,  setOtype]  = useState('Limit')
-  // FIX #5 — price initialises from prop; syncs when livePrice changes (Market mode excluded)
+  // FIX #5 -- price initialises from prop; syncs when livePrice changes (Market mode excluded)
   const [price,  setPrice]  = useState(String(livePrice))
   const [amount, setAmount] = useState('')
 
@@ -501,11 +501,11 @@ function OrderForm({ asset, livePrice }) {
       <div className="mdt-form-summary">
         <div className="mdt-sum-row">
           <span>Total</span>
-          <span>{total > 0 ? total.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '—'} USDT</span>
+          <span>{total > 0 ? total.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '--'} USDT</span>
         </div>
         <div className="mdt-sum-row">
           <span>Fee (0.10%)</span>
-          <span>{fee > 0 ? fee.toFixed(4) : '—'} USDT</span>
+          <span>{fee > 0 ? fee.toFixed(4) : '--'} USDT</span>
         </div>
       </div>
 
@@ -526,7 +526,7 @@ function OrderForm({ asset, livePrice }) {
    MAIN COMPONENT
 ════════════════════════════════════════════════════════ */
 export default function MarketDetail() {
-  // FIX #1 — call hook unconditionally; destructure (or ignore) the result properly
+  // FIX #1 -- call hook unconditionally; destructure (or ignore) the result properly
   useOutletContext()
 
   const navigate     = useNavigate()
@@ -556,7 +556,7 @@ export default function MarketDetail() {
     return genCandles(asset.sym, asset.baseP, cfg.n, cfg.mod)
   }, [asset, tf])
 
-  // FIX #6 — stable derived stats; memoised on asset only so they don't re-randomize on every tick
+  // FIX #6 -- stable derived stats; memoised on asset only so they don't re-randomize on every tick
   const stableStats = useMemo(() => {
     if (!asset) return {}
     const r      = xorshift(symSeed(asset.sym) + 99)
@@ -566,19 +566,19 @@ export default function MarketDetail() {
     const prevCl = asset.baseP * (1 + (r() - 0.5) * 0.008)
     const wk52hi = asset.baseP * 1.41
     const wk52lo = asset.baseP * 0.72
-    const pe     = asset.cat === 'Stock' ? (22 + r() * 14).toFixed(2) : '—'
-    const eps    = asset.cat === 'Stock' ? `$${(r() * 8 + 2).toFixed(2)}` : '—'
-    const beta   = asset.cat !== 'Forex' ? (0.6 + r() * 1.4).toFixed(2) : '—'
-    const divY   = asset.cat === 'Stock' ? `${(r() * 3).toFixed(2)}%` : '—'
+    const pe     = asset.cat === 'Stock' ? (22 + r() * 14).toFixed(2) : '--'
+    const eps    = asset.cat === 'Stock' ? `$${(r() * 8 + 2).toFixed(2)}` : '--'
+    const beta   = asset.cat !== 'Forex' ? (0.6 + r() * 1.4).toFixed(2) : '--'
+    const divY   = asset.cat === 'Stock' ? `${(r() * 3).toFixed(2)}%` : '--'
     return { dayHi, dayLo, openPx, prevCl, wk52hi, wk52lo, pe, eps, beta, divY }
   }, [asset])
 
-  // FIX #2 — side effects (setPriceDir, setFlashClass, setTimeout) lifted out of the
+  // FIX #2 -- side effects (setPriceDir, setFlashClass, setTimeout) lifted out of the
   //           state updater and driven by a separate ref + useEffect instead
   const prevPxRef  = useRef(asset?.baseP ?? 0)
-  const livePxRef  = useRef(asset?.baseP ?? 0)  // FIX #8 — stable ref for book interval
+  const livePxRef  = useRef(asset?.baseP ?? 0)  // FIX #8 -- stable ref for book interval
 
-  /* Live tick — state updater is now a pure function; side effects handled separately */
+  /* Live tick -- state updater is now a pure function; side effects handled separately */
   useEffect(() => {
     if (!asset) return
     const vol = asset.sym.includes('/') ? 0.00025 : (asset.cat === 'Crypto' ? 0.0018 : 0.0009)
@@ -597,7 +597,7 @@ export default function MarketDetail() {
       prevPxRef.current = next
       livePxRef.current = next
 
-      // FIX #2 — these setState calls are outside the updater; safe to call here
+      // FIX #2 -- these setState calls are outside the updater; safe to call here
       setLivePrice(next)
       setPriceDir(dir)
       if (cls) {
@@ -609,7 +609,7 @@ export default function MarketDetail() {
     return () => clearInterval(iv)
   }, [asset])
 
-  // FIX #8 — book interval uses ref so it never needs livePrice as a dependency,
+  // FIX #8 -- book interval uses ref so it never needs livePrice as a dependency,
   //           preventing constant interval teardown/recreation on every tick
   useEffect(() => {
     if (!asset) return
@@ -643,7 +643,7 @@ export default function MarketDetail() {
   const isPos    = pct >= 0
   const rangePct = Math.min(100, Math.max(0, ((livePrice - wk52lo) / ((wk52hi - wk52lo) || 1)) * 100))
 
-  /* Related assets — same sector, excluding self */
+  /* Related assets -- same sector, excluding self */
   const related = useMemo(() => {
     return ASSETS
       .filter(a => a.sector === asset.sector && a.sym !== asset.sym)

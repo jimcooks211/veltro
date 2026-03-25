@@ -59,7 +59,7 @@ const fmtType = t => {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   DONUT CHART — pure SVG
+   DONUT CHART -- pure SVG
 ═══════════════════════════════════════════════════════════════ */
 function DonutChart({ assets, hov, setHov, totalUSD }) {
   if (!assets.length) {
@@ -111,7 +111,7 @@ function DonutChart({ assets, hov, setHov, totalUSD }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   BALANCE CARD — real API data
+   BALANCE CARD -- real API data
 ═══════════════════════════════════════════════════════════════ */
 function BalanceCard({ totalUSD, available, locked, onDeposit, onWithdraw }) {
   const [hidden, setHidden] = useState(false)
@@ -160,7 +160,7 @@ function BalanceCard({ totalUSD, available, locked, onDeposit, onWithdraw }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   STAT STRIP — real numbers
+   STAT STRIP -- real numbers
 ═══════════════════════════════════════════════════════════════ */
 function StatStrip({ totalUSD, txCount }) {
   return (
@@ -185,7 +185,7 @@ function StatStrip({ totalUSD, txCount }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ASSET BREAKDOWN — real balances
+   ASSET BREAKDOWN -- real balances
 ═══════════════════════════════════════════════════════════════ */
 function AssetBreakdown({ balances }) {
   const [hov, setHov] = useState(null)
@@ -215,7 +215,7 @@ function AssetBreakdown({ balances }) {
         <div className='wl-asset-rows'>
           {assets.length === 0 ? (
             <div style={{ padding:'24px 0', color:'var(--vlt-text-muted)', fontSize:12, fontFamily:'Inter,sans-serif', textAlign:'center' }}>
-              No assets yet — deposit to get started.
+              No assets yet -- deposit to get started.
             </div>
           ) : (
             assets.map((a,i) => {
@@ -247,7 +247,7 @@ function AssetBreakdown({ balances }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   TRANSACTION HISTORY — real API data, empty state for new users
+   TRANSACTION HISTORY -- real API data, empty state for new users
 ═══════════════════════════════════════════════════════════════ */
 function TxHistory({ transactions, loading }) {
   const [filter, setFilter] = useState('all')
@@ -275,7 +275,7 @@ function TxHistory({ transactions, loading }) {
       <div className='wl-tx-list'>
         {loading ? (
           <div style={{ padding:'32px 0', display:'flex', alignItems:'center', justifyContent:'center', gap:8, color:'var(--vlt-text-muted)' }}>
-            <Spinner size={18} className='inv-spinner'/> Loading transactions…
+            <Spinner size={18} className='inv-spinner'/> Loading transactions...
           </div>
         ) : visible.length === 0 ? (
           <div style={{ padding:'40px 16px', textAlign:'center', color:'var(--vlt-text-muted)', fontFamily:'Inter,sans-serif', fontSize:13 }}>
@@ -304,7 +304,7 @@ function TxHistory({ transactions, loading }) {
                   </div>
                   <span className='wl-tx-date'>
                     <Clock size={9} weight='duotone'/>
-                    {tx.created_at ? new Date(tx.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'}
+                    {tx.created_at ? new Date(tx.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '--'}
                   </span>
                 </div>
                 <div className='wl-tx-right'>
@@ -325,7 +325,7 @@ function TxHistory({ transactions, loading }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   SIDEBAR — real data
+   SIDEBAR -- real data
 ═══════════════════════════════════════════════════════════════ */
 function WalletSidebar({ user, totalUSD, txCount, onDeposit, onWithdraw }) {
   const navigate    = useNavigate()
@@ -406,7 +406,7 @@ function WalletSidebar({ user, totalUSD, txCount, onDeposit, onWithdraw }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   WALLET PAGE — orchestrator
+   WALLET PAGE -- orchestrator
 ═══════════════════════════════════════════════════════════════ */
 export default function WalletOverview() {
   const { user } = useOutletContext() ?? {}
@@ -452,7 +452,7 @@ export default function WalletOverview() {
       <div className='wl-root' style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:400 }}>
         <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12, color:'var(--vlt-text-muted)' }}>
           <Spinner size={28} style={{ animation:'spin 0.8s linear infinite' }}/>
-          <span style={{ fontFamily:'Inter,sans-serif', fontSize:13 }}>Loading wallet…</span>
+          <span style={{ fontFamily:'Inter,sans-serif', fontSize:13 }}>Loading wallet...</span>
         </div>
       </div>
     )
