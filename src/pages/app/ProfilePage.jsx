@@ -32,7 +32,7 @@ const MOCK_USER = {
   is_verified:          1,
   registration_step:    'complete',
   login_count:          84,
-  last_login_at:        'Mar 10, 2026 Â· 09:02',
+  last_login_at:        'Mar 10, 2026 · 09:02',
   last_login_ip:        '105.112.34.88',
   created_at:           'Jan 8, 2026',
   gender:               'male',
@@ -79,9 +79,9 @@ const PLAN_META = {
   elite:   { label:'Elite',    color:'#00FFD1',              bg:'rgba(0,255,209,.1)'    },
 }
 const RISK_META = {
-  conservative: { label:'Conservative', color:'#00C076', icon:'ðŸ›¡ï¸' },
-  balanced:     { label:'Balanced',     color:'#FFB800', icon:'âš-ï¸' },
-  aggressive:   { label:'Aggressive',   color:'#FF3D57', icon:'âš¡' },
+conservative: { label:'Conservative', color:'#00C076', icon:'🛡️' },
+balanced:     { label:'Balanced',     color:'#FFB800', icon:'⚠️' },
+aggressive:   { label:'Aggressive',   color:'#FF3D57', icon:'⚡' },
 }
 const KYC_META = {
   none:     { label:'Not Started', color:'rgba(255,255,255,.3)', bg:'rgba(255,255,255,.06)'  },
@@ -122,7 +122,7 @@ function age(dob) {
     (now < new Date(now.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
 }
 function fmtDob(dob) {
-  if (!dob) return 'â€"'
+  return '—'
   return new Date(dob).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })
 }
 
@@ -141,9 +141,7 @@ function SaveBar({ dirty, onSave, onDiscard, saving, saved: wasSaved }) {
           <span className="pp-sb-msg">You have unsaved changes</span>
           <button className="pp-sb-dis" onClick={onDiscard}><X size={10} weight="bold" />Discard</button>
           <button className="pp-sb-save" onClick={onSave} disabled={saving}>
-            {saving
-              ? <><CircleNotch size={10} weight="bold" className="pp-spin" />Savingâ€¦</>
-              : <><FloppyDisk size={10} weight="bold" />Save changes</>}
+            {saving ? 'Saving…' : <><FloppyDisk size={10} weight="bold" />Save changes</>}
           </button>
         </>
       )}
@@ -320,9 +318,9 @@ export default function ProfilePage() {
           risk_profile:        p.risk_profile          || ctxUser?.riskProfile || 'balanced',
           is_verified:         p.is_verified ?? 1,
           registration_step:   p.registration_step     || 'complete',
-          login_count:         p.login_count           || 0,
-          last_login_at:       p.last_login_at         || 'â€"',
-          last_login_ip:       p.last_login_ip         || 'â€"',
+  login_count:         p.login_count           || 0,
+  last_login_at:       p.last_login_at         || '—',
+  last_login_ip:       p.last_login_ip         || '—',
           created_at:          p.created_at            || 'â€"',
           onboarding_complete: p.onboarding_complete   || 1,
         }
@@ -402,7 +400,7 @@ export default function ProfilePage() {
       <div className="pp-root" style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:400 }}>
         <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12, color:'var(--vlt-text-muted)' }}>
           <CircleNotch size={28} weight="duotone" style={{ animation:'spin 0.8s linear infinite', opacity:0.5 }}/>
-          <span style={{ fontFamily:'Inter,sans-serif', fontSize:13 }}>Loading profileâ€¦</span>
+Loading profile…
         </div>
       </div>
     )
