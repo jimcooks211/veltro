@@ -253,3 +253,13 @@
   .gs-profile-grid { grid-template-columns:1fr; }
   .gs-grid2 { grid-template-columns:1fr; }
 }
+/* ── delete modal ── */
+.gs-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px)}
+.gs-modal{background:var(--vlt-card,#141414);border:1px solid rgba(255,61,87,.25);border-radius:12px;padding:24px;width:100%;max-width:420px;display:flex;flex-direction:column;gap:16px}
+.gs-modal-head{display:flex;align-items:flex-start;gap:12px}
+.gs-modal-ico{width:36px;height:36px;border-radius:8px;background:rgba(255,61,87,.12);color:#FF3D57;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gs-modal-title{font-size:.9rem;font-weight:600;color:var(--vlt-text,#fff)}
+.gs-modal-sub{font-size:.75rem;color:var(--vlt-text-muted,rgba(255,255,255,.45));margin-top:2px}
+.gs-modal-warn{font-size:.78rem;color:var(--vlt-text-muted,rgba(255,255,255,.5));line-height:1.6;margin:0}
+.gs-modal-warn strong{color:#FF3D57}
+.gs-modal-actions{display:flex;gap:8px;justify-content:flex-end}
