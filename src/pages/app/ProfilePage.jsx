@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+﻿import { useState, useRef, useCallback, useEffect } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
 import { apiGet, apiPost, apiPut } from '../../utils/api.js'
 import {
@@ -12,7 +12,7 @@ import {
 import './ProfilePage.css'
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   MOCK DATA â€" mirrors DB schema exactly:
+   MOCK DATA — mirrors DB schema exactly:
    users   : { id, email, role, plan, risk_profile, is_verified,
                registration_step, login_count, last_login_at,
                last_login_ip, created_at, gender, onboarding_complete }
@@ -263,7 +263,7 @@ function AvatarBlock({ profile, onAvatarChange }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   ROOT â€" wired to real /api/profile/me
+   ROOT — wired to real /api/profile/me
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function ProfilePage() {
   const { user: ctxUser, refreshUser } = useOutletContext() ?? {}
@@ -321,7 +321,7 @@ export default function ProfilePage() {
   login_count:         p.login_count           || 0,
   last_login_at:       p.last_login_at         || '—',
   last_login_ip:       p.last_login_ip         || '—',
-          created_at:          p.created_at            || 'â€"',
+          created_at:          p.created_at            || '—',
           onboarding_complete: p.onboarding_complete   || 1,
         }
         setProfile(profileData)
@@ -343,7 +343,7 @@ export default function ProfilePage() {
           id: ctxUser?.id||'', email: ctxUser?.email||'', role:'user',
           plan: ctxUser?.plan||'starter', risk_profile: ctxUser?.riskProfile||'balanced',
           is_verified:1, registration_step:'complete', login_count:0,
-          last_login_at:'â€"', last_login_ip:'â€"', created_at:'â€"', onboarding_complete:1,
+          last_login_at:'—', last_login_ip:'—', created_at:'—', onboarding_complete:1,
         }
         setProfile(fallback); setSaved(fallback); setUserMeta(fallbackMeta)
       })
@@ -441,10 +441,10 @@ Loading profile…
       {/* â"€â"€â"€ ACCOUNT STATS â"€â"€â"€ */}
       <div className="pp-stats-row">
         <StatCard icon={ChartLineUp}  color="#00FFD1" label="Total Logins"   value={userMeta?.login_count ?? 0}  sub="All time" />
-        <StatCard icon={CurrencyDollar}        color="#FFB800" label="Plan"           value={plan.label}        sub={`Active since ${String(userMeta?.created_at||'â€"').split('T')[0]}`} />
-        <StatCard icon={ShieldCheck}  color={kyc.color} label="KYC Status"  value={kyc.label}         sub={profile.kyc_reviewed_at ? `Verified ${profile.kyc_reviewed_at}` : 'â€"'} />
+        <StatCard icon={CurrencyDollar}        color="#FFB800" label="Plan"           value={plan.label}        sub={`Active since ${String(userMeta?.created_at||'—').split('T')[0]}`} />
+        <StatCard icon={ShieldCheck}  color={kyc.color} label="KYC Status"  value={kyc.label}         sub={profile.kyc_reviewed_at ? `Verified ${profile.kyc_reviewed_at}` : '—'} />
         <StatCard icon={TrendUp}      color={risk.color} label="Risk Profile" value={risk.label}       sub="Investment style" />
-        <StatCard icon={Lock}         color="#9945FF" label="Last Login"     value={String(userMeta?.last_login_at||'â€"').split('T')[0]} sub={userMeta?.last_login_ip||'â€"'} />
+        <StatCard icon={Lock}         color="#9945FF" label="Last Login"     value={String(userMeta?.last_login_at||'—').split('T')[0]} sub={userMeta?.last_login_ip||'—'} />
         <StatCard icon={Lightning}      color="#1A56FF" label="Account Role"   value={String(userMeta?.role||'user').charAt(0).toUpperCase()+String(userMeta?.role||'user').slice(1)} sub={`Step: ${userMeta?.registration_step||'complete'}`} />
       </div>
 
@@ -478,7 +478,7 @@ Loading profile…
                 </>
               ) : (
                 <div className="pp-bio-static" onClick={() => setEditBio(true)}>
-                  <p>{profile.bio || <span className="pp-bio-empty">Add a bioâ€¦</span>}</p>
+                  <p>{profile.bio || <span className="pp-bio-empty">Add a bio…</span>}</p>
                   <button className="pp-bio-edit"><Pencil size={10} weight="bold" /></button>
                 </div>
               )}
@@ -490,15 +490,15 @@ Loading profile…
             <Section title="Account Information" icon={IdentificationCard} iconColor="#1A56FF">
               <div className="pp-info-grid">
                 {[
-                  { l:'User ID',         v: String(userMeta?.id||'â€"').slice(0,18)+'â€¦'         },
-                  { l:'Email Address',   v: userMeta?.email || 'â€"'                             },
-                  { l:'Email Verified',  v: (userMeta?.is_verified) ? 'âœ" Verified' : 'âœ-- Not verified',
+                  { l:'User ID',         v: String(userMeta?.id||'—').slice(0,18)+'…'         },
+                  { l:'Email Address',   v: userMeta?.email || '—'                             },
+                  { l:'Email Verified',  v: (userMeta?.is_verified) ? 'Verified' : 'Not verified',
                     c: (userMeta?.is_verified) ? '#00C076' : '#FF3D57'                          },
                   { l:'Account Role',    v: userMeta?.role || 'user'                           },
                   { l:'Onboarding',      v: userMeta?.onboarding_complete ? 'Complete' : 'Incomplete' },
-                  { l:'Member Since',    v: String(userMeta?.created_at||'â€"').split('T')[0]    },
-                  { l:'Last Login',      v: String(userMeta?.last_login_at||'â€"').split('T')[0] },
-                  { l:'Login IP',        v: userMeta?.last_login_ip || 'â€"'                     },
+                  { l:'Member Since',    v: String(userMeta?.created_at||'—').split('T')[0]    },
+                  { l:'Last Login',      v: String(userMeta?.last_login_at||'—').split('T')[0] },
+                  { l:'Login IP',        v: userMeta?.last_login_ip || '—'                     },
                 ].map(r => (
                   <div key={r.l} className="pp-info-row">
                     <span className="pp-info-l">{r.l}</span>
@@ -600,7 +600,7 @@ Loading profile…
                 <Field label="Address Line 2" span>
                   <input className="pp-input" value={profile.address_line2}
                     onChange={e => set('address_line2', e.target.value)}
-                    placeholder="Apt, suite, unitâ€¦" />
+                    placeholder="Apt, suite, unit..." />
                 </Field>
                 <Field label="City">
                   <input className="pp-input" value={profile.city}
@@ -742,3 +742,4 @@ Loading profile…
     </div>
   )
 }
+

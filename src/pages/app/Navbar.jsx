@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+﻿import { useState, useRef, useEffect, useCallback } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { apiGet, apiPatch } from '../../utils/api.js'
 import {
   List, MagnifyingGlass, Moon, Sun, Bell, ArrowsLeftRight,
@@ -9,7 +9,7 @@ import {
 } from '@phosphor-icons/react'
 import './Navbar.css'
 
-/* ── notification type config ─────────────────────────────────────── */
+/* â”€â”€ notification type config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const N_TYPE = {
   login:      { color: '#00C076', Icon: ShieldCheck  },
   signup:     { color: '#1A56FF', Icon: UserCircle   },
@@ -35,7 +35,7 @@ const formatTime = (dateStr) => {
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-/* ── NotificationBell ─────────────────────────────────────────────── */
+/* â”€â”€ NotificationBell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function NotificationBell() {
   const [open,          setOpen]          = useState(false)
   const [count,         setCount]         = useState(0)
@@ -44,21 +44,21 @@ function NotificationBell() {
   const [marking,       setMarking]       = useState(false)
   const ref = useRef(null)
 
-  /* ── fetch unread count ── */
+  /* â”€â”€ fetch unread count â”€â”€ */
   const fetchCount = useCallback(() => {
     apiGet('/api/notifications/unread-count')
       .then(({ unread }) => setCount(unread ?? 0))
       .catch(() => {})
   }, [])
 
-  /* ── poll count every 60s ── */
+  /* â”€â”€ poll count every 60s â”€â”€ */
   useEffect(() => {
     fetchCount()
     const id = setInterval(fetchCount, 60_000)
     return () => clearInterval(id)
   }, [fetchCount])
 
-  /* ── close on outside click ── */
+  /* â”€â”€ close on outside click â”€â”€ */
   useEffect(() => {
     if (!open) return
     const h = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
@@ -66,7 +66,7 @@ function NotificationBell() {
     return () => document.removeEventListener('mousedown', h)
   }, [open])
 
-  /* ── fetch fresh notifications every time panel opens ── */
+  /* â”€â”€ fetch fresh notifications every time panel opens â”€â”€ */
   useEffect(() => {
     if (!open) return
     setLoading(true)
@@ -77,9 +77,9 @@ function NotificationBell() {
       })
       .catch(() => setNotifications([]))
       .finally(() => setLoading(false))
-  }, [open]) // ← removed notifications.length guard -- always fetch fresh
+  }, [open]) // â† removed notifications.length guard -- always fetch fresh
 
-  /* ── mark all as read ── */
+  /* â”€â”€ mark all as read â”€â”€ */
   const markAllRead = async () => {
     if (marking || count === 0) return
     setMarking(true)
@@ -177,10 +177,12 @@ function NotificationBell() {
   )
 }
 
-/* ── UserMenu (navbar dropdown) ──────────────────────────────────── */
+/* â”€â”€ UserMenu (navbar dropdown) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function UserMenu({ user, onThemeToggle, isDark, onLogout }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
+  const navigate = useNavigate()
+  const { userId } = useParams()
 
   useEffect(() => {
     if (!open) return
@@ -242,10 +244,10 @@ function UserMenu({ user, onThemeToggle, isDark, onLogout }) {
             </div>
           </div>
           <div className='vlt-um-divider' />
-          <button type='button' className='vlt-um-item'>
+          <button type='button' className='vlt-um-item' onClick={() => { setOpen(false); navigate(\/dashboard/\/profile\) }}>
             <UserCircle size={14} weight='duotone' /> Profile
           </button>
-          <button type='button' className='vlt-um-item'>
+          <button type='button' className='vlt-um-item' onClick={() => { setOpen(false); navigate(\/dashboard/\/settings\) }}>
             <Gear size={14} weight='duotone' /> Settings
           </button>
           <button type='button' className='vlt-um-item' onClick={onThemeToggle}>
@@ -264,7 +266,7 @@ function UserMenu({ user, onThemeToggle, isDark, onLogout }) {
   )
 }
 
-/* ── Navbar ──────────────────────────────────────────────────────── */
+/* â”€â”€ Navbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 export default function Navbar({
   onMobileMenuOpen,
   onSidebarToggle,
@@ -302,14 +304,14 @@ export default function Navbar({
             className='vlt-nb-search-input' autoComplete='off' spellCheck='false'
           />
           {search && (
-            <button type='button' className='vlt-nb-search-clear' onClick={() => setSearch('')}>×</button>
+            <button type='button' className='vlt-nb-search-clear' onClick={() => setSearch('')}>Ã—</button>
           )}
         </div>
       </div>
 
       <div className='vlt-nb-right'>
         <button type='button' className='vlt-nb-icon-btn' title='Language'>
-          <span className='vlt-nb-flag'>🇺🇸</span>
+          <span className='vlt-nb-flag'>ðŸ‡ºðŸ‡¸</span>
         </button>
         <button type='button' className='vlt-nb-icon-btn' onClick={onThemeToggle}
           title={isDark ? 'Switch to light' : 'Switch to dark'}>
@@ -324,3 +326,4 @@ export default function Navbar({
     </header>
   )
 }
+
