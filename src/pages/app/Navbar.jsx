@@ -244,10 +244,10 @@ function UserMenu({ user, onThemeToggle, isDark, onLogout }) {
             </div>
           </div>
           <div className='vlt-um-divider' />
-          <button type='button' className='vlt-um-item' onClick={() => { setOpen(false); navigate(\/dashboard/\/profile\) }}>
+          <button type='button' className='vlt-um-item' onClick={() => { setOpen(false); navigate('/dashboard/' + userId + '/profile') }}>
             <UserCircle size={14} weight='duotone' /> Profile
           </button>
-          <button type='button' className='vlt-um-item' onClick={() => { setOpen(false); navigate(\/dashboard/\/settings\) }}>
+          <button type='button' className='vlt-um-item' onClick={() => { setOpen(false); navigate('/dashboard/' + userId + '/settings') }}>
             <Gear size={14} weight='duotone' /> Settings
           </button>
           <button type='button' className='vlt-um-item' onClick={onThemeToggle}>
