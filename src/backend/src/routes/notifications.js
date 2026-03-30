@@ -108,12 +108,12 @@ router.patch('/read', requireAuth, async (req, res) => {
     if (Array.isArray(ids) && ids.length) {
       const placeholders = ids.map(() => '?').join(',')
       await db.execute(
-        `UPDATE notifications SET is_read = 1 WHERE user_id = ? AND id IN (${placeholders})`,
+        `UPDATE notifications SET is_read = 1, read_at = NOW() WHERE user_id = ? AND id IN (${placeholders})`,
         [req.userId, ...ids]
       )
     } else {
       await db.execute(
-        `UPDATE notifications SET is_read = 1 WHERE user_id = ?`, [req.userId]
+        `UPDATE notifications SET is_read = 1, read_at = NOW() WHERE user_id = ?`, [req.userId]
       )
     }
     return res.json({ message: 'Marked as read.' })

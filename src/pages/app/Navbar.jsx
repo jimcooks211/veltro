@@ -5,21 +5,21 @@ import {
   List, MagnifyingGlass, Moon, Sun, Bell, ArrowsLeftRight,
   CaretDown, SignOut, UserCircle, Gear, Check,
   ShieldCheck, ArrowCircleDown, ArrowCircleUp, Swap,
-  IdentificationCard, ChartBar, Sparkle, Tag, Info,
+  IdentificationCard, ChartBar, Info,
 } from '@phosphor-icons/react'
 import './Navbar.css'
 
 /* -- notification type config -- */
 const N_TYPE = {
-  login:      { color: '#00C076', Icon: ShieldCheck     },
-  signup:     { color: '#1A56FF', Icon: UserCircle      },
-  deposit:    { color: '#00FFD1', Icon: ArrowCircleDown },
-  withdrawal: { color: '#FF3D57', Icon: ArrowCircleUp   },
-  trade:      { color: '#F7931A', Icon: Swap            },
+  login:      { color: '#00C076', Icon: ShieldCheck        },
+  signup:     { color: '#1A56FF', Icon: UserCircle         },
+  deposit:    { color: '#00FFD1', Icon: ArrowCircleDown    },
+  withdrawal: { color: '#FF3D57', Icon: ArrowCircleUp      },
+  trade:      { color: '#F7931A', Icon: Swap               },
   kyc:        { color: '#9945FF', Icon: IdentificationCard },
-  security:   { color: '#FFB800', Icon: ShieldCheck     },
-  price:      { color: '#627EEA', Icon: ChartBar        },
-  system:     { color: 'rgba(255,255,255,0.35)', Icon: Info },
+  security:   { color: '#FFB800', Icon: ShieldCheck        },
+  price:      { color: '#627EEA', Icon: ChartBar           },
+  system:     { color: 'rgba(255,255,255,0.3)', Icon: Info  },
 }
 
 const formatTime = (dateStr) => {
@@ -35,26 +35,25 @@ const formatTime = (dateStr) => {
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-/* -- country flag helper -- */
-const COUNTRY_NAME_TO_CODE = {
-  'nigeria':'NG','united states':'US','united kingdom':'GB','ghana':'GH',
-  'kenya':'KE','south africa':'ZA','canada':'CA','australia':'AU',
-  'germany':'DE','france':'FR','india':'IN','brazil':'BR','china':'CN',
-  'japan':'JP','uae':'AE','united arab emirates':'AE','singapore':'SG',
-  'netherlands':'NL','sweden':'SE','norway':'NO','denmark':'DK',
+/* -- country flag from ISO 3166-1 alpha-2 code or country name -- */
+const COUNTRY_NAME_MAP = {
+  'nigeria':'NG','united states':'US','united states of america':'US','usa':'US',
+  'united kingdom':'GB','uk':'GB','ghana':'GH','kenya':'KE','south africa':'ZA',
+  'canada':'CA','australia':'AU','germany':'DE','france':'FR','india':'IN',
+  'brazil':'BR','china':'CN','japan':'JP','uae':'AE','united arab emirates':'AE',
+  'singapore':'SG','netherlands':'NL','sweden':'SE','norway':'NO','denmark':'DK',
   'spain':'ES','italy':'IT','portugal':'PT','poland':'PL','russia':'RU',
-  'mexico':'MX','argentina':'AR','colombia':'CO','indonesia':'ID',
-  'malaysia':'MY','philippines':'PH','thailand':'TH','pakistan':'PK',
-  'bangladesh':'BD','egypt':'EG','tanzania':'TZ','ethiopia':'ET',
-  'cameroon':'CM','ivory coast':'CI','senegal':'SN','zimbabwe':'ZW',
+  'mexico':'MX','argentina':'AR','colombia':'CO','indonesia':'ID','malaysia':'MY',
+  'philippines':'PH','thailand':'TH','pakistan':'PK','egypt':'EG','tanzania':'TZ',
+  'ethiopia':'ET','cameroon':'CM','ivory coast':'CI','senegal':'SN','ireland':'IE',
+  'switzerland':'CH','austria':'AT','belgium':'BE','turkey':'TR','saudi arabia':'SA',
+  'south korea':'KR','vietnam':'VN','uganda':'UG','rwanda':'RW','finland':'FI',
 }
 function countryFlag(codeOrName) {
   if (!codeOrName) return null
   let code = codeOrName.trim()
-  if (code.length !== 2) {
-    code = COUNTRY_NAME_TO_CODE[code.toLowerCase()] || null
-    if (!code) return null
-  }
+  if (code.length !== 2) code = COUNTRY_NAME_MAP[code.toLowerCase()] || null
+  if (!code) return null
   const c = code.toUpperCase()
   return String.fromCodePoint(...[...c].map(ch => 0x1F1E6 + ch.charCodeAt(0) - 65))
 }
@@ -62,7 +61,7 @@ function countryFlag(codeOrName) {
 /* -- NotificationBell -- */
 function NotificationBell() {
   const [open,          setOpen]          = useState(false)
-  const [count,         setCount]         = useState(0)
+  const [hasUnread,     setHasUnread]     = useState(false)
   const [notifications, setNotifications] = useState([])
   const [loading,       setLoading]       = useState(false)
   const [marking,       setMarking]       = useState(false)
@@ -70,7 +69,7 @@ function NotificationBell() {
 
   const fetchCount = useCallback(() => {
     apiGet('/api/notifications/unread-count')
-      .then(({ unread }) => setCount(unread ?? 0))
+      .then(({ unread }) => setHasUnread((unread ?? 0) > 0))
       .catch(() => {})
   }, [])
 
@@ -90,26 +89,24 @@ function NotificationBell() {
   useEffect(() => {
     if (!open) return
     setLoading(true)
-    apiGet('/api/notifications?limit=15')
+    apiGet('/api/notifications?limit=20')
       .then(({ notifications: notifs, unread }) => {
         setNotifications(Array.isArray(notifs) ? notifs : [])
-        if (typeof unread === 'number') setCount(unread)
+        setHasUnread((unread ?? 0) > 0)
       })
       .catch(() => setNotifications([]))
       .finally(() => setLoading(false))
   }, [open])
 
   const markAllRead = async () => {
-    if (marking || count === 0) return
+    if (marking || !hasUnread) return
     setMarking(true)
     try {
       await apiPatch('/api/notifications/read', {})
       setNotifications(ns => ns.map(n => ({ ...n, is_read: 1 })))
-      setCount(0)
+      setHasUnread(false)
     } catch { /* silent */ } finally { setMarking(false) }
   }
-
-  const displayCount = count > 99 ? '99+' : count > 0 ? String(count) : null
 
   return (
     <div ref={ref} className='vlt-nb-wrap'>
@@ -120,38 +117,42 @@ function NotificationBell() {
         title='Notifications'
       >
         <Bell size={18} weight='duotone' />
-        {displayCount && <span className='vlt-nb-dot'>{displayCount}</span>}
+        {hasUnread && <span className='vlt-nb-dot' />}
       </button>
 
       {open && (
         <div className='vlt-nb-panel'>
           <div className='vlt-nb-header'>
-            <span className='vlt-nb-header-title'>Notifications</span>
-            <div className='vlt-nb-header-right'>
-              {count > 0 && <span className='vlt-nb-count'>{count} new</span>}
-              {count > 0 && (
-                <button className='vlt-nb-mark-all' onClick={markAllRead} disabled={marking}>
-                  {marking ? 'Marking...' : 'Mark all read'}
-                </button>
-              )}
+            <div className='vlt-nb-header-left'>
+              <Bell size={13} weight='duotone' style={{ opacity: 0.6 }} />
+              <span>Notifications</span>
             </div>
+            {hasUnread && (
+              <button className='vlt-nb-mark-all' onClick={markAllRead} disabled={marking}>
+                {marking ? 'Marking...' : 'Mark all read'}
+              </button>
+            )}
           </div>
+
           <div className='vlt-nb-content'>
             {loading ? (
-              <div className='vlt-nb-loading'><span className='vlt-nb-spin' />Loading...</div>
+              <div className='vlt-nb-loading'>
+                <span className='vlt-nb-spin' />
+                Loading...
+              </div>
             ) : notifications.length > 0 ? (
               <div className='vlt-nb-list'>
                 {notifications.map(n => {
                   const cfg = N_TYPE[n.type] || N_TYPE.system
                   const Icon = cfg.Icon
                   return (
-                    <div key={n.id} className={`vlt-nb-item ${!n.is_read ? 'unread' : ''}`}>
+                    <div key={n.id} className={`vlt-nb-item${!n.is_read ? ' unread' : ''}`}>
                       <div className='vlt-nb-item-ico' style={{ background: `${cfg.color}18`, color: cfg.color }}>
-                        <Icon size={12} weight='duotone' />
+                        <Icon size={13} weight='duotone' />
                       </div>
                       <div className='vlt-nb-item-body'>
                         <div className='vlt-nb-item-title'>{n.title}</div>
-                        <div className='vlt-nb-item-msg'>{n.message}</div>
+                        {n.message && <div className='vlt-nb-item-msg'>{n.message}</div>}
                         <div className='vlt-nb-item-time'>{formatTime(n.created_at)}</div>
                       </div>
                       {!n.is_read && <span className='vlt-nb-unread-dot' />}
@@ -161,8 +162,8 @@ function NotificationBell() {
               </div>
             ) : (
               <div className='vlt-nb-empty'>
-                <Bell size={28} weight='duotone' className='vlt-nb-empty-icon' />
-                <p>You're all caught up</p>
+                <Bell size={26} weight='duotone' className='vlt-nb-empty-icon' />
+                <span>All caught up</span>
               </div>
             )}
           </div>
@@ -292,7 +293,7 @@ export default function Navbar({
 
       <div className='vlt-nb-right'>
         {flag && (
-          <button type='button' className='vlt-nb-icon-btn' title={user?.country || 'Country'}>
+          <button type='button' className='vlt-nb-icon-btn' title={user?.country || user?.country_code || 'Country'}>
             <span className='vlt-nb-flag'>{flag}</span>
           </button>
         )}

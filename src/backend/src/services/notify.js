@@ -8,7 +8,7 @@ import { db } from '../config.js'
 export async function createNotification({ userId, type, title, message, meta = null }) {
   try {
     await db.execute(
-      `INSERT INTO notifications (user_id, type, title, message, meta)
+      `INSERT INTO notifications (user_id, type, title, body, metadata)
        VALUES (?, ?, ?, ?, ?)`,
       [userId, type, title, message, meta ? JSON.stringify(meta) : null]
     )
