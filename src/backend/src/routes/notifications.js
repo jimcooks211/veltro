@@ -135,8 +135,8 @@ router.get('/', requireAuth, async (req, res) => {
     const [rows] = await db.execute(
       `SELECT id, type, title, message, is_read, meta, created_at
        FROM notifications WHERE user_id = ?
-       ORDER BY created_at DESC LIMIT ? OFFSET ?`,
-      [req.userId, limit, offset]
+       ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`,
+      [req.userId]
     )
     const [[{ total }]] = await db.execute(
       `SELECT COUNT(*) AS total FROM notifications WHERE user_id = ?`, [req.userId]

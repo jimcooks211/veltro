@@ -104,6 +104,7 @@ export default function Dashboard() {
             state:                p.state                 || '',
             zip:                  p.zip                   || '',
             country:              p.country               || '',
+            country_code:         p.country_code          || '',
             occupation:           p.occupation            || '',
             investmentExperience: p.investment_experience || '',
             website:              p.website               || '',
