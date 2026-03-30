@@ -501,6 +501,7 @@ export default function CreateProfile({ onSave }) {
               }
 
               if (p.gender) setGender(p.gender)
+              else if (!gender) setGender('prefer-not-to-say')
 
               if (p.phone) {
                 const sorted = [...COUNTRIES].sort((a, b) => b.dial.length - a.dial.length)
@@ -781,7 +782,7 @@ export default function CreateProfile({ onSave }) {
             lastName:             form.lastName,
             username:             form.username,
             bio:                  form.bio,
-            gender,
+            gender: gender || 'prefer-not-to-say',
             occupation:           form.occupation,
             investmentExperience: form.investmentExperience,
             website:              form.website,
