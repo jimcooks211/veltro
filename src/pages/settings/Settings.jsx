@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+﻿import { useState, useRef, useEffect, useCallback } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
 import { apiGet, apiPut, apiDelete } from '../../utils/api.js'
 import {
@@ -43,7 +43,7 @@ function Section({ title, accent, children }) {
 function SaveBar({ dirty, saving, saved: wasSaved, onSave, onDiscard }) {
   if (!dirty && !wasSaved) return null
   return (
-    <div className={gs-savebar }>
+    <div className="gs-savebar">
       {wasSaved ? (
         <><Check size={11} weight="bold" style={{ color: '#00C076' }} />Changes saved successfully</>
       ) : (
@@ -212,7 +212,7 @@ export default function Settings() {
       <Section title="Profile">
         <div className="gs-profile-wrap">
           <div className="gs-av-wrap">
-            <div className="gs-av" style={avatarPreview ? { backgroundImage: url() } : {}}>
+            <div className="gs-av" style={avatarPreview ? { backgroundImage: `url(${avatarPreview})` } : {}}>
               {!avatarPreview && <span className="gs-av-init">{initials}</span>}
             </div>
             <div className="gs-av-ring" style={{ '--ar': app.accent }} />
@@ -252,7 +252,7 @@ export default function Settings() {
         <Row icon={Moon} color="#9945FF" title="Theme" sub="Dashboard color scheme">
           <div className="gs-theme-pills">
             {THEMES.map(t => (
-              <button key={t.id} className={gs-theme-pill } onClick={() => a('theme', t.id)}>
+              <button key={t.id} className={`gs-theme-pill${app.theme === t.id ? " active" : ""}`} onClick={() => a('theme', t.id)}>
                 <t.Icon size={11} weight={app.theme === t.id ? 'fill' : 'duotone'} />
                 {t.id.charAt(0).toUpperCase() + t.id.slice(1)}
               </button>
@@ -262,7 +262,7 @@ export default function Settings() {
         <Row icon={Palette} color="#627EEA" title="Accent color" sub="Primary highlight across the UI">
           <div className="gs-accents">
             {ACCENTS.map(c => (
-              <button key={c} className={gs-swatch } style={{ background: c, '--ac': c }} onClick={() => a('accent', c)}>
+              <button key={c} className={`gs-swatch${app.accent === c ? " active" : ""}`} style={{ background: c, '--ac': c }} onClick={() => a('accent', c)}>
                 {app.accent === c && <Check size={8} weight="bold" style={{ color:'#000' }} />}
               </button>
             ))}
@@ -271,7 +271,7 @@ export default function Settings() {
         <Row icon={TextAa} color="#1A56FF" title="Density" sub="Interface spacing and information density">
           <div className="gs-seg">
             {['Compact','Normal','Spacious'].map(d => (
-              <button key={d} className={gs-seg-btn } onClick={() => a('density', d.toLowerCase())}>{d}</button>
+              <button key={d} className={`gs-seg-btn${app.density === d.toLowerCase() ? " active" : ""}`} onClick={() => a('density', d.toLowerCase())}>{d}</button>
             ))}
           </div>
         </Row>
@@ -303,7 +303,7 @@ export default function Settings() {
         <Row icon={ChartBar} color="#F7931A" title="Number format" sub="How large numbers are displayed">
           <div className="gs-seg">
             {[{ id:'comma',l:'1,234.56' },{ id:'dot',l:'1.234,56' },{ id:'space',l:'1 234.56' }].map(n => (
-              <button key={n.id} className={gs-seg-btn } onClick={() => r('numFmt', n.id)}>{n.l}</button>
+              <button key={n.id} className={`gs-seg-btn${reg.numFmt === n.id ? " active" : ""}`} onClick={() => r('numFmt', n.id)}>{n.l}</button>
             ))}
           </div>
         </Row>
