@@ -38,7 +38,7 @@ async function seedWelcomeIfEmpty(userId) {
     )
     if (cnt === 0) {
       await db.execute(
-        `INSERT INTO notifications (user_id, type, title, message) VALUES (?, 'system', ?, ?)`,
+        `INSERT INTO notifications (user_id, type, title, body) VALUES (?, 'system', ?, ?)`,
         [userId, 'Welcome to Veltro!', 'Your account is active. Explore markets, manage your portfolio, and make your first trade.']
       )
     }
@@ -133,7 +133,7 @@ router.get('/', requireAuth, async (req, res) => {
     await seedWelcomeIfEmpty(req.userId)
 
     const [rows] = await db.execute(
-      `SELECT id, type, title, message, is_read, meta, created_at
+      `SELECT id, type, title, body AS message, is_read, metadata AS meta, created_at
        FROM notifications WHERE user_id = ?
        ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`,
       [req.userId]
