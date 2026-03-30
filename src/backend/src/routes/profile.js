@@ -126,8 +126,10 @@ function validateProfileInput(data) {
 
   /* Website validation (optional) */
   if (data.website) {
+    let w = data.website.trim()
+    if (!w.startsWith('http://') && !w.startsWith('https://')) w = 'https://' + w
     try {
-      new URL(data.website)
+      new URL(w)
     } catch {
       errors.website = 'Invalid URL format'
     }
@@ -247,6 +249,12 @@ router.post('/create', requireAuth, async (req, res) => {
         field:   'username',
       })
 
+    /* ── normalize website: prepend https:// if no protocol ── */
+    let normalizedWebsite = website?.trim() || null
+    if (normalizedWebsite && !normalizedWebsite.startsWith('http://') && !normalizedWebsite.startsWith('https://')) {
+      normalizedWebsite = 'https://' + normalizedWebsite
+    }
+
     /* ── parse DOB safely ── */
     const dobValue = dob ? new Date(dob) : null
     const dobSql   = dobValue && !isNaN(dobValue) ? dobValue : null
@@ -296,7 +304,7 @@ router.post('/create', requireAuth, async (req, res) => {
         state?.trim()   || null,
         zip?.trim()     || null,
         country?.trim() || null,
-        website?.trim() || null,
+        normalizedWebsite,
         occupation?.trim()   || null,
         investmentExperience || null,
         investmentGoal       || null,

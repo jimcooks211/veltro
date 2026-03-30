@@ -245,15 +245,6 @@ router.post('/register', async (req, res) => {
     )
     await db.execute(`INSERT INTO wallets (user_id) VALUES (?)`, [userId])
 
-    // signup notification -- non-blocking, errors logged
-    createNotification({
-      userId,
-      type: 'signup',
-      title: 'Welcome to Veltro!',
-      message: `Your account has been created. Verify your email to get started.`,
-      meta: { email: email.toLowerCase() },
-    }).catch(err => console.error('[notify] signup failed for userId=' + userId + ':', err.message))
-
     try {
       await withEmailTimeout(sendVerificationEmail(email, code))
     } catch (mailErr) {
@@ -329,15 +320,25 @@ router.post('/verify-email', async (req, res) => {
       [user.id, ip]
     )
 
-    // login notification -- non-blocking, errors logged
+    // fire signup notification on first verification, login notification on all subsequent sign-ins
     const location = [geo.city, geo.country].filter(Boolean).join(', ') || ip
-    createNotification({
-      userId: user.id,
-      type: 'login',
-      title: 'New login to your account',
-      message: `Signed in from ${uaParsed.browser} on ${uaParsed.os} \u00B7 ${location}`,
-      meta: { ip, browser: uaParsed.browser, os: uaParsed.os, device: uaParsed.device_type, city: geo.city, country: geo.country },
-    }).catch(err => console.error('[notify] login failed for userId=' + user.id + ':', err.message))
+    if (!user.is_verified) {
+      await createNotification({
+        userId: user.id,
+        type: 'signup',
+        title: 'Welcome to Veltro!',
+        message: 'Your account is verified and ready. Explore markets, build your portfolio, and make your first trade.',
+        meta: { email: user.email },
+      }).catch(err => console.error('[notify] signup notification failed:', err.message))
+    } else {
+      await createNotification({
+        userId: user.id,
+        type: 'login',
+        title: 'New sign-in to your account',
+        message: `Signed in from ${uaParsed.browser} on ${uaParsed.os} \u00B7 ${location}`,
+        meta: { ip, browser: uaParsed.browser, os: uaParsed.os, device: uaParsed.device_type, city: geo.city, country: geo.country },
+      }).catch(err => console.error('[notify] login notification failed:', err.message))
+    }
 
     const [[profile]] = await db.execute(
       `SELECT first_name, last_name, username, gender, date_of_birth,

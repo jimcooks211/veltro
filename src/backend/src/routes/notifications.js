@@ -91,6 +91,7 @@ router.patch('/preferences', requireAuth, async (req, res) => {
 /* ── GET /api/notifications/unread-count ───────────────────────── */
 router.get('/unread-count', requireAuth, async (req, res) => {
   try {
+    await seedWelcomeIfEmpty(req.userId)
     const [[{ unread }]] = await db.execute(
       `SELECT COUNT(*) AS unread FROM notifications WHERE user_id = ? AND is_read = 0`,
       [req.userId]

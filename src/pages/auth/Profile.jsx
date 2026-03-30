@@ -771,6 +771,12 @@ export default function CreateProfile({ onSave }) {
         const fullPhone = phoneDigits ? `${selectedCountry.dial}${phoneDigits}` : ''
         const avatarUrl = customImg || avatarSeed || DEFAULT_AVATAR
 
+        /* normalize website: auto-prepend https:// if user omitted protocol */
+        let websiteVal = form.website?.trim() || ''
+        if (websiteVal && !websiteVal.startsWith('http://') && !websiteVal.startsWith('https://')) {
+          websiteVal = 'https://' + websiteVal
+        }
+
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/create`, {
           method:  'POST',
           headers: {
@@ -785,7 +791,7 @@ export default function CreateProfile({ onSave }) {
             gender: gender || 'prefer-not-to-say',
             occupation:           form.occupation,
             investmentExperience: form.investmentExperience,
-            website:              form.website,
+            website:              websiteVal,
             address:              form.address,
             apt:                  form.apt,
             city:                 form.city,
@@ -804,13 +810,32 @@ export default function CreateProfile({ onSave }) {
         if (!res.ok) {
           let data = {}
           try { data = await res.json() } catch {}
-          if (data.field === 'username') {
+
+          /* map backend field errors back onto the form and jump to the right step */
+          if (data.errors && Object.keys(data.errors).length > 0) {
+            setErrors(data.errors)
+
+            const stepFieldMap = {
+              0: ['firstName', 'lastName', 'username', 'bio'],
+              1: ['dob', 'gender', 'phone'],
+              2: ['address', 'city', 'state', 'zip', 'country'],
+              3: ['occupation', 'investmentExperience', 'website'],
+            }
+            const errorKeys = Object.keys(data.errors)
+            const targetStep = Object.entries(stepFieldMap).find(([, fields]) =>
+              fields.some(f => errorKeys.includes(f))
+            )
+            if (targetStep) setCurrentStep(Number(targetStep[0]))
+
+            setSegmentError(data.message || 'Please fix the highlighted fields.')
+          } else if (data.field === 'username') {
             setErrors({ username: data.message })
           } else {
             setSegmentError(data.message || 'Something went wrong. Please try again.')
-            clearTimeout(segErrTimer.current)
-            segErrTimer.current = setTimeout(() => setSegmentError(''), 4000)
           }
+
+          clearTimeout(segErrTimer.current)
+          segErrTimer.current = setTimeout(() => setSegmentError(''), 4000)
           return
         }
 
