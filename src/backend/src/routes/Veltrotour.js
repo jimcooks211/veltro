@@ -186,6 +186,12 @@ router.post('/complete', requireAuth, async (req, res) => {
     return res.status(400).json({ message: `Invalid plan. Allowed: ${VALID_PLANS.join(', ')}.` })
 
   try {
+    /* ── check if this is the first completion (for email idempotency) ── */
+    const [[currentState]] = await db.execute(
+      `SELECT onboarding_complete FROM users WHERE id = ?`, [userId]
+    )
+    const isFirstCompletion = !currentState?.onboarding_complete
+
     const [result] = await db.execute(
       `UPDATE users SET risk_profile=?, plan=?, onboarding_complete=1, updated_at=NOW() WHERE id=?`,
       [riskProfile, plan, userId]
@@ -194,18 +200,20 @@ router.post('/complete', requireAuth, async (req, res) => {
     if (result.affectedRows === 0)
       return res.status(404).json({ message: 'User not found.' })
 
-    const [[user]] = await db.execute(
-      `SELECT u.email, p.first_name FROM users u LEFT JOIN profiles p ON p.user_id = u.id WHERE u.id = ?`,
-      [userId]
-    )
-
-    if (user?.email) {
-      sendWelcomeEmail({
-        to:          user.email,
-        firstName:   user.first_name || '',
-        plan,
-        riskProfile,
-      }).catch(err => console.error('Welcome email failed:', err.message))
+    /* ── only send welcome email on the very first tour completion ── */
+    if (isFirstCompletion) {
+      const [[user]] = await db.execute(
+        `SELECT u.email, p.first_name FROM users u LEFT JOIN profiles p ON p.user_id = u.id WHERE u.id = ?`,
+        [userId]
+      )
+      if (user?.email) {
+        sendWelcomeEmail({
+          to:          user.email,
+          firstName:   user.first_name || '',
+          plan,
+          riskProfile,
+        }).catch(err => console.error('Welcome email failed:', err.message))
+      }
     }
 
     return res.status(200).json({ message: 'Onboarding complete.', riskProfile, plan })

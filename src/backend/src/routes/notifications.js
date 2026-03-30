@@ -38,7 +38,7 @@ async function seedWelcomeIfEmpty(userId) {
     )
     if (cnt === 0) {
       await db.execute(
-        `INSERT INTO notifications (user_id, type, title, body) VALUES (?, 'system', ?, ?)`,
+        `INSERT INTO notifications (user_id, type, title, body, is_read) VALUES (?, 'system', ?, ?, 0)`,
         [userId, 'Welcome to Veltro!', 'Your account is active. Explore markets, manage your portfolio, and make your first trade.']
       )
     }

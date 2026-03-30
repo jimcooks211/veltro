@@ -184,6 +184,42 @@ export default function Onboard({ user = {}, onComplete, onSkip }) {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { step, riskProfile, selectedPlan } = state
 
+  /* ── guard: check tour status on mount, redirect if already done ── */
+  const [guardStatus, setGuardStatus] = useState('checking') // 'checking' | 'ok'
+
+  useEffect(() => {
+    const check = async () => {
+      const token = getToken('accessToken')
+      if (!token) { navigate('/', { replace: true }); return }
+
+      try {
+        const res = await authFetch(`${API_BASE}/api/tour/status`)
+        if (res === null) { navigate('/', { replace: true }); return }
+
+        const status = await res.json()
+
+        if (status.onboardingComplete) {
+          /* tour already done — go straight to dashboard */
+          const uid = getUserId()
+          navigate(uid ? `/dashboard/${uid}` : '/', { replace: true })
+          return
+        }
+
+        if (!status.profileComplete) {
+          /* profile not done yet — send back to profile form */
+          const uid = getUserId()
+          navigate(uid ? `/createprofile/${uid}` : '/', { replace: true })
+          return
+        }
+      } catch {
+        /* network error — show the tour anyway, complete flow will handle errors */
+      }
+
+      setGuardStatus('ok')
+    }
+    check()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   const [isDark, setIsDark] = useState(
     () => window.matchMedia('(prefers-color-scheme:dark)').matches
   )
@@ -470,6 +506,9 @@ export default function Onboard({ user = {}, onComplete, onSkip }) {
   )
 
   const SLIDES = [slideWelcome, slideFeatures, slideRisk, slidePlan, slideLaunch]
+
+  /* ── guard gate — show nothing while checking tour status ── */
+  if (guardStatus === 'checking') return null
 
   /* ══════════════════════════════════════════════════════
      RENDER

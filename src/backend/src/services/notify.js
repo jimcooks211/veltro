@@ -8,12 +8,12 @@ import { db } from '../config.js'
 export async function createNotification({ userId, type, title, message, meta = null }) {
   try {
     await db.execute(
-      `INSERT INTO notifications (user_id, type, title, body, metadata)
-       VALUES (?, ?, ?, ?, ?)`,
-      [userId, type, title, message, meta ? JSON.stringify(meta) : null]
+      `INSERT INTO notifications (user_id, type, title, body, metadata, is_read)
+       VALUES (?, ?, ?, ?, ?, 0)`,
+      [userId, type, title, message ?? null, meta ? JSON.stringify(meta) : null]
     )
   } catch (err) {
-    console.error('[notify] Failed to create notification:', err.message)
+    console.error(`[notify] Failed to create notification (type=${type}, userId=${userId}):`, err.message)
   }
 }
 
