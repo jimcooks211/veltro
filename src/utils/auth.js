@@ -1,7 +1,7 @@
 // src/utils/auth.js
 
 export function getToken(key) {
-  return localStorage.getItem(key) || sessionStorage.getItem(key)
+  return sessionStorage.getItem(key) || localStorage.getItem(key)
 }
 
 export function clearTokens() {
