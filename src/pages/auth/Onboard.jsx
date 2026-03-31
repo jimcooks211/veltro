@@ -204,13 +204,6 @@ export default function Onboard({ user = {}, onComplete, onSkip }) {
           navigate(uid ? `/dashboard/${uid}` : '/', { replace: true })
           return
         }
-
-        if (!status.profileComplete) {
-          /* profile not done yet — send back to profile form */
-          const uid = getUserId()
-          navigate(uid ? `/createprofile/${uid}` : '/', { replace: true })
-          return
-        }
       } catch {
         /* network error — show the tour anyway, complete flow will handle errors */
       }
