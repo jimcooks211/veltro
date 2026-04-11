@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Veltro"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png"/>
+<link rel="manifest" href="/manifest.json"/>
+<title>Install Veltro - One Tap</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container {
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+  }
+  .logo {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 30px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+    font-weight: 800;
+    box-shadow: 0 0 50px rgba(26,86,255,0.4);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 50px rgba(26,86,255,0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 70px rgba(26,86,255,0.6); }
+  }
+  h1 {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    color: #a8b2cc;
+    font-size: 18px;
+    margin-bottom: 40px;
+    line-height: 1.5;
+  }
+  .install-btn {
+    display: block;
+    width: 100%;
+    padding: 24px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 40px rgba(26,86,255,0.5);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .install-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+  }
+  .install-btn:hover::before {
+    left: 100%;
+  }
+  .install-btn:active { transform: scale(0.97); }
+  .progress-container {
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .progress-container.show { display: block; }
+  .progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1A56FF, #00D4FF);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 4px;
+  }
+  .progress-text {
+    font-size: 14px;
+    color: #a8b2cc;
+    text-align: left;
+  }
+  .success-message {
+    background: rgba(0,230,118,0.1);
+    border: 1px solid rgba(0,230,118,0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .success-message.show { display: block; }
+  .success-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+  .success-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #00E676;
+    margin-bottom: 8px;
+  }
+  .success-text {
+    font-size: 14px;
+    color: #a8b2cc;
+    line-height: 1.5;
+  }
+  .alternative-methods {
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 30px;
+  }
+  .alternative-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #00D4FF;
+  }
+  .alternative-btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #a8b2cc;
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+  }
+  .alternative-btn:last-child { margin-bottom: 0; }
+  .alternative-btn:active {
+    background: rgba(255,255,255,0.15);
+    transform: scale(0.98);
+  }
+  .device-info {
+    margin-top: 30px;
+    padding: 16px;
+    background: rgba(26,86,255,0.1);
+    border: 1px solid rgba(26,86,255,0.2);
+    border-radius: 12px;
+    font-size: 13px;
+    color: #a8b2cc;
+  }
+  .device-info strong { color: #00D4FF; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">V</div>
+  <h1>Install Veltro</h1>
+  <p class="subtitle">Add Veltro to your home screen with one tap</p>
+
+  <button class="install-btn" onclick="startInstallation()">
+    🚀 Install Now
+  </button>
+
+  <div class="progress-container" id="progressContainer">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-text" id="progressText">Initializing installation...</div>
+  </div>
+
+  <div class="success-message" id="successMessage">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Installation Started!</div>
+    <div class="success-text">
+      Check your home screen. The Veltro icon should appear shortly.<br><br>
+      If you don't see it, try the alternative methods below.
+    </div>
+  </div>
+
+  <div class="alternative-methods">
+    <div class="alternative-title">Alternative Methods</div>
+    <a href="/install-methods.html" class="alternative-btn">
+      📱 View All Installation Methods
+    </a>
+    <a href="/Veltro.mobileconfig" class="alternative-btn">
+      ⚙️ Configuration Profile Method
+    </a>
+    <a href="javascript:void(0)" onclick="showSafariInstructions()" class="alternative-btn">
+      🌊 Safari Manual Method
+    </a>
+  </div>
+
+  <div class="device-info" id="deviceInfo">
+    <strong>Device:</strong> <span id="deviceType">Detecting...</span><br>
+    <strong>Browser:</strong> <span id="browserType">Detecting...</span>
+  </div>
+</div>
+
+<script>
+  // Device and browser detection
+  function detectDevice() {
+    const ua = navigator.userAgent;
+    let device = 'Unknown';
+    let browser = 'Unknown';
+
+    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
+      device = 'iOS Device';
+      if (/iPad/.test(ua)) device = 'iPad';
+      else if (/iPhone/.test(ua)) device = 'iPhone';
+      else if (/iPod/.test(ua)) device = 'iPod Touch';
+    } else if (/Android/.test(ua)) {
+      device = 'Android Device';
+    } else if (/Windows/.test(ua)) {
+      device = 'Windows PC';
+    } else if (/Mac/.test(ua)) {
+      device = 'Mac';
+    } else if (/Linux/.test(ua)) {
+      device = 'Linux PC';
+    }
+
+    if (/Safari/.test(ua) && !/Chrome/.test(ua)) {
+      browser = 'Safari';
+    } else if (/Chrome/.test(ua)) {
+      browser = 'Chrome';
+    } else if (/Firefox/.test(ua)) {
+      browser = 'Firefox';
+    } else if (/Edge/.test(ua)) {
+      browser = 'Edge';
+    }
+
+    document.getElementById('deviceType').textContent = device;
+    document.getElementById('browserType').textContent = browser;
+
+    return { device, browser, isIOS: /iPad|iPhone|iPod/.test(ua) && !window.MSStream };
+  }
+
+  // Installation progress simulation
+  function startInstallation() {
+    const { isIOS } = detectDevice();
+    const progressContainer = document.getElementById('progressContainer');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const successMessage = document.getElementById('successMessage');
+
+    progressContainer.classList.add('show');
+
+    const steps = [
+      { progress: 20, text: 'Preparing installation...' },
+      { progress: 40, text: 'Downloading configuration...' },
+      { progress: 60, text: 'Setting up home screen icon...' },
+      { progress: 80, text: 'Finalizing installation...' },
+      { progress: 100, text: 'Installation complete!' }
+    ];
+
+    let currentStep = 0;
+
+    const interval = setInterval(() => {
+      if (currentStep < steps.length) {
+        progressFill.style.width = steps[currentStep].progress + '%';
+        progressText.textContent = steps[currentStep].text;
+        currentStep++;
+      } else {
+        clearInterval(interval);
+        setTimeout(() => {
+          progressContainer.classList.remove('show');
+          successMessage.classList.add('show');
+
+          // Trigger actual installation based on device
+          if (isIOS) {
+            // Try multiple iOS installation methods
+            try {
+              // Method 1: Direct mobileconfig download
+              window.location.href = '/Veltro.mobileconfig';
+            } catch (e) {
+              console.log('Mobileconfig method failed:', e);
+            }
+
+            // Method 2: Fallback to PWA install prompt
+            setTimeout(() => {
+              if ('serviceWorker' in navigator) {
+                // Register service worker for PWA
+                navigator.serviceWorker.register('/sw.js').then(() => {
+                  // Trigger install prompt if available
+                  window.location.reload();
+                });
+              }
+            }, 2000);
+          } else {
+            // For non-iOS devices, show PWA install
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.register('/sw.js');
+            }
+            alert('For the best experience, please use an iOS device or add this site to your home screen manually.');
+          }
+        }, 500);
+      }
+    }, 800);
+  }
+
+  // Show Safari manual instructions
+  function showSafariInstructions() {
+    const instructions = `
+🌊 Safari Manual Installation:
+
+1. Open Veltro in Safari
+2. Tap the Share button (⎋)
+3. Scroll down and tap "Add to Home Screen"
+4. Tap "Add" in the top right
+5. Veltro icon appears on your home screen!
+
+This is the most reliable method for iOS devices.
+    `;
+    alert(instructions);
+  }
+
+  // Initialize on page load
+  detectDevice();
+
+  // Auto-detect and show appropriate message
+  window.addEventListener('load', () => {
+    const { isIOS } = detectDevice();
+    if (!isIOS) {
+      const deviceInfo = document.getElementById('deviceInfo');
+      deviceInfo.innerHTML += '<br><br><strong>⚠️ Note:</strong> For best results, use an iOS device with Safari.';
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -37,8 +37,8 @@ export default function iOSInstallBanner() {
   }
 
   const handleInstall = () => {
-    // Navigate to iOS shortcut installation page
-    window.location.href = '/install-shortcut.html'
+    // Navigate to smart iOS installation page
+    window.location.href = '/install-smart.html'
   }
 
   if (!isVisible || isDismissed) {

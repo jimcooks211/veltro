@@ -5,69 +5,49 @@
   <key>PayloadContent</key>
   <array>
     <dict>
+      <key>PayloadDescription</key>
+      <string>Veltro Investment Web App</string>
+      <key>PayloadDisplayName</key>
+      <string>Veltro</string>
+      <key>PayloadIdentifier</key>
+      <string>com.veltro.webclip.profile</string>
+      <key>PayloadOrganization</key>
+      <string>Veltro Technologies</string>
       <key>PayloadType</key>
       <string>com.apple.webClip.managed</string>
+      <key>PayloadUUID</key>
+      <string>A1B2C3D4-E5F6-7890-ABCD-EF1234567890</string>
       <key>PayloadVersion</key>
       <integer>1</integer>
-      <key>PayloadIdentifier</key>
-      <string>com.veltro.app.webclip</string>
-      <key>PayloadUUID</key>
-      <string>C3D4E5F6-A7B8-9012-CDEF-123456789012</string>
-      <key>PayloadDisplayName</key>
-      <string>Veltro Web Clip</string>
+      <key>FullScreen</key>
+      <true/>
+      <key>Icon</key>
+      <dict>
+        <key>IconSize</key>
+        <integer>180</integer>
+        <key>URL</key>
+        <string>https://veltroinvestment.vercel.app/apple-touch-icon-180x180.png</string>
+      </dict>
+      <key>IsRemovable</key>
+      <true/>
       <key>Label</key>
       <string>Veltro</string>
       <key>URL</key>
       <string>https://veltroinvestment.vercel.app</string>
-      <key>FullScreen</key>
-      <true/>
-      <key>IsRemovable</key>
-      <true/>
-      <key>Icon</key>
-      <data>
-      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
-      </data>
     </dict>
   </array>
-  <key>PayloadDisplayName</key>
-  <string>Veltro — Install</string>
   <key>PayloadDescription</key>
-  <string>Adds Veltro to your home screen for full-screen access.</string>
+  <string>Install Veltro Investment web app on your home screen</string>
+  <key>PayloadDisplayName</key>
+  <string>Veltro Installation</string>
   <key>PayloadIdentifier</key>
-  <string>com.veltro.app.webclip</string>
+  <string>com.veltro.install.profile</string>
   <key>PayloadOrganization</key>
-  <string>Veltro Technologies Inc.</string>
+  <string>Veltro Technologies</string>
   <key>PayloadType</key>
   <string>Configuration</string>
   <key>PayloadUUID</key>
-  <string>D4E5F6A7-B8C9-0123-DEFA-234567890123</string>
+  <string>B2C3D4E5-F6A7-8901-BCDE-F23456789012</string>
   <key>PayloadVersion</key>
   <integer>1</integer>
 </dict>

@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Veltro"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png"/>
+<title>Veltro - Investment Platform</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0A0F1E;
+    color: #fff;
+    min-height: 100vh;
+  }
+  .install-prompt {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, rgba(10, 15, 30, 0.98) 0%, rgba(10, 15, 30, 0.95) 100%);
+    border-top: 1px solid rgba(26, 86, 255, 0.3);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 9999;
+    padding: 16px 20px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    animation: slideUp 0.5s ease-out;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .install-prompt-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .install-prompt-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .install-prompt-text {
+    flex: 1;
+  }
+  .install-prompt-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #e8edf8;
+    margin-bottom: 4px;
+  }
+  .install-prompt-subtitle {
+    font-size: 13px;
+    color: #a8b2cc;
+  }
+  .install-prompt-btn {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(26, 86, 255, 0.4);
+  }
+  .install-prompt-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(26, 86, 255, 0.5);
+  }
+  .install-prompt-btn:active {
+    transform: scale(0.97);
+  }
+  .install-prompt-close {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    color: #a8b2cc;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s ease;
+  }
+  .install-prompt-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #e8edf8;
+  }
+  @media (max-width: 480px) {
+    .install-prompt-content {
+      gap: 12px;
+    }
+    .install-prompt-btn {
+      padding: 10px 16px;
+      font-size: 13px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="install-prompt" id="installPrompt">
+  <div class="install-prompt-content">
+    <div class="install-prompt-icon">V</div>
+    <div class="install-prompt-text">
+      <div class="install-prompt-title">Install Veltro</div>
+      <div class="install-prompt-subtitle">Add to home screen for the best experience</div>
+    </div>
+    <button class="install-prompt-btn" onclick="installApp()">Install</button>
+    <button class="install-prompt-close" onclick="closePrompt()">✕</button>
+  </div>
+</div>
+
+<script>
+  // Check if user is on iOS
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isStandalone = window.navigator.standalone || (window.matchMedia('(display-mode: standalone)').matches);
+
+  // Show prompt only on iOS, not standalone, and not dismissed
+  if (isIOS && !isStandalone && !localStorage.getItem('install-prompt-dismissed')) {
+    // Delay showing prompt
+    setTimeout(() => {
+      document.getElementById('installPrompt').style.display = 'block';
+    }, 2000);
+  } else {
+    document.getElementById('installPrompt').style.display = 'none';
+  }
+
+  function installApp() {
+    // Try multiple installation methods
+    const methods = [
+      // Method 1: Direct mobileconfig
+      () => {
+        window.location.href = '/Veltro.mobileconfig';
+      },
+      // Method 2: Smart install page
+      () => {
+        window.location.href = '/install-smart.html';
+      },
+      // Method 3: All methods page
+      () => {
+        window.location.href = '/install-methods.html';
+      }
+    ];
+
+    // Try each method
+    for (const method of methods) {
+      try {
+        method();
+        break;
+      } catch (e) {
+        console.log('Method failed, trying next:', e);
+      }
+    }
+  }
+
+  function closePrompt() {
+    document.getElementById('installPrompt').style.display = 'none';
+    localStorage.setItem('install-prompt-dismissed', 'true');
+  }
+</script>
+
+</body>
+</html>
