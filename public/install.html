@@ -358,7 +358,7 @@
       </svg>
       Download Install Profile
     </button>
-    <a class="open-btn" href="https://veltroinvestment.vercel.app" target="_blank" rel="noopener">
+    <a class="open-btn" id="open-btn" href="" target="_blank" rel="noopener">
       Open in browser instead →
     </a>
     <p class="legal">Profile adds a home screen shortcut only. No personal data is collected or transmitted.</p>
@@ -368,11 +368,27 @@
 
 <script>
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+  const isStandalone = window.navigator.standalone || (window.matchMedia('(display-mode: standalone)').matches)
+
+  // Get current URL dynamically
+  const currentUrl = window.location.origin
+
+  // Set dynamic URL for open button
+  document.getElementById('open-btn').href = currentUrl
+
   if (!isIOS) {
     document.getElementById('dl-btn').style.display = 'none'
     const n = document.getElementById('ios-only')
     n.style.display = 'block'
-    n.innerHTML = 'This page is for iPhone only.<br/><a href="https://veltroinvestment.vercel.app" style="color:#1A56FF;text-decoration:none;font-weight:500;">Open Veltro in your browser →</a>'
+    n.innerHTML = 'This page is for iPhone only.<br/><a href="' + currentUrl + '" style="color:#1A56FF;text-decoration:none;font-weight:500;">Open Veltro in your browser →</a>'
+  }
+
+  // If already installed as PWA, show different message
+  if (isStandalone) {
+    document.getElementById('dl-btn').style.display = 'none'
+    const n = document.getElementById('ios-only')
+    n.style.display = 'block'
+    n.innerHTML = '✓ Veltro is already installed on your device.<br/><a href="' + currentUrl + '" style="color:#1A56FF;text-decoration:none;font-weight:500;">Open Veltro →</a>'
   }
 
   function downloadProfile() {
@@ -389,7 +405,7 @@
       <key>PayloadUUID</key><string>C3D4E5F6-A7B8-9012-CDEF-123456789012</string>
       <key>PayloadDisplayName</key><string>Veltro Web Clip</string>
       <key>Label</key><string>Veltro</string>
-      <key>URL</key><string>https://veltroinvestment.vercel.app</string>
+      <key>URL</key><string>${currentUrl}</string>
       <key>FullScreen</key><true/>
       <key>IsRemovable</key><true/>
     </dict>
@@ -410,6 +426,19 @@
     document.body.appendChild(a); a.click()
     document.body.removeChild(a); URL.revokeObjectURL(url)
     document.getElementById('success').classList.add('show')
+  }
+
+  // Register service worker for offline support
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then((registration) => {
+          console.log('[SW] Service worker registered:', registration.scope)
+        })
+        .catch((error) => {
+          console.error('[SW] Service worker registration failed:', error)
+        })
+    })
   }
 </script>
 </body>

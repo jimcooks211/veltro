@@ -42,9 +42,13 @@ import Security      from './pages/settings/Security'
 import KYC           from './pages/settings/KYC'
 import Notifications from './pages/settings/Notifications'
 
+/* ── Components ── */
+import iOSInstallBanner from './components/iOSInstallBanner'
+
 export default function App() {
   return (
     <BrowserRouter>
+      <iOSInstallBanner />
       <Routes>
 
         {/* ── Public ── */}
