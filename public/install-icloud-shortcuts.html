@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Veltro"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png"/>
+<title>Veltro Investment - iCloud Shortcuts</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container {
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+  .logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 30px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 800;
+    box-shadow: 0 0 40px rgba(26,86,255,0.3);
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  p {
+    color: #a8b2cc;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+  .install-btn {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(26,86,255,0.5);
+    transition: transform 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .install-btn:active { transform: scale(0.98); }
+  .info {
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  .info-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #00D4FF;
+  }
+  .info-item {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #a8b2cc;
+  }
+  .info-item:last-child { margin-bottom: 0; }
+  .info-item strong { color: #fff; }
+  .note {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #ffc107;
+  }
+  .note strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">V</div>
+  <h1>Veltro Investment</h1>
+  <p>iCloud Shortcuts Installation</p>
+
+  <button class="install-btn" onclick="installShortcut()">
+    🎯 Install Veltro Shortcut
+  </button>
+
+  <div class="info">
+    <div class="info-title">Installation Info</div>
+    <div class="info-item"><strong>Method:</strong> iOS Shortcuts</div>
+    <div class="info-item"><strong>Icon:</strong> Custom Veltro branding</div>
+    <div class="info-item"><strong>Opens:</strong> Veltro Investment Platform</div>
+    <div class="info-item"><strong>Works:</strong> iOS 12+</div>
+  </div>
+
+  <div class="note">
+    <strong>⚠️ Note:</strong> This creates a local shortcut on your device. For iCloud sharing, you'll need to create and share the shortcut from your iOS device.
+  </div>
+
+  <div style="margin-top: 20px;">
+    <a href="/install-ios-native.html" style="color: #a8b2cc; text-decoration: none; font-size: 14px;">
+      ← Back to Installation Methods
+    </a>
+  </div>
+</div>
+
+<script>
+  function installShortcut() {
+    // Download the shortcut file
+    const link = document.createElement('a');
+    link.href = '/Veltro.shortcut';
+    link.download = 'Veltro.shortcut';
+    link.click();
+
+    // Try to open it
+    setTimeout(() => {
+      window.location.href = '/Veltro.shortcut';
+    }, 100);
+  }
+</script>
+
+</body>
+</html>

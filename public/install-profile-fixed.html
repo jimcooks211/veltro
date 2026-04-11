@@ -7,12 +7,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Veltro"/>
 <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png"/>
-<title>Install Veltro - iOS Shortcut</title>
+<title>Veltro Investment - Profile Installation</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0A0F1E;
+    background: linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%);
     color: #fff;
     min-height: 100vh;
     display: flex;
@@ -21,7 +21,7 @@
     padding: 20px;
   }
   .container {
-    max-width: 400px;
+    max-width: 420px;
     width: 100%;
     text-align: center;
   }
@@ -102,30 +102,36 @@
     color: white;
   }
   .step strong { color: #fff; }
-  .features {
+  .info {
     background: rgba(255,255,255,0.05);
     padding: 20px;
     border-radius: 12px;
+    margin-bottom: 20px;
     text-align: left;
   }
-  .feature {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  .info-title {
+    font-size: 16px;
+    font-weight: 700;
     margin-bottom: 12px;
+    color: #00D4FF;
+  }
+  .info-item {
+    margin-bottom: 8px;
     font-size: 14px;
+    color: #a8b2cc;
   }
-  .feature:last-child { margin-bottom: 0; }
-  .check {
-    width: 20px;
-    height: 20px;
-    background: #00E676;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
+  .info-item:last-child { margin-bottom: 0; }
+  .info-item strong { color: #fff; }
+  .warning {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #ffc107;
   }
+  .warning strong { color: #fff; }
   .troubleshoot {
     margin-top: 20px;
     padding: 16px;
@@ -176,107 +182,99 @@
 <div class="container">
   <div class="logo">V</div>
   <h1>Install Veltro</h1>
-  <p>Smart installation with automatic detection</p>
+  <p>Configuration Profile Installation</p>
 
-  <button class="install-btn" onclick="startSmartInstall()">
-    🚀 Start Smart Install
-  </button>
+  <a href="/Veltro.mobileconfig" class="install-btn">
+    ⚙️ Download Configuration Profile
+  </a>
 
   <div class="steps">
     <div class="steps-title">Installation Steps</div>
     <div class="step">
       <div class="step-num">1</div>
-      <div><strong>Tap "Get Veltro Shortcut"</strong> above</div>
+      <div><strong>Tap "Download Configuration Profile"</strong> above</div>
     </div>
     <div class="step">
       <div class="step-num">2</div>
-      <div><strong>Shortcuts app opens</strong> automatically</div>
+      <div><strong>Settings app opens</strong> automatically</div>
     </div>
     <div class="step">
       <div class="step-num">3</div>
-      <div><strong>Tap "Add Shortcut"</strong> in the top right</div>
+      <div><strong>Tap "Install"</strong> in top right corner</div>
     </div>
     <div class="step">
       <div class="step-num">4</div>
-      <div><strong>Tap "Add to Home Screen"</strong></div>
+      <div><strong>Enter passcode</strong> if prompted</div>
     </div>
     <div class="step">
       <div class="step-num">5</div>
-      <div><strong>Position the icon</strong> and tap "Add"</div>
+      <div><strong>Tap "Install"</strong> to confirm</div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div><strong>Tap "Done"</strong> when complete</div>
     </div>
     <div class="step">
       <div class="step-num">✓</div>
-      <div><strong>Veltro icon appears</strong> on your home screen!</div>
+      <div><strong>Veltro icon appears</strong> on home screen!</div>
     </div>
   </div>
 
-  <div class="features">
-    <div class="feature">
-      <div class="check">✓</div>
-      <div>Custom Veltro icon</div>
-    </div>
-    <div class="feature">
-      <div class="check">✓</div>
-      <div>Opens Veltro instantly</div>
-    </div>
-    <div class="feature">
-      <div class="check">✓</div>
-      <div>Full-screen experience</div>
-    </div>
-    <div class="feature">
-      <div class="check">✓</div>
-      <div>Works offline</div>
-    </div>
+  <div class="info">
+    <div class="info-title">Profile Information</div>
+    <div class="info-item"><strong>Name:</strong> Veltro Investment</div>
+    <div class="info-item"><strong>Type:</strong> Web Clip Configuration</div>
+    <div class="info-item"><strong>Purpose:</strong> Home Screen Icon</div>
+    <div class="info-item"><strong>URL:</strong> veltroinvestment.vercel.app</div>
+    <div class="info-item"><strong>Security:</strong> No personal data collected</div>
+  </div>
+
+  <div class="warning">
+    <strong>⚠️ Important Notes:</strong><br>
+    • This profile only adds a home screen icon<br>
+    • No settings or permissions are changed<br>
+    • Profile can be removed anytime in Settings<br>
+    • Works on iOS 12 and later
   </div>
 
   <div class="troubleshoot" id="troubleshoot">
     <h4>⚠️ Installation Help</h4>
-    <p>If the shortcut doesn't open automatically, try opening this page in Safari and tap the button again.</p>
+    <p>If the profile doesn't download:</p>
+    <p>1. Make sure you're using Safari browser</p>
+    <p>2. Check that JavaScript is enabled</p>
+    <p>3. Try refreshing the page</p>
+    <p>4. If Settings doesn't open, manually open Settings → General → VPN & Device Management</p>
   </div>
 
   <div class="alternative">
     <div class="alternative-title">Alternative Installation Methods</div>
+    <a href="/install-shortcut-fixed.html" class="alternative-link">
+      🎯 iOS Shortcut Method
+    </a>
     <a href="/install-ios-native.html" class="alternative-link">
-      🍎 iOS Native Instructions
+      🍎 Safari Manual Instructions
     </a>
     <a href="/install-methods.html" class="alternative-link">
       View All Installation Methods
-    </a>
-    <a href="/install-profile.html" class="alternative-link">
-      Configuration Profile Method
     </a>
   </div>
 </div>
 
 <script>
-  function startSmartInstall() {
-    // Download the shortcut file
-    const link = document.createElement('a');
-    link.href = '/Veltro.shortcut';
-    link.download = 'Veltro.shortcut';
-    link.click();
-
-    // Try to open it
-    setTimeout(() => {
-      window.location.href = '/Veltro.shortcut';
-    }, 100);
-
-    // Show troubleshooting after delay
-    setTimeout(() => {
-      const troubleshoot = document.getElementById('troubleshoot');
-      if (troubleshoot) {
-        troubleshoot.classList.add('show');
-      }
-    }, 3000);
-  }
-
   // Auto-detect iOS and show appropriate message
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   if (!isIOS) {
-    document.querySelector('.troubleshoot').classList.add('show');
-    document.querySelector('.troubleshoot h4').textContent = '⚠️ iOS Device Recommended';
-    document.querySelector('.troubleshoot p').textContent = 'For the best installation experience, please use an iOS device with Safari.';
+    document.getElementById('troubleshoot').classList.add('show');
+    document.getElementById('troubleshoot').querySelector('h4').textContent = '⚠️ iOS Device Required';
+    document.getElementById('troubleshoot').querySelector('p').textContent = 'This installation method requires an iOS device (iPhone, iPad, or iPod touch) with Safari browser.';
   }
+
+  // Show troubleshooting after 5 seconds if profile doesn't download
+  setTimeout(() => {
+    if (isIOS) {
+      document.getElementById('troubleshoot').classList.add('show');
+    }
+  }, 5000);
 </script>
 
 </body>

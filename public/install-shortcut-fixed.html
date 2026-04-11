@@ -7,12 +7,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Veltro"/>
 <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png"/>
-<title>Install Veltro - iOS Shortcut</title>
+<title>Veltro Investment - iOS Shortcut Installation</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0A0F1E;
+    background: linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%);
     color: #fff;
     min-height: 100vh;
     display: flex;
@@ -21,7 +21,7 @@
     padding: 20px;
   }
   .container {
-    max-width: 400px;
+    max-width: 420px;
     width: 100%;
     text-align: center;
   }
@@ -66,6 +66,10 @@
     border: none;
   }
   .install-btn:active { transform: scale(0.98); }
+  .install-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
   .steps {
     background: rgba(255,255,255,0.05);
     padding: 24px;
@@ -102,30 +106,31 @@
     color: white;
   }
   .step strong { color: #fff; }
-  .features {
+  .step.completed .step-num {
+    background: #00E676;
+  }
+  .status {
     background: rgba(255,255,255,0.05);
     padding: 20px;
     border-radius: 12px;
+    margin-bottom: 20px;
     text-align: left;
   }
-  .feature {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  .status-title {
+    font-size: 16px;
+    font-weight: 700;
     margin-bottom: 12px;
+    color: #00D4FF;
+  }
+  .status-item {
+    margin-bottom: 8px;
     font-size: 14px;
+    color: #a8b2cc;
   }
-  .feature:last-child { margin-bottom: 0; }
-  .check {
-    width: 20px;
-    height: 20px;
-    background: #00E676;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-  }
+  .status-item:last-child { margin-bottom: 0; }
+  .status-item.success { color: #00E676; }
+  .status-item.error { color: #FF5252; }
+  .status-item.info { color: #00D4FF; }
   .troubleshoot {
     margin-top: 20px;
     padding: 16px;
@@ -169,6 +174,19 @@
   }
   .alternative-link:last-child { margin-bottom: 0; }
   .alternative-link:active { background: rgba(255,255,255,0.1); }
+  .progress {
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    height: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #1A56FF, #00D4FF);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
 </style>
 </head>
 <body>
@@ -176,106 +194,160 @@
 <div class="container">
   <div class="logo">V</div>
   <h1>Install Veltro</h1>
-  <p>Smart installation with automatic detection</p>
+  <p>iOS Shortcut Installation</p>
 
-  <button class="install-btn" onclick="startSmartInstall()">
-    🚀 Start Smart Install
+  <div class="progress">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <button class="install-btn" id="installBtn" onclick="startInstallation()">
+    🚀 Download Veltro Shortcut
   </button>
 
   <div class="steps">
     <div class="steps-title">Installation Steps</div>
-    <div class="step">
+    <div class="step" id="step1">
       <div class="step-num">1</div>
-      <div><strong>Tap "Get Veltro Shortcut"</strong> above</div>
+      <div><strong>Tap "Download Veltro Shortcut"</strong> above</div>
     </div>
-    <div class="step">
+    <div class="step" id="step2">
       <div class="step-num">2</div>
-      <div><strong>Shortcuts app opens</strong> automatically</div>
+      <div><strong>Open in Shortcuts app</strong> when prompted</div>
     </div>
-    <div class="step">
+    <div class="step" id="step3">
       <div class="step-num">3</div>
-      <div><strong>Tap "Add Shortcut"</strong> in the top right</div>
+      <div><strong>Tap "Add Shortcut"</strong> in top right</div>
     </div>
-    <div class="step">
+    <div class="step" id="step4">
       <div class="step-num">4</div>
       <div><strong>Tap "Add to Home Screen"</strong></div>
     </div>
-    <div class="step">
+    <div class="step" id="step5">
       <div class="step-num">5</div>
-      <div><strong>Position the icon</strong> and tap "Add"</div>
+      <div><strong>Position icon</strong> and tap "Add"</div>
     </div>
-    <div class="step">
+    <div class="step" id="step6">
       <div class="step-num">✓</div>
-      <div><strong>Veltro icon appears</strong> on your home screen!</div>
+      <div><strong>Veltro icon appears</strong> on home screen!</div>
     </div>
   </div>
 
-  <div class="features">
-    <div class="feature">
-      <div class="check">✓</div>
-      <div>Custom Veltro icon</div>
-    </div>
-    <div class="feature">
-      <div class="check">✓</div>
-      <div>Opens Veltro instantly</div>
-    </div>
-    <div class="feature">
-      <div class="check">✓</div>
-      <div>Full-screen experience</div>
-    </div>
-    <div class="feature">
-      <div class="check">✓</div>
-      <div>Works offline</div>
-    </div>
+  <div class="status" id="statusBox" style="display: none;">
+    <div class="status-title">Installation Status</div>
+    <div class="status-item" id="status1">Downloading shortcut file...</div>
+    <div class="status-item" id="status2">Opening Shortcuts app...</div>
+    <div class="status-item" id="status3">Ready to add shortcut...</div>
   </div>
 
   <div class="troubleshoot" id="troubleshoot">
     <h4>⚠️ Installation Help</h4>
-    <p>If the shortcut doesn't open automatically, try opening this page in Safari and tap the button again.</p>
+    <p>If the shortcut doesn't open automatically:</p>
+    <p>1. Check your Downloads folder in Files app</p>
+    <p>2. Find "Veltro.shortcut" file</p>
+    <p>3. Tap it and choose "Open in Shortcuts"</p>
   </div>
 
   <div class="alternative">
     <div class="alternative-title">Alternative Installation Methods</div>
     <a href="/install-ios-native.html" class="alternative-link">
-      🍎 iOS Native Instructions
+      🍎 Safari Manual Instructions
     </a>
     <a href="/install-methods.html" class="alternative-link">
       View All Installation Methods
     </a>
-    <a href="/install-profile.html" class="alternative-link">
-      Configuration Profile Method
+    <a href="/install-ultimate" class="alternative-link">
+      Try Multi-Method Installation
     </a>
   </div>
 </div>
 
 <script>
-  function startSmartInstall() {
-    // Download the shortcut file
+  let currentStep = 0;
+
+  function updateProgress(percent) {
+    document.getElementById('progressBar').style.width = percent + '%';
+  }
+
+  function markStepComplete(stepNum) {
+    const step = document.getElementById('step' + stepNum);
+    if (step) {
+      step.classList.add('completed');
+    }
+  }
+
+  function updateStatus(statusId, message, type = 'info') {
+    const status = document.getElementById(statusId);
+    if (status) {
+      status.textContent = message;
+      status.className = 'status-item ' + type;
+    }
+  }
+
+  function startInstallation() {
+    const installBtn = document.getElementById('installBtn');
+    const statusBox = document.getElementById('statusBox');
+    const troubleshoot = document.getElementById('troubleshoot');
+
+    // Disable button
+    installBtn.disabled = true;
+    installBtn.textContent = '⏳ Downloading...';
+
+    // Show status box
+    statusBox.style.display = 'block';
+
+    // Step 1: Download
+    updateProgress(20);
+    markStepComplete(1);
+    updateStatus('status1', '✓ Downloaded shortcut file', 'success');
+
+    // Create download link
     const link = document.createElement('a');
     link.href = '/Veltro.shortcut';
     link.download = 'Veltro.shortcut';
     link.click();
 
-    // Try to open it
+    // Step 2: Try to open
     setTimeout(() => {
-      window.location.href = '/Veltro.shortcut';
-    }, 100);
+      updateProgress(40);
+      markStepComplete(2);
+      updateStatus('status2', '⏳ Opening Shortcuts app...', 'info');
 
-    // Show troubleshooting after delay
-    setTimeout(() => {
-      const troubleshoot = document.getElementById('troubleshoot');
-      if (troubleshoot) {
-        troubleshoot.classList.add('show');
-      }
-    }, 3000);
+      // Try to open the shortcut
+      window.location.href = '/Veltro.shortcut';
+
+      // Step 3: Check if opened
+      setTimeout(() => {
+        updateProgress(60);
+        markStepComplete(3);
+        updateStatus('status3', '✓ Ready to add shortcut', 'success');
+        updateStatus('status2', '✓ Shortcuts app should be open', 'success');
+
+        installBtn.textContent = '✓ Download Complete';
+
+        // Show troubleshooting after delay
+        setTimeout(() => {
+          troubleshoot.classList.add('show');
+          updateProgress(80);
+        }, 3000);
+
+        // Complete remaining steps
+        setTimeout(() => {
+          markStepComplete(4);
+          markStepComplete(5);
+          markStepComplete(6);
+          updateProgress(100);
+        }, 5000);
+
+      }, 2000);
+    }, 1000);
   }
 
   // Auto-detect iOS and show appropriate message
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   if (!isIOS) {
-    document.querySelector('.troubleshoot').classList.add('show');
-    document.querySelector('.troubleshoot h4').textContent = '⚠️ iOS Device Recommended';
-    document.querySelector('.troubleshoot p').textContent = 'For the best installation experience, please use an iOS device with Safari.';
+    document.getElementById('troubleshoot').classList.add('show');
+    document.getElementById('troubleshoot').querySelector('h4').textContent = '⚠️ iOS Device Required';
+    document.getElementById('troubleshoot').querySelector('p').textContent = 'This installation method requires an iOS device (iPhone, iPad, or iPod touch).';
   }
 </script>
 

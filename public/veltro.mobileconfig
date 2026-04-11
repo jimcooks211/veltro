@@ -21,11 +21,13 @@
       <key>Label</key>
       <string>Veltro Investment</string>
       <key>PayloadDescription</key>
-      <string>Veltro Investment Web Clip</string>
+      <string>Adds Veltro Investment to your home screen</string>
       <key>PayloadDisplayName</key>
       <string>Veltro Investment</string>
       <key>PayloadIdentifier</key>
-      <string>com.veltro.investment.webclip</string>
+      <string>com.veltro.investment.webclip.profile</string>
+      <key>PayloadOrganization</key>
+      <string>Veltro Investment</string>
       <key>PayloadType</key>
       <string>com.apple.webClip.managed</string>
       <key>PayloadUUID</key>
@@ -38,10 +40,12 @@
       <string>https://veltroinvestment.vercel.app</string>
     </dict>
   </array>
+  <key>PayloadDescription</key>
+  <string>Install Veltro Investment web clip on your home screen</string>
   <key>PayloadDisplayName</key>
-  <string>Veltro Investment Installation</string>
+  <string>Veltro Investment</string>
   <key>PayloadIdentifier</key>
-  <string>com.veltro.investment.install</string>
+  <string>com.veltro.investment.install.profile</string>
   <key>PayloadOrganization</key>
   <string>Veltro Investment</string>
   <key>PayloadRemovalDisallowed</key>
