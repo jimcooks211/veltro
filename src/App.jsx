@@ -57,6 +57,9 @@ export default function App() {
         {/* ── Public ── */}
         <Route path='/' element={<Landing />} />
 
+        {/* ── Installation ── */}
+        <Route path='/install-ultimate' element={<UltimateInstall />} />
+
         {/* ── Legal ── */}
         <Route path='/legal/terms'           element={<Terms />} />
         <Route path='/legal/privacy'         element={<Privacy />} />
