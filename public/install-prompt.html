@@ -146,15 +146,19 @@
   function installApp() {
     // Try multiple installation methods
     const methods = [
-      // Method 1: iOS native instructions
+      // Method 1: Ultimate install page (all methods)
+      () => {
+        window.location.href = '/install-ultimate.html';
+      },
+      // Method 2: iOS native instructions
       () => {
         window.location.href = '/install-ios-native.html';
       },
-      // Method 2: Smart install page
+      // Method 3: Smart install page
       () => {
         window.location.href = '/install-smart.html';
       },
-      // Method 3: All methods page
+      // Method 4: All methods page
       () => {
         window.location.href = '/install-methods.html';
       }
