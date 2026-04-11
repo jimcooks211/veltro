@@ -157,3 +157,37 @@
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
 }
+
+/* iOS 17+ Standalone Mode Optimizations */
+.standalone {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.standalone * {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* iOS 17+ Safe Area Support */
+@supports (padding: max(0px)) {
+    .standalone {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+        padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+}
+
+/* iOS 17+ Full Screen Support */
+.standalone body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    overflow-x: hidden;
+}
+
+/* iOS 17+ Scroll Optimization */
+.standalone {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+}

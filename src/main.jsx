@@ -5,7 +5,7 @@ import App from './App.jsx'
 import SwitchMode from './hooks/Switchmode.jsx'
 
 // Register service worker for PWA support
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
       .then((registration) => {
@@ -15,6 +15,11 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
         console.error('[SW] Service worker registration failed:', error)
       })
   })
+}
+
+// iOS 17+ specific optimizations
+if (window.navigator.standalone) {
+  document.documentElement.classList.add('standalone')
 }
 
 createRoot(document.getElementById('root')).render(
