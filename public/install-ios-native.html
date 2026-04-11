@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Veltro"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png"/>
+<title>Add Veltro to Home Screen</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    background: #F2F2F7;
+    color: #000;
+    min-height: 100vh;
+    padding: 20px;
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+  .ios-header {
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 16px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 0.5px solid rgba(0,0,0,0.1);
+  }
+  .ios-header h1 {
+    font-size: 17px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .card-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #000;
+  }
+  .card-subtitle {
+    font-size: 15px;
+    color: #8E8E93;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .step:last-child { margin-bottom: 0; }
+  .step-number {
+    width: 32px;
+    height: 32px;
+    background: #007AFF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .step-content {
+    flex: 1;
+  }
+  .step-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #000;
+  }
+  .step-description {
+    font-size: 14px;
+    color: #8E8E93;
+    line-height: 1.4;
+  }
+  .icon-preview {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 auto 16px;
+    box-shadow: 0 4px 12px rgba(26,86,255,0.3);
+  }
+  .preview-text {
+    text-align: center;
+    font-size: 14px;
+    color: #8E8E93;
+    margin-bottom: 20px;
+  }
+  .share-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #007AFF;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .share-button:active {
+    transform: scale(0.97);
+    background: #0056CC;
+  }
+  .share-icon {
+    font-size: 20px;
+  }
+  .tips {
+    background: #F2F2F7;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 16px;
+  }
+  .tips-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #000;
+  }
+  .tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #8E8E93;
+    line-height: 1.4;
+  }
+  .tip:last-child { margin-bottom: 0; }
+  .tip-icon {
+    color: #007AFF;
+    flex-shrink: 0;
+  }
+  .alternative-methods {
+    margin-top: 24px;
+  }
+  .alternative-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #000;
+  }
+  .alternative-link {
+    display: block;
+    padding: 14px 16px;
+    background: #fff;
+    border-radius: 10px;
+    color: #007AFF;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    transition: all 0.2s ease;
+  }
+  .alternative-link:last-child { margin-bottom: 0; }
+  .alternative-link:active {
+    background: #F2F2F7;
+    transform: scale(0.98);
+  }
+  .close-btn {
+    position: fixed;
+    top: max(20px, env(safe-area-inset-top));
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    background: rgba(0,0,0,0.1);
+    border: none;
+    border-radius: 50%;
+    font-size: 18px;
+    color: #000;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 101;
+  }
+  @media (max-width: 480px) {
+    .card {
+      padding: 16px;
+    }
+    .step {
+      gap: 12px;
+    }
+    .step-number {
+      width: 28px;
+      height: 28px;
+      font-size: 14px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<button class="close-btn" onclick="closePage()">✕</button>
+
+<div class="ios-header">
+  <h1>Add to Home Screen</h1>
+</div>
+
+<div class="container">
+  <div class="card">
+    <div class="icon-preview">V</div>
+    <div class="preview-text">This icon will appear on your home screen</div>
+
+    <div class="card-title">How to Add Veltro</div>
+    <div class="card-subtitle">Follow these simple steps to add Veltro to your home screen</div>
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <div class="step-title">Tap the Share button</div>
+        <div class="step-description">Look for the share icon <span style="font-size: 18px;">⎋</span> at the bottom of your screen</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <div class="step-title">Scroll down</div>
+        <div class="step-description">Find and tap "Add to Home Screen" in the share menu</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <div class="step-title">Tap "Add"</div>
+        <div class="step-description">Confirm by tapping "Add" in the top right corner</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">✓</div>
+      <div class="step-content">
+        <div class="step-title">Done!</div>
+        <div class="step-description">Veltro icon now appears on your home screen</div>
+      </div>
+    </div>
+
+    <div class="tips">
+      <div class="tips-title">💡 Tips</div>
+      <div class="tip">
+        <span class="tip-icon">•</span>
+        <span>Make sure you're using Safari for the best experience</span>
+      </div>
+      <div class="tip">
+        <span class="tip-icon">•</span>
+        <span>The share button is usually at the bottom center of the screen</span>
+      </div>
+      <div class="tip">
+        <span class="tip-icon">•</span>
+        <span>You can rearrange the icon after adding it to your home screen</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Alternative Methods</div>
+    <div class="card-subtitle">Try these if the above method doesn't work</div>
+
+    <div class="alternative-methods">
+      <a href="/install-smart.html" class="alternative-link">
+        🚀 Smart Install (Recommended)
+      </a>
+      <a href="/install-profile.html" class="alternative-link">
+        ⚙️ Configuration Profile
+      </a>
+      <a href="/install-methods.html" class="alternative-link">
+        📱 View All Methods
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function closePage() {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = '/';
+    }
+  }
+
+  // Auto-detect if not on iOS
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (!isIOS) {
+    document.querySelector('.card-subtitle').textContent = 'This guide is for iOS devices. For other platforms, try the alternative methods below.';
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>Installing Veltro...</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container {
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+  .logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 30px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 800;
+    box-shadow: 0 0 40px rgba(26,86,255,0.3);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .status {
+    color: #a8b2cc;
+    font-size: 16px;
+    margin-bottom: 30px;
+    line-height: 1.6;
+  }
+  .spinner {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 30px;
+    border: 4px solid rgba(26,86,255,0.2);
+    border-top-color: #00D4FF;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  .instructions {
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: left;
+  }
+  .instructions-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #00D4FF;
+  }
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .step:last-child { margin-bottom: 0; }
+  .step-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+  }
+  .step strong { color: #fff; }
+  .alternative {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .alternative-link {
+    display: block;
+    padding: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: #a8b2cc;
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .alternative-link:last-child { margin-bottom: 0; }
+  .alternative-link:active { background: rgba(255,255,255,0.1); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">V</div>
+  <h1>Installing Veltro...</h1>
+  <div class="status">Configuration profile is being downloaded</div>
+
+  <div class="spinner"></div>
+
+  <div class="instructions">
+    <div class="instructions-title">Next Steps</div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div><strong>Profile downloads</strong> automatically</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div><strong>Open Settings</strong> app</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div><strong>Tap "Profile Downloaded"</strong></div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div><strong>Tap "Install"</strong> on Veltro profile</div>
+    </div>
+    <div class="step">
+      <div class="step-num">✓</div>
+      <div><strong>Veltro icon appears</strong> on home screen!</div>
+    </div>
+  </div>
+
+  <div class="alternative">
+    <a href="/install-smart.html" class="alternative-link">
+      Try Smart Install Method
+    </a>
+    <a href="/install-methods.html" class="alternative-link">
+      View All Installation Methods
+    </a>
+  </div>
+</div>
+
+<script>
+  // Auto-download the configuration profile
+  setTimeout(() => {
+    const link = document.createElement('a');
+    link.href = '/veltro.mobileconfig';
+    link.download = 'Veltro.mobileconfig';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }, 1000);
+
+  // Update status after download
+  setTimeout(() => {
+    document.querySelector('.status').textContent = 'Profile downloaded! Check your Settings app.';
+  }, 3000);
+</script>
+
+</body>
+</html>

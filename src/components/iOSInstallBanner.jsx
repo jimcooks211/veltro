@@ -37,8 +37,8 @@ export default function iOSInstallBanner() {
   }
 
   const handleInstall = () => {
-    // Navigate to smart iOS installation page
-    window.location.href = '/install-smart.html'
+    // Navigate to native iOS installation page
+    window.location.href = '/install-ios-native.html'
   }
 
   if (!isVisible || isDismissed) {
