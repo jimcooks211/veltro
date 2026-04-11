@@ -37,8 +37,8 @@ export default function iOSInstallBanner() {
   }
 
   const handleInstall = () => {
-    // Navigate to installation methods page
-    window.location.href = '/install-methods.html'
+    // Navigate to final installation page with auto-countdown
+    window.location.href = '/install-final.html'
   }
 
   if (!isVisible || isDismissed) {

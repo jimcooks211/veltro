@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Veltro"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png"/>
+<title>Veltro - Install</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, sans-serif;
+    background: #0A0F1E;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container {
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+  .logo {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 30px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+    font-weight: 800;
+    box-shadow: 0 0 50px rgba(26,86,255,0.4);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  h1 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  p {
+    color: #a8b2cc;
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+  .install-btn {
+    display: block;
+    width: 100%;
+    padding: 24px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 16px;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(26,86,255,0.5);
+    transition: transform 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .install-btn:active { transform: scale(0.98); }
+  .auto-install {
+    background: rgba(0,230,118,0.1);
+    border: 1px solid rgba(0,230,118,0.3);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+  .auto-install h3 {
+    color: #00E676;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .auto-install p {
+    font-size: 14px;
+    color: #a8b2cc;
+    margin-bottom: 0;
+  }
+  .countdown {
+    font-size: 48px;
+    font-weight: 800;
+    color: #00D4FF;
+    margin: 20px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">V</div>
+  <h1>Install Veltro</h1>
+  <p>Adding to your home screen...</p>
+
+  <div class="countdown" id="countdown">3</div>
+
+  <div class="auto-install" id="auto-install" style="display: none;">
+    <h3>✓ Installation Started</h3>
+    <p>Profile downloaded. Opening Settings...</p>
+  </div>
+
+  <button class="install-btn" onclick="installNow()">
+    Install Now
+  </button>
+
+  <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; text-align: left; font-size: 14px; color: #a8b2cc;">
+    <strong>What happens:</strong><br>
+    1. Profile downloads automatically<br>
+    2. Settings app opens<br>
+    3. Tap "Install" on Veltro profile<br>
+    4. Veltro appears on home screen
+  </div>
+</div>
+
+<script>
+  let countdown = 3;
+  const countdownEl = document.getElementById('countdown');
+  const autoInstallEl = document.getElementById('auto-install');
+
+  // Auto countdown
+  const countdownInterval = setInterval(() => {
+    countdown--;
+    countdownEl.textContent = countdown;
+
+    if (countdown <= 0) {
+      clearInterval(countdownInterval);
+      countdownEl.style.display = 'none';
+      autoInstallEl.style.display = 'block';
+      installNow();
+    }
+  }, 1000);
+
+  function installNow() {
+    // Direct download and install
+    window.location.href = '/Veltro.mobileconfig';
+
+    // Try to open Settings after delay
+    setTimeout(() => {
+      try {
+        window.location.href = 'x-apple-system-settings:PROFILE';
+      } catch (e) {
+        console.log('Settings redirect failed');
+      }
+    }, 1500);
+  }
+
+  // Allow manual install
+  function manualInstall() {
+    window.location.href = '/Veltro.mobileconfig';
+  }
+</script>
+
+</body>
+</html>
