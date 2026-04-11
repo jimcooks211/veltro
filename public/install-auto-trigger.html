@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Veltro"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png"/>
+<link rel="manifest" href="/manifest.json"/>
+<title>Veltro Investment - Auto Install</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container {
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+  }
+  .logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 30px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 800;
+    box-shadow: 0 0 40px rgba(26,86,255,0.3);
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  p {
+    color: #a8b2cc;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+  .install-btn {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(26,86,255,0.5);
+    transition: transform 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .install-btn:active { transform: scale(0.98); }
+  .install-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .install-btn.hidden { display: none; }
+  .status {
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  .status-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #00D4FF;
+  }
+  .status-item {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #a8b2cc;
+  }
+  .status-item:last-child { margin-bottom: 0; }
+  .status-item.success { color: #00E676; }
+  .status-item.error { color: #FF5252; }
+  .status-item.info { color: #00D4FF; }
+  .browser-info {
+    background: rgba(26,86,255,0.1);
+    border: 1px solid rgba(26,86,255,0.2);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #a8b2cc;
+  }
+  .browser-info strong { color: #00D4FF; }
+  .troubleshoot {
+    background: rgba(255,100,100,0.1);
+    border: 1px solid rgba(255,100,100,0.2);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #ff6b6b;
+    display: none;
+  }
+  .troubleshoot.show { display: block; }
+  .troubleshoot h4 {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .troubleshoot p {
+    font-size: 12px;
+    margin-bottom: 0;
+  }
+  .alternative {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .alternative-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #a8b2cc;
+  }
+  .alternative-link {
+    display: block;
+    padding: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: #a8b2cc;
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .alternative-link:last-child { margin-bottom: 0; }
+  .alternative-link:active { background: rgba(255,255,255,0.1); }
+  .auto-install-notice {
+    background: rgba(0,230,118,0.1);
+    border: 1px solid rgba(0,230,118,0.3);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #00E676;
+    display: none;
+  }
+  .auto-install-notice.show { display: block; }
+  .auto-install-notice strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">V</div>
+  <h1>Install Veltro</h1>
+  <p>Auto-Trigger Installation</p>
+
+  <button class="install-btn" id="installBtn" onclick="triggerInstall()">
+    🚀 Install Veltro
+  </button>
+
+  <div class="auto-install-notice" id="autoInstallNotice">
+    <strong>✅ Auto-Install Triggered!</strong><br>
+    Installation prompt should appear. If not, tap the button above.
+  </div>
+
+  <div class="status" id="statusBox" style="display: none;">
+    <div class="status-title">Installation Status</div>
+    <div class="status-item" id="status1">Detecting browser capabilities...</div>
+    <div class="status-item" id="status2">Checking PWA support...</div>
+    <div class="status-item" id="status3">Ready to install...</div>
+  </div>
+
+  <div class="browser-info" id="browserInfo">
+    <strong>Browser Info:</strong><br>
+    <span id="browserDetails">Detecting...</span>
+  </div>
+
+  <div class="troubleshoot" id="troubleshoot">
+    <h4>⚠️ Installation Help</h4>
+    <p id="troubleshootText">If installation doesn't start automatically, try the alternative methods below.</p>
+  </div>
+
+  <div class="alternative">
+    <div class="alternative-title">Alternative Installation Methods</div>
+    <a href="/install-safari-manual.html" class="alternative-link">
+      🍎 Safari Manual (iOS)
+    </a>
+    <a href="/install-shortcut-fixed.html" class="alternative-link">
+      🎯 iOS Shortcut (iOS)
+    </a>
+    <a href="/install-profile-fixed.html" class="alternative-link">
+      ⚙️ Configuration Profile (iOS)
+    </a>
+    <a href="/install-methods.html" class="alternative-link">
+      View All Methods
+    </a>
+  </div>
+</div>
+
+<script>
+  let deferredPrompt = null;
+  let installAttempted = false;
+
+  // Detect browser and platform
+  function detectBrowser() {
+    const ua = navigator.userAgent;
+    let browser = 'Unknown';
+    let platform = 'Unknown';
+    let supportsPWAInstall = false;
+    let supportsAutoInstall = false;
+
+    // Platform detection
+    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
+      platform = 'iOS';
+    } else if (/Android/.test(ua)) {
+      platform = 'Android';
+    } else if (/Windows/.test(ua)) {
+      platform = 'Windows';
+    } else if (/Mac/.test(ua)) {
+      platform = 'macOS';
+    } else if (/Linux/.test(ua)) {
+      platform = 'Linux';
+    }
+
+    // Browser detection
+    if (/Chrome/.test(ua) && !/Edge|OPR/.test(ua)) {
+      browser = 'Chrome';
+      supportsPWAInstall = true;
+      supportsAutoInstall = platform === 'Android';
+    } else if (/Safari/.test(ua) && !/Chrome/.test(ua)) {
+      browser = 'Safari';
+      supportsPWAInstall = platform === 'iOS';
+    } else if (/Firefox/.test(ua)) {
+      browser = 'Firefox';
+      supportsPWAInstall = platform === 'Android';
+    } else if (/Edge/.test(ua)) {
+      browser = 'Edge';
+      supportsPWAInstall = true;
+      supportsAutoInstall = platform === 'Android';
+    } else if (/OPR/.test(ua)) {
+      browser = 'Opera';
+      supportsPWAInstall = platform === 'Android';
+    }
+
+    return { browser, platform, supportsPWAInstall, supportsAutoInstall };
+  }
+
+  // Update browser info display
+  function updateBrowserInfo() {
+    const info = detectBrowser();
+    const details = document.getElementById('browserDetails');
+    const installBtn = document.getElementById('installBtn');
+    const statusBox = document.getElementById('statusBox');
+
+    details.innerHTML = `
+      Browser: ${info.browser}<br>
+      Platform: ${info.platform}<br>
+      PWA Support: ${info.supportsPWAInstall ? '✅ Yes' : '❌ No'}<br>
+      Auto-Install: ${info.supportsAutoInstall ? '✅ Yes' : '❌ No'}
+    `;
+
+    // Show status box
+    statusBox.style.display = 'block';
+    updateStatus('status1', `✅ Detected: ${info.browser} on ${info.platform}`, 'success');
+    updateStatus('status2', info.supportsPWAInstall ? '✅ PWA installation supported' : '⚠️ Limited PWA support', info.supportsPWAInstall ? 'success' : 'info');
+    updateStatus('status3', 'Ready to install', 'info');
+
+    // Update button text based on capabilities
+    if (info.supportsAutoInstall) {
+      installBtn.textContent = '🚀 Auto-Install Veltro';
+    } else if (info.supportsPWAInstall) {
+      installBtn.textContent = '📱 Install Veltro App';
+    } else {
+      installBtn.textContent = '📋 View Installation Options';
+    }
+
+    // Show appropriate troubleshooting
+    if (platform === 'iOS') {
+      showTroubleshoot('iOS requires manual installation. Use Safari and tap Share → Add to Home Screen.');
+    } else if (!info.supportsPWAInstall) {
+      showTroubleshoot('Your browser has limited PWA support. Try Chrome or Edge for best experience.');
+    }
+
+    return info;
+  }
+
+  function updateStatus(statusId, message, type = 'info') {
+    const status = document.getElementById(statusId);
+    if (status) {
+      status.textContent = message;
+      status.className = 'status-item ' + type;
+    }
+  }
+
+  function showTroubleshoot(text) {
+    const troubleshoot = document.getElementById('troubleshoot');
+    const troubleshootText = document.getElementById('troubleshootText');
+    troubleshoot.classList.add('show');
+    troubleshootText.textContent = text;
+  }
+
+  // Trigger PWA installation
+  function triggerInstall() {
+    const info = detectBrowser();
+    const installBtn = document.getElementById('installBtn');
+
+    installBtn.disabled = true;
+    installBtn.textContent = '⏳ Installing...';
+
+    if (deferredPrompt) {
+      // Use the deferred prompt (Chrome/Edge on Android)
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          updateStatus('status3', '✅ Installation accepted!', 'success');
+          installBtn.textContent = '✅ Installing...';
+        } else {
+          updateStatus('status3', '❌ Installation declined', 'error');
+          installBtn.textContent = '❌ Declined';
+          installBtn.disabled = false;
+        }
+        deferredPrompt = null;
+      });
+    } else if (info.platform === 'iOS') {
+      // iOS - redirect to Safari manual
+      updateStatus('status3', '⚠️ iOS requires manual installation', 'info');
+      setTimeout(() => {
+        window.location.href = '/install-safari-manual.html';
+      }, 1000);
+    } else if (info.supportsPWAInstall) {
+      // Other PWA-supporting browsers
+      updateStatus('status3', '⏳ Opening installation prompt...', 'info');
+      // Try to trigger install prompt
+      if (window.navigator && window.navigator.standalone) {
+        updateStatus('status3', '✅ Already installed as PWA!', 'success');
+        installBtn.textContent = '✅ Already Installed';
+      } else {
+        // Show instructions for manual install
+        showTroubleshoot('Look for the "Add to Home Screen" or "Install" option in your browser menu.');
+        installBtn.textContent = '📋 Check Browser Menu';
+        installBtn.disabled = false;
+      }
+    } else {
+      // No PWA support
+      updateStatus('status3', '❌ PWA not supported', 'error');
+      showTroubleshoot('Your browser doesn\'t support PWA installation. Try Chrome or Edge.');
+      installBtn.textContent = '❌ Not Supported';
+      installBtn.disabled = false;
+    }
+  }
+
+  // Listen for beforeinstallprompt event (Chrome/Edge)
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const info = detectBrowser();
+
+    // Auto-trigger on supported platforms
+    if (info.supportsAutoInstall && !installAttempted) {
+      installAttempted = true;
+      document.getElementById('autoInstallNotice').classList.add('show');
+      setTimeout(() => {
+        triggerInstall();
+      }, 1000);
+    }
+  });
+
+  // Listen for appinstalled event
+  window.addEventListener('appinstalled', () => {
+    updateStatus('status3', '✅ Successfully installed!', 'success');
+    const installBtn = document.getElementById('installBtn');
+    installBtn.textContent = '✅ Installed!';
+    installBtn.disabled = true;
+  });
+
+  // Initialize on page load
+  window.addEventListener('load', () => {
+    updateBrowserInfo();
+
+    // Check if already installed
+    if (window.navigator && window.navigator.standalone) {
+      updateStatus('status3', '✅ Already installed as PWA!', 'success');
+      const installBtn = document.getElementById('installBtn');
+      installBtn.textContent = '✅ Already Installed';
+      installBtn.disabled = true;
+    }
+  });
+</script>
+
+</body>
+</html>
