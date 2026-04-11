@@ -1,5 +1,58 @@
 {
-  "appId": "xyz.appinstall.nov.carbon.lam",
+  "android": {
+    "buildOptions": {
+      "keystoreAlias": "",
+      "keystorePassword": "",
+      "keystorePath": ""
+    }
+  },
+  "appId": "com.veltro.investment",
   "appName": "Veltro",
+  "bundledWebRuntime": false,
+  "ios": {
+    "backgroundColor": "#0A0F1E",
+    "buildConfiguration": "Debug",
+    "contentInset": "always",
+    "scheme": "Veltro",
+    "scrollEnabled": true,
+    "target": "App"
+  },
+  "plugins": {
+    "App": {
+      "launchUrl": "https://veltroinvestment.vercel.app"
+    },
+    "Keyboard": {
+      "resize": "body"
+    },
+    "SplashScreen": {
+      "androidScaleType": "CENTER_CROP",
+      "androidSpinnerStyle": "large",
+      "androidSplashResourceName": "splash",
+      "backgroundColor": "#0A0F1E",
+      "iosSpinnerStyle": "small",
+      "launchAutoHide": true,
+      "launchShowDuration": 2000,
+      "layoutName": "launch_screen",
+      "showSpinner": true,
+      "spinnerColor": "#0A0F1E",
+      "splashFullScreen": true,
+      "splashImmersive": true,
+      "useDialog": true
+    },
+    "StatusBar": {
+      "overlaysWebView": true,
+      "style": "DARK"
+    },
+    "WebView": {
+      "appendUserAgent": "VeltroInvestment/1.0",
+      "overrideUserAgent": "VeltroInvestment/1.0"
+    }
+  },
+  "server": {
+    "allowNavigation": ["*"],
+    "cleartext": true,
+    "hostname": "veltroinvestment.vercel.app",
+    "url": "https://veltroinvestment.vercel.app"
+  },
   "webDir": "dist"
 }
