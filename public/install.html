@@ -268,6 +268,48 @@
     border: 1px solid var(--vlt-border-color);
     border-radius: 8px; line-height: 1.7;
   }
+
+  .alternative-method {
+    margin-top: 12px;
+    padding: 16px;
+    background: rgba(26, 86, 255, 0.05);
+    border: 1px solid rgba(26, 86, 255, 0.15);
+    border-radius: 8px;
+  }
+
+  .alt-text {
+    font-size: 11px;
+    color: var(--vlt-text-secondary);
+    margin-bottom: 12px;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .share-guide {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .share-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--vlt-text-primary);
+  }
+
+  .share-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(26, 86, 255, 0.1);
+    border-radius: 6px;
+    font-size: 12px;
+  }
 </style>
 </head>
 <body>
@@ -323,45 +365,58 @@
       </div>
     </div>
 
-    <p class="tap-hint">tap to install</p>
-    <h1 class="hero-title">Add <span class="accent">Veltro</span><br/>to your iPhone</h1>
-    <p class="hero-sub">Full-screen access to your portfolio, markets, and trades — right from your home screen.</p>
+    <p class="tap-hint">one-tap installation</p>
+    <h1 class="hero-title">Add <span class="accent">Veltro</span><br/>to Home Screen</h1>
+    <p class="hero-sub">Get instant access to your portfolio with a single tap.</p>
 
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <div class="step-text">Tap the icon above or the button below to download the profile</div>
+        <div class="step-text">Tap the <strong>Install</strong> button below</div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <div class="step-text">Safari prompts — tap <span class="chip">Allow</span> to continue</div>
+        <div class="step-text">Tap <span class="chip">Add</span> when prompted</div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <div class="step-text">Open <span class="chip">⚙ Settings</span> → <span class="chip">Profile Downloaded</span> → <span class="chip">Install</span></div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-text">Veltro appears on your home screen — tap to launch full screen</div>
+        <div class="step-text">Veltro appears on your home screen — done!</div>
       </div>
     </div>
   </div>
 
   <div class="bottom">
     <div class="success" id="success">
-      ✓ &nbsp;<span>Profile downloaded — open <strong style="color:var(--vlt-text-primary)">Settings → Profile Downloaded</strong> to finish.</span>
+      ✓ &nbsp;<span>Installation started! Check your home screen.</span>
     </div>
     <div class="ios-only" id="ios-only"></div>
-    <button class="dl-btn" id="dl-btn" onclick="downloadProfile()">
+    <button class="dl-btn" id="dl-btn" onclick="installPWA()">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
         <path d="M8 1v9M4.5 6.5L8 10l3.5-3.5M2 13h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      Download Install Profile
+      Install Veltro
     </button>
+    <div class="alternative-method" id="alternative-method" style="display: none;">
+      <p class="alt-text">Or use Safari's share menu:</p>
+      <div class="share-guide">
+        <div class="share-step">
+          <span class="share-icon">⎋</span>
+          <span>Tap Share button</span>
+        </div>
+        <div class="share-step">
+          <span class="share-icon">➕</span>
+          <span>Scroll to "Add to Home Screen"</span>
+        </div>
+        <div class="share-step">
+          <span class="share-icon">✓</span>
+          <span>Tap "Add" in top right</span>
+        </div>
+      </div>
+    </div>
     <a class="open-btn" id="open-btn" href="" target="_blank" rel="noopener">
       Open in browser instead →
     </a>
-    <p class="legal">Profile adds a home screen shortcut only. No personal data is collected or transmitted.</p>
+    <p class="legal">One-tap installation. No personal data collected.</p>
   </div>
 
 </div>
@@ -389,6 +444,33 @@
     const n = document.getElementById('ios-only')
     n.style.display = 'block'
     n.innerHTML = '✓ Veltro is already installed on your device.<br/><a href="' + currentUrl + '" style="color:#1A56FF;text-decoration:none;font-weight:500;">Open Veltro →</a>'
+  }
+
+  async function installPWA() {
+    try {
+      // Try to use the share API to trigger "Add to Home Screen"
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Veltro Investment',
+          text: 'Install Veltro for instant access to your portfolio',
+          url: currentUrl
+        })
+        // After sharing, show the alternative method
+        showAlternativeMethod()
+      } else {
+        // Fallback to mobileconfig approach
+        downloadProfile()
+      }
+    } catch (err) {
+      console.log('Share failed or cancelled, trying alternative method')
+      // If share fails, show the alternative method
+      showAlternativeMethod()
+    }
+  }
+
+  function showAlternativeMethod() {
+    document.getElementById('alternative-method').style.display = 'block'
+    document.getElementById('success').classList.add('show')
   }
 
   function downloadProfile() {
