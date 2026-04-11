@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Veltro"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png"/>
+<title>Install Veltro - One Tap</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --vlt-bg-page:        #080d18;
+    --vlt-bg-card:        #111827;
+    --vlt-border-color:   rgba(255,255,255,0.07);
+    --veltro-blue:        #1A56FF;
+    --veltro-cyan:        #00D4FF;
+    --veltro-green:       #00E676;
+    --vlt-text-primary:   #e8edf8;
+    --vlt-text-secondary: #a8b2cc;
+    --vlt-text-muted:     #5a6480;
+    --font-display:       'Syne', sans-serif;
+    --font-body:          'Inter', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--vlt-bg-page);
+    color: var(--vlt-text-primary);
+    font-family: var(--font-body);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .bg-glow-1 {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 80% 10%, rgba(26,86,255,0.09) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 10% 90%, rgba(0,212,255,0.05) 0%, transparent 60%);
+  }
+
+  .page {
+    position: relative; z-index: 1;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 20px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+  }
+
+  .icon-wrap {
+    position: relative;
+    margin-bottom: 20px;
+    cursor: pointer;
+  }
+
+  .icon-box {
+    width: 100px; height: 100px;
+    background: #0d1428;
+    border: 2px solid rgba(26,86,255,0.3);
+    border-radius: 24px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 40px rgba(26,86,255,0.2);
+    transition: transform 0.2s ease;
+  }
+
+  .icon-wrap:active .icon-box { transform: scale(0.95); }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800; letter-spacing: -0.03em;
+    line-height: 1.1; text-align: center;
+    color: var(--vlt-text-primary);
+    margin-bottom: 12px;
+  }
+
+  .hero-title .accent {
+    background: linear-gradient(90deg, var(--veltro-blue) 0%, var(--veltro-cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 14px; color: var(--vlt-text-muted);
+    text-align: center; line-height: 1.6;
+    max-width: 280px; margin-bottom: 24px;
+  }
+
+  .install-btn {
+    width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, var(--veltro-blue) 0%, var(--veltro-cyan) 100%);
+    color: #fff;
+    font-family: var(--font-body); font-size: 16px; font-weight: 600;
+    border: none; border-radius: 12px; cursor: pointer;
+    letter-spacing: 0.01em;
+    box-shadow: 0 4px 24px rgba(26,86,255,0.4);
+    transition: all 0.2s ease;
+    margin-bottom: 16px;
+  }
+
+  .install-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 32px rgba(26,86,255,0.5);
+  }
+
+  .install-btn:active { transform: scale(0.98); }
+
+  .success-message {
+    display: none;
+    background: rgba(0,230,118,0.1);
+    border: 1px solid rgba(0,230,118,0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .success-message.show { display: block; animation: fadeUp 0.3s ease both; }
+
+  .success-message h3 {
+    color: var(--veltro-green);
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .success-message p {
+    color: var(--vlt-text-secondary);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .alternative-methods {
+    display: none;
+    background: var(--vlt-bg-card);
+    border: 1px solid var(--vlt-border-color);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .alternative-methods.show { display: block; }
+
+  .alt-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--veltro-cyan);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .alt-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--vlt-text-primary);
+  }
+
+  .alt-step:last-child { margin-bottom: 0; }
+
+  .alt-num {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(26,86,255,0.2);
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--veltro-blue);
+  }
+
+  .legal {
+    font-size: 11px; color: var(--vlt-text-muted);
+    text-align: center; line-height: 1.5; opacity: 0.7;
+  }
+
+  .auto-redirect {
+    display: none;
+    background: rgba(26,86,255,0.1);
+    border: 1px solid rgba(26,86,255,0.2);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .auto-redirect.show { display: block; }
+
+  .auto-redirect p {
+    font-size: 12px;
+    color: var(--vlt-text-secondary);
+    margin-bottom: 8px;
+  }
+
+  .auto-redirect a {
+    color: var(--veltro-blue);
+    text-decoration: none;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow-1"></div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="icon-wrap" onclick="installApp()">
+      <div class="icon-box">
+        <svg width="60" height="60" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="installGrad" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00D4FF"/>
+              <stop offset="50%" stopColor="#1A56FF"/>
+              <stop offset="100%" stopColor="#7B2FFF"/>
+            </linearGradient>
+          </defs>
+          <path d="M28 3 L51 16 L51 40 L28 53 L5 40 L5 16 Z" stroke="url(#installGrad)" strokeWidth="1.2" fill="none" opacity="0.3"/>
+          <path d="M12 14 L28 42 L44 14" stroke="url(#installGrad)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+          <line x1="18" y1="28" x2="38" y2="28" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round"/>
+          <circle cx="28" cy="28" r="2.5" fill="#00D4FF"/>
+        </svg>
+      </div>
+    </div>
+
+    <h1 class="hero-title">Install <span class="accent">Veltro</span></h1>
+    <p class="hero-sub">One-tap installation to your home screen</p>
+
+    <button class="install-btn" onclick="installApp()">
+      <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1v9M4.5 6.5L8 10l3.5-3.5M2 13h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+      Install Now
+    </button>
+
+    <div class="success-message" id="success">
+      <h3>✓ Installation Started</h3>
+      <p>Profile downloaded. Opening Settings...</p>
+    </div>
+
+    <div class="auto-redirect" id="auto-redirect">
+      <p>Opening Settings app...</p>
+      <a href="#" onclick="openSettingsManually()">Open Settings Manually</a>
+    </div>
+
+    <div class="alternative-methods" id="alternative">
+      <div class="alt-title">Alternative Installation</div>
+      <div class="alt-step">
+        <div class="alt-num">1</div>
+        <div>Tap Share button <span style="font-size:16px">⎋</span></div>
+      </div>
+      <div class="alt-step">
+        <div class="alt-num">2</div>
+        <div>Scroll to "Add to Home Screen"</div>
+      </div>
+      <div class="alt-step">
+        <div class="alt-num">3</div>
+        <div>Tap "Add" in top right</div>
+      </div>
+    </div>
+
+    <p class="legal">Secure installation. No personal data collected.</p>
+  </div>
+
+</div>
+
+<script>
+  const currentUrl = window.location.origin
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+
+  async function installApp() {
+    if (!isIOS) {
+      alert('This installation is for iOS devices only.')
+      return
+    }
+
+    try {
+      // Method 1: Enhanced mobileconfig with auto-redirect
+      const mobileconfig = createEnhancedMobileconfig()
+      downloadAndInstall(mobileconfig)
+
+    } catch (error) {
+      console.error('Installation failed:', error)
+      showAlternativeMethods()
+    }
+  }
+
+  function createEnhancedMobileconfig() {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>PayloadType</key><string>com.apple.webClip.managed</string>
+      <key>PayloadVersion</key><integer>1</integer>
+      <key>PayloadIdentifier</key><string>com.veltro.app.webclip</string>
+      <key>PayloadUUID</key><string>C3D4E5F6-A7B8-9012-CDEF-123456789012</string>
+      <key>PayloadDisplayName</key><string>Veltro Investment</string>
+      <key>Label</key><string>Veltro</string>
+      <key>URL</key><string>${currentUrl}</string>
+      <key>FullScreen</key><true/>
+      <key>IsRemovable</key><true/>
+      <key>Icon</key><dict>
+        <key>IconSize</key><integer>180</integer>
+        <key>URL</key><string>${currentUrl}/apple-touch-icon-180x180.png</string>
+      </dict>
+    </dict>
+  </array>
+  <key>PayloadDisplayName</key><string>Veltro Investment</string>
+  <key>PayloadDescription</key><string>Add Veltro to your home screen for instant access to your investment portfolio.</string>
+  <key>PayloadIdentifier</key><string>com.veltro.app.webclip</string>
+  <key>PayloadOrganization</key><string>Veltro Technologies Inc.</string>
+  <key>PayloadType</key><string>Configuration</string>
+  <key>PayloadUUID</key><string>D4E5F6A7-B8C9-0123-DEFA-234567890123</string>
+  <key>PayloadVersion</key><integer>1</integer>
+</dict>
+</plist>`
+  }
+
+  function downloadAndInstall(mobileconfig) {
+    try {
+      // Create blob and download
+      const blob = new Blob([mobileconfig], { type: 'application/x-apple-aspen-config' })
+      const url = URL.createObjectURL(blob)
+
+      const link = document.createElement('a')
+      link.href = url
+      link.download = 'Veltro.mobileconfig'
+      link.style.display = 'none'
+      document.body.appendChild(link)
+      link.click()
+
+      // Cleanup
+      setTimeout(() => {
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+      }, 100)
+
+      // Show success
+      document.getElementById('success').classList.add('show')
+
+      // Auto-redirect to Settings after delay
+      setTimeout(() => {
+        autoRedirectToSettings()
+      }, 2000)
+
+    } catch (error) {
+      console.error('Download failed:', error)
+      showAlternativeMethods()
+    }
+  }
+
+  function autoRedirectToSettings() {
+    try {
+      // Try multiple iOS Settings URL schemes
+      const settingsURLs = [
+        'x-apple-system-settings:PROFILE',
+        'prefs:root=General&path=PROFILE',
+        'app-settings:',
+        'settings://'
+      ]
+
+      for (const url of settingsURLs) {
+        try {
+          window.location.href = url
+          document.getElementById('auto-redirect').classList.add('show')
+          break
+        } catch (e) {
+          continue
+        }
+      }
+    } catch (error) {
+      console.error('Auto-redirect failed:', error)
+      showAlternativeMethods()
+    }
+  }
+
+  function openSettingsManually() {
+    window.location.href = 'x-apple-system-settings:'
+  }
+
+  function showAlternativeMethods() {
+    document.getElementById('alternative').classList.add('show')
+  }
+
+  // Auto-trigger installation on page load for better UX
+  window.addEventListener('load', () => {
+    if (isIOS) {
+      // Small delay before showing install prompt
+      setTimeout(() => {
+        // Could auto-trigger here if desired
+        // installApp()
+      }, 1000)
+    }
+  })
+</script>
+</body>
+</html>
