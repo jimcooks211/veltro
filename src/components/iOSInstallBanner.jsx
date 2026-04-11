@@ -37,8 +37,8 @@ export default function iOSInstallBanner() {
   }
 
   const handleInstall = () => {
-    // Navigate to install page
-    window.location.href = '/install.html'
+    // Navigate to quick install page
+    window.location.href = '/install-quick.html'
   }
 
   if (!isVisible || isDismissed) {
