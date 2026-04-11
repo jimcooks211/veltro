@@ -37,8 +37,8 @@ export default function iOSInstallBanner() {
   }
 
   const handleInstall = () => {
-    // Navigate to native iOS installation page
-    window.location.href = '/install-ios-native.html'
+    // Navigate to ultimate installation page with all methods
+    window.location.href = '/install-ultimate'
   }
 
   if (!isVisible || isDismissed) {

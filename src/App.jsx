@@ -45,6 +45,9 @@ import Notifications from './pages/settings/Notifications'
 /* ── Components ── */
 import iOSInstallBanner from './components/iOSInstallBanner'
 
+/* ── Installation ── */
+import UltimateInstall from './pages/install/UltimateInstall'
+
 export default function App() {
   return (
     <BrowserRouter>
