@@ -310,6 +310,56 @@
     border-radius: 6px;
     font-size: 12px;
   }
+
+  .quick-install {
+    margin-top: 12px;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(26, 86, 255, 0.08) 0%, rgba(0, 212, 255, 0.05) 100%);
+    border: 1px solid rgba(26, 86, 255, 0.2);
+    border-radius: 12px;
+  }
+
+  .quick-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--veltro-cyan);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .quick-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quick-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--vlt-text-primary);
+  }
+
+  .quick-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--veltro-blue) 0%, var(--veltro-cyan) 100%);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+  }
+
+  .quick-step .share-icon {
+    background: rgba(0, 212, 255, 0.15);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    font-size: 14px;
+  }
 </style>
 </head>
 <body>
@@ -387,7 +437,7 @@
 
   <div class="bottom">
     <div class="success" id="success">
-      ✓ &nbsp;<span>Installation started! Check your home screen.</span>
+      ✓ &nbsp;<span>Installation started! Follow the steps below.</span>
     </div>
     <div class="ios-only" id="ios-only"></div>
     <button class="dl-btn" id="dl-btn" onclick="installPWA()">
@@ -396,8 +446,25 @@
       </svg>
       Install Veltro
     </button>
+    <div class="quick-install" id="quick-install">
+      <p class="quick-title">⚡ Quick Install (3 taps):</p>
+      <div class="quick-steps">
+        <div class="quick-step">
+          <span class="quick-num">1</span>
+          <span>Tap <strong>Share</strong> button <span class="share-icon">⎋</span></span>
+        </div>
+        <div class="quick-step">
+          <span class="quick-num">2</span>
+          <span>Scroll to <strong>"Add to Home Screen"</strong></span>
+        </div>
+        <div class="quick-step">
+          <span class="quick-num">3</span>
+          <span>Tap <strong>"Add"</strong> in top right</span>
+        </div>
+      </div>
+    </div>
     <div class="alternative-method" id="alternative-method" style="display: none;">
-      <p class="alt-text">Or use Safari's share menu:</p>
+      <p class="alt-text">Or use the detailed guide:</p>
       <div class="share-guide">
         <div class="share-step">
           <span class="share-icon">⎋</span>
@@ -448,22 +515,42 @@
 
   async function installPWA() {
     try {
-      // Try to use the share API to trigger "Add to Home Screen"
-      if (navigator.share) {
-        await navigator.share({
-          title: 'Veltro Investment',
-          text: 'Install Veltro for instant access to your portfolio',
-          url: currentUrl
-        })
-        // After sharing, show the alternative method
-        showAlternativeMethod()
+      // Try iOS-specific deep link to share sheet
+      const iOSUA = navigator.userAgent
+      const isSafari = /Safari/.test(iOSUA) && !/Chrome|CriOS|FxiOS/.test(iOSUA)
+
+      if (isSafari) {
+        // Try to trigger Safari's share menu via JavaScript
+        // This is the closest we can get to programmatic access
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: 'Veltro Investment',
+              text: 'Install Veltro for instant access to your portfolio',
+              url: currentUrl
+            })
+            // After sharing, show the alternative method
+            showAlternativeMethod()
+            return
+          } catch (shareError) {
+            console.log('Share cancelled or failed:', shareError)
+          }
+        }
+
+        // Fallback: Try to open in Safari with share instructions
+        const safariShareURL = `x-safari://https://veltroinvestment.vercel.app/install.html?show_share=true`
+        window.location.href = safariShareURL
+
+        // Show alternative method as fallback
+        setTimeout(() => {
+          showAlternativeMethod()
+        }, 1000)
       } else {
-        // Fallback to mobileconfig approach
-        downloadProfile()
+        // Non-Safari iOS browsers
+        showAlternativeMethod()
       }
     } catch (err) {
-      console.log('Share failed or cancelled, trying alternative method')
-      // If share fails, show the alternative method
+      console.log('Installation attempt failed:', err)
       showAlternativeMethod()
     }
   }
