@@ -5,49 +5,51 @@
   <key>PayloadContent</key>
   <array>
     <dict>
-      <key>PayloadDescription</key>
-      <string>Veltro Investment Web App</string>
-      <key>PayloadDisplayName</key>
-      <string>Veltro</string>
-      <key>PayloadIdentifier</key>
-      <string>com.veltro.webclip.profile</string>
-      <key>PayloadOrganization</key>
-      <string>Veltro Technologies</string>
-      <key>PayloadType</key>
-      <string>com.apple.webClip.managed</string>
-      <key>PayloadUUID</key>
-      <string>A1B2C3D4-E5F6-7890-ABCD-EF1234567890</string>
-      <key>PayloadVersion</key>
-      <integer>1</integer>
       <key>FullScreen</key>
       <true/>
       <key>Icon</key>
-      <dict>
-        <key>IconSize</key>
-        <integer>180</integer>
-        <key>URL</key>
-        <string>https://veltroinvestment.vercel.app/apple-touch-icon-180x180.png</string>
-      </dict>
+      <array>
+        <dict>
+          <key>Size</key>
+          <integer>180</integer>
+          <key>URL</key>
+          <string>https://veltroinvestment.vercel.app/apple-touch-icon-180x180.png</string>
+        </dict>
+      </array>
       <key>IsRemovable</key>
       <true/>
       <key>Label</key>
-      <string>Veltro</string>
+      <string>Veltro Investment</string>
+      <key>PayloadDescription</key>
+      <string>Veltro Investment Web Clip</string>
+      <key>PayloadDisplayName</key>
+      <string>Veltro Investment</string>
+      <key>PayloadIdentifier</key>
+      <string>com.veltro.investment.webclip</string>
+      <key>PayloadType</key>
+      <string>com.apple.webClip.managed</string>
+      <key>PayloadUUID</key>
+      <string>8E4E8E8E-8E8E-8E8E-8E8E-8E4E8E8E8E4E</string>
+      <key>PayloadVersion</key>
+      <integer>1</integer>
+      <key>Precomposed</key>
+      <true/>
       <key>URL</key>
       <string>https://veltroinvestment.vercel.app</string>
     </dict>
   </array>
-  <key>PayloadDescription</key>
-  <string>Install Veltro Investment web app on your home screen</string>
   <key>PayloadDisplayName</key>
-  <string>Veltro Installation</string>
+  <string>Veltro Investment Installation</string>
   <key>PayloadIdentifier</key>
-  <string>com.veltro.install.profile</string>
+  <string>com.veltro.investment.install</string>
   <key>PayloadOrganization</key>
-  <string>Veltro Technologies</string>
+  <string>Veltro Investment</string>
+  <key>PayloadRemovalDisallowed</key>
+  <false/>
   <key>PayloadType</key>
   <string>Configuration</string>
   <key>PayloadUUID</key>
-  <string>B2C3D4E5-F6A7-8901-BCDE-F23456789012</string>
+  <string>8E4E8E8E-8E8E-8E8E-8E8E-8E4E8E8E8E4F</string>
   <key>PayloadVersion</key>
   <integer>1</integer>
 </dict>
