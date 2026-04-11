@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>Install Veltro - iOS Shortcut</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, sans-serif;
+    background: #0A0F1E;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container {
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+  .logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 30px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 800;
+    box-shadow: 0 0 40px rgba(26,86,255,0.3);
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  p {
+    color: #a8b2cc;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+  .method {
+    background: rgba(255,255,255,0.05);
+    padding: 24px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  .method-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #00D4FF;
+  }
+  .method-link {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 12px;
+    box-shadow: 0 4px 16px rgba(26,86,255,0.3);
+  }
+  .method-link:active { transform: scale(0.98); }
+  .method-link.secondary {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .steps {
+    margin-top: 16px;
+    font-size: 14px;
+    color: #a8b2cc;
+    line-height: 1.8;
+  }
+  .steps strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">V</div>
+  <h1>Install Veltro</h1>
+  <p>Choose your installation method</p>
+
+  <div class="method">
+    <div class="method-title">🚀 Method 1: iOS Shortcut</div>
+    <div class="steps">
+      <strong>Fastest method</strong> - Opens Veltro instantly from home screen
+    </div>
+    <a href="shortcuts://run-shortcut?name=Veltro" class="method-link">
+      Add to Home Screen
+    </a>
+  </div>
+
+  <div class="method">
+    <div class="method-title">📱 Method 2: Configuration Profile</div>
+    <div class="steps">
+      <strong>Traditional method</strong> - Creates web clip on home screen
+    </div>
+    <a href="/Veltro.mobileconfig" class="method-link secondary">
+      Install Profile
+    </a>
+  </div>
+
+  <div class="method">
+    <div class="method-title">⚡ Method 3: Safari Manual</div>
+    <div class="steps">
+      <strong>Most reliable</strong> - Use Safari's built-in installation
+    </div>
+    <div class="steps">
+      1. Tap Share button <strong>⎋</strong><br>
+      2. Scroll to <strong>"Add to Home Screen"</strong><br>
+      3. Tap <strong>"Add"</strong>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
