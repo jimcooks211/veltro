@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 
 /**
- * UltimateInstallPage - Comprehensive iOS home screen installation with all available methods
+ * UltimateInstall - Comprehensive iOS home screen installation with all available methods
  * Combines itms-services, configuration profile, iOS shortcut, PWA, and Safari manual methods
  */
-export default function UltimateInstallPage() {
+export default function UltimateInstall() {
   const [deviceInfo, setDeviceInfo] = useState({
     device: 'Detecting...',
     browser: 'Detecting...',
