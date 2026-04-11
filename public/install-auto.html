@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Veltro"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png"/>
+<title>Veltro - Install</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0A0F1E;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container {
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+  .logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 800;
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  p {
+    color: #a8b2cc;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #1A56FF 0%, #00D4FF 100%);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: transform 0.2s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-secondary {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .status {
+    margin-top: 20px;
+    padding: 12px;
+    background: rgba(0,230,118,0.1);
+    border: 1px solid rgba(0,230,118,0.3);
+    border-radius: 8px;
+    font-size: 13px;
+    display: none;
+  }
+  .status.show { display: block; }
+  .steps {
+    margin-top: 20px;
+    text-align: left;
+    background: rgba(255,255,255,0.05);
+    padding: 16px;
+    border-radius: 12px;
+    display: none;
+  }
+  .steps.show { display: block; }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .step:last-child { margin-bottom: 0; }
+  .step-num {
+    width: 24px;
+    height: 24px;
+    background: #1A56FF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">V</div>
+  <h1>Install Veltro</h1>
+  <p>Add Veltro to your home screen for instant access</p>
+
+  <button class="btn" onclick="installApp()">Install Now</button>
+  <button class="btn btn-secondary" onclick="tryShareMethod()">Try Share Method</button>
+
+  <div class="status" id="status">
+    ✓ Installation started! Opening Settings...
+  </div>
+
+  <div class="steps" id="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>Open Settings → Profile Downloaded</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>Tap "Install" on Veltro profile</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>Veltro appears on your home screen!</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const currentUrl = window.location.origin
+
+  async function installApp() {
+    try {
+      // Create enhanced mobileconfig
+      const config = createMobileConfig()
+
+      // Download and trigger installation
+      const blob = new Blob([config], { type: 'application/x-apple-aspen-config' })
+      const url = URL.createObjectURL(blob)
+
+      const link = document.createElement('a')
+      link.href = url
+      link.download = 'Veltro.mobileconfig'
+      document.body.appendChild(link)
+      link.click()
+
+      setTimeout(() => {
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+      }, 100)
+
+      // Show status
+      document.getElementById('status').classList.add('show')
+
+      // Auto-redirect to Settings
+      setTimeout(() => {
+        redirectToSettings()
+      }, 1500)
+
+    } catch (error) {
+      console.error('Installation failed:', error)
+      showManualSteps()
+    }
+  }
+
+  async function tryShareMethod() {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Veltro Investment',
+          text: 'Install Veltro for instant access',
+          url: currentUrl
+        })
+      } else {
+        alert('Share not supported on this browser')
+      }
+    } catch (error) {
+      console.log('Share cancelled')
+    }
+  }
+
+  function createMobileConfig() {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>PayloadType</key><string>com.apple.webClip.managed</string>
+      <key>PayloadVersion</key><integer>1</integer>
+      <key>PayloadIdentifier</key><string>com.veltro.app.webclip</string>
+      <key>PayloadUUID</key><string>C3D4E5F6-A7B8-9012-CDEF-123456789012</string>
+      <key>PayloadDisplayName</key><string>Veltro Investment</string>
+      <key>Label</key><string>Veltro</string>
+      <key>URL</key><string>${currentUrl}</string>
+      <key>FullScreen</key><true/>
+      <key>IsRemovable</key><true/>
+    </dict>
+  </array>
+  <key>PayloadDisplayName</key><string>Veltro Investment</string>
+  <key>PayloadDescription</key><string>Add Veltro to your home screen.</string>
+  <key>PayloadIdentifier</key><string>com.veltro.app.webclip</string>
+  <key>PayloadOrganization</key><string>Veltro Technologies Inc.</string>
+  <key>PayloadType</key><string>Configuration</string>
+  <key>PayloadUUID</key><string>D4E5F6A7-B8C9-0123-DEFA-234567890123</string>
+  <key>PayloadVersion</key><integer>1</integer>
+</dict>
+</plist>`
+  }
+
+  function redirectToSettings() {
+    const settingsURLs = [
+      'x-apple-system-settings:PROFILE',
+      'prefs:root=General&path=PROFILE',
+      'app-settings:'
+    ]
+
+    for (const url of settingsURLs) {
+      try {
+        window.location.href = url
+        break
+      } catch (e) {
+        continue
+      }
+    }
+
+    // Show manual steps as fallback
+    setTimeout(() => {
+      showManualSteps()
+    }, 2000)
+  }
+
+  function showManualSteps() {
+    document.getElementById('steps').classList.add('show')
+  }
+
+  // Auto-install on page load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      installApp()
+    }, 500)
+  })
+</script>
+</body>
+</html>
