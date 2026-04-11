@@ -4,54 +4,52 @@
 
 We've created multiple installation methods to give you the best possible experience on iOS:
 
-### Method 1: Auto-Install (Recommended)
-**URL:** `https://veltroinvestment.vercel.app/install-auto.html`
+### Method 1: iOS Shortcut (Recommended) ⭐
+**URL:** `https://veltroinvestment.vercel.app/install-shortcut.html`
 
 **Features:**
-- ✅ Automatic installation trigger on page load
-- ✅ Auto-redirect to Settings app
-- ✅ Enhanced mobileconfig profile
-- ✅ Multiple fallback methods
+- ✅ Custom Veltro icon on home screen
+- ✅ Opens Veltro instantly when tapped
+- ✅ No Settings app required
+- ✅ Familiar iOS Shortcuts experience
+- ✅ Can be customized by user
 
 **Steps:**
 1. Visit the URL above
-2. Installation starts automatically
-3. Follow the prompts in Settings
-4. Veltro appears on your home screen
+2. Tap "Get Veltro Shortcut"
+3. Shortcuts app opens automatically
+4. Tap "Add Shortcut"
+5. Tap "Add to Home Screen"
+6. Veltro icon appears on home screen
 
-### Method 2: Quick Install
-**URL:** `https://veltroinvestment.vercel.app/install-quick.html`
+**Time:** 2-3 minutes (one-time setup)
+
+### Method 2: Configuration Profile
+**URL:** `https://veltroinvestment.vercel.app/Veltro.mobileconfig`
 
 **Features:**
-- ✅ One-tap installation button
-- ✅ Auto-redirect to Settings
-- ✅ Clean, focused interface
-- ✅ Visual step-by-step guidance
+- ✅ Direct profile download
+- ✅ Creates web clip on home screen
+- ✅ Full-screen experience
+- ✅ No browser bars
 
 **Steps:**
 1. Visit the URL above
-2. Tap "Install Now"
-3. Profile downloads automatically
-4. Settings opens automatically
-5. Install the profile
+2. Profile downloads automatically
+3. Open Settings → Profile Downloaded
+4. Tap "Install" on Veltro profile
+5. Veltro appears on home screen
 
-### Method 3: Standard Install
-**URL:** `https://veltroinvestment.vercel.app/install.html`
+**Time:** 1-2 minutes
 
-**Features:**
-- ✅ Comprehensive installation guide
-- ✅ Visual step-by-step instructions
-- ✅ Multiple installation methods
-- ✅ Detailed troubleshooting
-
-**Steps:**
-1. Visit the URL above
-2. Choose your preferred method
-3. Follow the detailed instructions
-4. Complete installation
-
-### Method 4: Manual Safari Installation
+### Method 3: Safari Manual
 **No URL needed - works directly from Safari**
+
+**Features:**
+- ✅ Most reliable method
+- ✅ Built-in iOS functionality
+- ✅ No additional files needed
+- ✅ Works on all iOS versions
 
 **Steps:**
 1. Open Veltro in Safari
@@ -59,6 +57,36 @@ We've created multiple installation methods to give you the best possible experi
 3. Scroll down and tap "Add to Home Screen"
 4. Tap "Add" in the top right
 5. Veltro appears on your home screen
+
+**Time:** 30 seconds
+
+### Method 4: Auto-Install
+**URL:** `https://veltroinvestment.vercel.app/install-final.html`
+
+**Features:**
+- ✅ 3-second auto countdown
+- ✅ Auto-triggers installation
+- ✅ Auto-opens Settings app
+- ✅ Visual step-by-step guidance
+
+**Steps:**
+1. Visit the URL above
+2. 3-second countdown starts
+3. Profile downloads automatically
+4. Settings app opens automatically
+5. Tap "Install" on profile
+6. Veltro appears on home screen
+
+**Time:** 1 minute
+
+### Method 5: View All Options
+**URL:** `https://veltroinvestment.vercel.app/install-methods.html`
+
+**Features:**
+- ✅ All installation methods in one place
+- ✅ Choose your preferred method
+- ✅ Detailed instructions for each
+- ✅ Troubleshooting tips
 
 ## 🔧 Troubleshooting
 
