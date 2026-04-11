@@ -498,7 +498,7 @@ export default function UltimateInstallPage() {
               textDecoration: 'none',
               borderRadius: '12px',
               fontSize: '15px',
-              fontWeight: 600',
+              fontWeight: 600,
               transition: 'all 0.2s ease'
             }}
           >
